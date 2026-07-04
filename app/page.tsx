@@ -1,101 +1,109 @@
-import Image from "next/image";
+import Link from "next/link";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import ProductCard from "@/components/products/ProductCard";
+import categoriesData from "@/data/categories.json";
+import productsData from "@/data/products.json";
+import type { Category, Product } from "@/types/product";
 
+const categories = categoriesData as Category[];
+const products = productsData as Product[];
+
+/** 카테고리 슬러그별 아이콘 이모지 */
+const CATEGORY_ICONS: Record<string, string> = {
+  cases: "📱",
+  chargers: "🔌",
+  earphones: "🎧",
+  watch: "⌚",
+  films: "🛡️",
+  others: "✨",
+};
+
+/** 활성 상품 중 베스트 상품 6개를 정렬 순서대로 가져옵니다 */
+function getBestProducts(): Product[] {
+  return products
+    .filter((product) => product.is_active)
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .slice(0, 6);
+}
+
+/** 메인 페이지 */
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const sortedCategories = [...categories].sort(
+    (a, b) => a.sort_order - b.sort_order
+  );
+  const bestProducts = getBestProducts();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header />
+
+      <main className="flex-1">
+        {/* 히어로 배너 */}
+        <section className="bg-gradient-to-b from-blue-50 to-white px-4 py-16 text-center sm:px-6 sm:py-24">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+            삼성 휴대폰을 더 특별하게,
+            <br />
+            마이사도
+          </h1>
+          <p className="mx-auto mt-4 max-w-xl text-base text-gray-500 sm:text-lg">
+            갤럭시 케이스부터 충전기, 워치 액세서리까지
+            <br />
+            믿을 수 있는 정품 액세서리를 만나보세요.
+          </p>
+          <Link
+            href="/products"
+            className="mt-8 inline-block rounded-full bg-gray-900 px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-gray-700 sm:text-base"
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+            상품 둘러보기
+          </Link>
+        </section>
+
+        {/* 카테고리 바로가기 */}
+        <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+          <h2 className="mb-6 text-xl font-bold text-gray-900 sm:text-2xl">
+            카테고리
+          </h2>
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-6 sm:gap-4">
+            {sortedCategories.map((category) => (
+              <Link
+                key={category.id}
+                href={`/products?category=${category.slug}`}
+                className="flex flex-col items-center gap-2 rounded-xl border border-gray-100 py-6 transition-colors hover:border-gray-300 hover:bg-gray-50"
+              >
+                <span className="text-3xl">
+                  {CATEGORY_ICONS[category.slug] ?? "🛍️"}
+                </span>
+                <span className="text-sm font-medium text-gray-700">
+                  {category.name}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* 베스트 상품 */}
+        <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">
+              베스트 상품
+            </h2>
+            <Link
+              href="/products"
+              className="text-sm font-medium text-gray-500 hover:text-gray-900"
+            >
+              전체보기 →
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
+            {bestProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+      <Footer />
     </div>
   );
 }
