@@ -68,7 +68,7 @@ export default function Home() {
             {sortedCategories.map((category) => (
               <Link
                 key={category.id}
-                href={`/products?category=${category.slug}`}
+                href={`/products?category=${category.id}`}
                 className="flex flex-col items-center gap-2 rounded-xl border border-gray-100 py-6 transition-colors hover:border-gray-300 hover:bg-gray-50"
               >
                 <span className="text-3xl">
