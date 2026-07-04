@@ -1,0 +1,5 @@
+[
+  { "id": "cat-001", "name": "케이스",        "slug": "cases",    "sort_order": 1 },
+  { "id": "cat-002", "name": "충전기",        "slug": "chargers", "sort_order": 2 },
+  { "id": "cat-003", "name": "기타 액세서리", "slug": "others",   "sort_order": 3 }
+]
