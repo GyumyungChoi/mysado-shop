@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // prisma/seed.js — products.json(v2, 199개) → product 테이블
 const { PrismaClient } = require("@prisma/client");
 const products = require("../data/products.json");
