@@ -1,4 +1,7 @@
 {
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "name": "mysado-shop",
   "version": "0.1.0",
   "private": true,
