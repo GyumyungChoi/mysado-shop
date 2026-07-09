@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AuthStatus from "@/components/AuthStatus";
 
 /** 사이트 상단 헤더 (로고 + 네비게이션) */
 export default function Header() {
@@ -26,6 +27,7 @@ export default function Header() {
             </Link>
           ))}
         </nav>
+        <AuthStatus />
       </div>
     </header>
   );
