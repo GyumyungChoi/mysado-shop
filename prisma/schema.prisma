@@ -1,13 +1,104 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
+// mysado-shop / Prisma 6 기준
+// Phase 2: 인증(Better Auth) + 행동 로그
 
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  productViews  ProductViewLog[]   // ← 추가
+  searchLogs    SearchLog[]        // ← 추가
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+// ─── 행동 로그 (AI 개인화 추천용 데이터 수집) ───
+
+model ProductViewLog {
+  id        Int      @id @default(autoincrement())
+  userId    String?  // 비로그인 조회도 기록 (null 허용)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  sessionId String?  // 비로그인 방문자 구분용 (쿠키 기반, 추후 활용)
+  productId String   // products.json의 상품 ID (Phase 3에서 FK 전환 예정)
+  viewedAt  DateTime @default(now())
+
+  @@index([userId, viewedAt])
+  @@index([productId])
+  @@map("product_view_log")
+}
+
+model SearchLog {
+  id          Int      @id @default(autoincrement())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  keyword     String
+  resultCount Int?     // 검색 결과 개수 (0이면 "없는 상품 수요" 신호!), 검색했는데 결과가 0인 키워드는 "손님이 찾는데 우리 가게에 없는 상품" 목록
+  createdAt   DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([keyword])
+  @@map("search_log")
 }
