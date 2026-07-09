@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
+import { getAuthErrorMessage } from "@/lib/auth-errors";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -29,7 +30,9 @@ export default function LoginPage() {
     setLoading(false);
 
     if (signInError) {
-      setError(signInError.message ?? "로그인에 실패했습니다.");
+      // setError(signInError.message ?? "로그인에 실패했습니다.");
+      // 2026.07.09 목 17:18 수정
+      setError(getAuthErrorMessage(signInError.code));
       return;
     }
 

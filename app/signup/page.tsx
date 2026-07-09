@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/lib/auth-client";
+import { getAuthErrorMessage } from "@/lib/auth-errors";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -41,7 +42,10 @@ export default function SignupPage() {
 
     if (signUpError) {
       // 지금은 원문 그대로 표시, 한국어 매핑은 다음 단계에서
-      setError(signUpError.message ?? "가입에 실패했습니다.");
+      // setError(signUpError.message ?? "가입에 실패했습니다.");
+      // 2026.07.09 목 17:18 수정
+      // console.log("signup error:", signUpError.code, signUpError.message);
+      setError(getAuthErrorMessage(signUpError.code));
       return;
     }
 
