@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { signOut, useSession } from "@/lib/auth-client";
 
 export default function AuthStatus() {
+  const router = useRouter();
   const { data: session, isPending } = useSession();
 
   // 세션 확인 중 (깜빡임 방지용 자리 차지)
@@ -18,6 +20,16 @@ export default function AuthStatus() {
         <span className="font-medium text-gray-900">
           {session.user.name}님
         </span>
+        <button
+          onClick={async () => {
+            await signOut();
+            router.push("/");
+            router.refresh();
+          }}
+          className="text-gray-500 transition-colors hover:text-gray-900"
+        >
+          로그아웃
+        </button>
       </div>
     );
   }
