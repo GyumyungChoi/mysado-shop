@@ -102,3 +102,41 @@ model SearchLog {
   @@index([keyword])
   @@map("search_log")
 }
+
+model Product {
+  id               String   @id                      // prod-001 (URL/로그 호환)
+  sku              String?                           // null 50건, @unique 불가
+  categoryId       String   @map("category_id")
+  categoryName     String   @map("category_name")
+  name             String
+  price            Int
+  discountedPrice  Int?     @map("discounted_price")
+  stock            Int      @default(0) @map("stock_quantity")
+  status           String   @default("SALE")         // SALE/OUTOFSTOCK/SUSPENSION
+  isVisible        Boolean  @default(true) @map("is_active")
+  description      String   @default("")             // AI 설명 생성용
+  detailHtml       String   @default("") @map("detail_html")
+  images           String[]
+  brand            String
+  manufacturerName String   @default("") @map("manufacturer_name")
+  modelName        String   @default("") @map("model_name")
+  tags             String[]
+  deliveryFee      Int      @default(0) @map("delivery_fee")
+  returnFee        Int      @default(0) @map("return_fee")
+  exchangeFee      Int      @default(0) @map("exchange_fee")
+  sortOrder        Int      @map("sort_order")
+
+  // ── 네이버 채널 필드 (향후 ProductChannel 분리 예정) ──
+  originProductNo  String   @map("origin_product_no")
+  channelProductNo String   @map("channel_product_no")
+  naverCategoryId  String   @map("naver_category_id")
+  naverWholeCategoryId String @map("naver_whole_category_id")
+  smartstoreUrl    String   @map("smartstore_url")
+
+  registeredAt     DateTime @map("registered_at")    // 스토어 등록일 (JSON created_at)
+  channelModifiedAt DateTime @map("channel_modified_at") // JSON modified_at
+  createdAt        DateTime @default(now()) @map("created_at")  // DB 삽입 시각
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("product")
+}
