@@ -3,22 +3,26 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ProductCard from "@/components/products/ProductCard";
 import categoriesData from "@/data/categories.json";
-import productsData from "@/data/products.json";
-import type { Category, Product } from "@/types/product";
+// import productsData from "@/data/products.json";
+import type { Category } from "@/types/product";
+import { getFilteredProducts } from "@/lib/products";
 
 const categories = categoriesData as Category[];
-const products = productsData as Product[];
+// const products = productsData as Product[];
 
 /** 카테고리 id로 활성 상품을 필터링하고 정렬 순서대로 반환합니다 */
-function getFilteredProducts(categoryId?: string): Product[] {
-  return products
-    .filter((product) => product.is_active)
-    .filter((product) => !categoryId || product.category_id === categoryId)
-    .sort((a, b) => a.sort_order - b.sort_order);
-}
+// function getFilteredProducts(categoryId?: string): Product[] {
+//   return products
+//     .filter((product) => product.is_active)
+//     .filter((product) => !categoryId || product.category_id === categoryId)
+//     .sort((a, b) => a.sort_order - b.sort_order);
+// }
+
+/** ISR: 60초마다 캐시 재생성 (운영 빌드에서만 의미) */
+export const revalidate = 60;
 
 /** 상품 목록 페이지 (카테고리 탭 필터 포함) */
-export default function ProductsPage({
+export default async function ProductsPage({
   searchParams,
 }: {
   searchParams: { category?: string };
@@ -27,7 +31,7 @@ export default function ProductsPage({
   const sortedCategories = [...categories].sort(
     (a, b) => a.sort_order - b.sort_order
   );
-  const filteredProducts = getFilteredProducts(selectedCategory);
+  const filteredProducts = await getFilteredProducts(selectedCategory);
 
   return (
     <div className="flex min-h-screen flex-col">
