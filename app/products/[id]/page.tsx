@@ -5,16 +5,17 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ProductCard from "@/components/products/ProductCard";
 import categoriesData from "@/data/categories.json";
-import productsData from "@/data/products.json";
-import type { Category, Product } from "@/types/product";
+// import productsData from "@/data/products.json";
+import type { Category } from "@/types/product";
+import { getProductById, getRelatedProducts } from "@/lib/products";
 
 const categories = categoriesData as Category[];
-const products = productsData as Product[];
+// const products = productsData as Product[];
 
 /** id로 활성 상품을 조회합니다 */
-function getProduct(id: string): Product | undefined {
-  return products.find((product) => product.id === id && product.is_active);
-}
+// function getProduct(id: string): Product | undefined {
+//   return products.find((product) => product.id === id && product.is_active);
+// }
 
 /** 카테고리 id로 카테고리 정보를 조회합니다 */
 function getCategory(categoryId: string): Category | undefined {
@@ -22,32 +23,35 @@ function getCategory(categoryId: string): Category | undefined {
 }
 
 /** 같은 카테고리의 관련 상품을 최대 4개 반환합니다 */
-function getRelatedProducts(product: Product, limit = 4): Product[] {
-  return products
-    .filter(
-      (item) =>
-        item.is_active &&
-        item.category_id === product.category_id &&
-        item.id !== product.id
-    )
-    .sort((a, b) => a.sort_order - b.sort_order)
-    .slice(0, limit);
-}
+// function getRelatedProducts(product: Product, limit = 4): Product[] {
+//   return products
+//     .filter(
+//       (item) =>
+//         item.is_active &&
+//         item.category_id === product.category_id &&
+//         item.id !== product.id
+//     )
+//     .sort((a, b) => a.sort_order - b.sort_order)
+//     .slice(0, limit);
+// }
+
 
 /** 상품 상세 페이지 */
-export default function ProductDetailPage({
+export const revalidate = 60;
+
+export default async function ProductDetailPage({
   params,
 }: {
   params: { id: string };
 }) {
-  const product = getProduct(params.id);
+  const product = await getProductById(params.id);
 
   if (!product) {
     notFound();
   }
 
   const category = getCategory(product.category_id);
-  const relatedProducts = getRelatedProducts(product);
+  const relatedProducts = await getRelatedProducts(product.category_id, product.id);
   const hasDiscount = product.discounted_price !== null;
   const displayPrice = product.discounted_price ?? product.price;
 

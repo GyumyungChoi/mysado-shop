@@ -3,11 +3,12 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ProductCard from "@/components/products/ProductCard";
 import categoriesData from "@/data/categories.json";
-import productsData from "@/data/products.json";
-import type { Category, Product } from "@/types/product";
+// import productsData from "@/data/products.json";
+import type { Category } from "@/types/product";
+import { getBestProducts } from "@/lib/products";
 
 const categories = categoriesData as Category[];
-const products = productsData as Product[];
+// const products = productsData as Product[];
 
 /** 카테고리 슬러그별 아이콘 이모지 */
 const CATEGORY_ICONS: Record<string, string> = {
@@ -20,19 +21,21 @@ const CATEGORY_ICONS: Record<string, string> = {
 };
 
 /** 활성 상품 중 베스트 상품 6개를 정렬 순서대로 가져옵니다 */
-function getBestProducts(): Product[] {
-  return products
-    .filter((product) => product.is_active)
-    .sort((a, b) => a.sort_order - b.sort_order)
-    .slice(0, 6);
-}
+// function getBestProducts(): Product[] {
+//   return products
+//     .filter((product) => product.is_active)
+//     .sort((a, b) => a.sort_order - b.sort_order)
+//     .slice(0, 6);
+// }
+
+export const revalidate = 60;
 
 /** 메인 페이지 */
-export default function Home() {
+export default async function Home() {
   const sortedCategories = [...categories].sort(
     (a, b) => a.sort_order - b.sort_order
   );
-  const bestProducts = getBestProducts();
+  const bestProducts = await getBestProducts();
 
   return (
     <div className="flex min-h-screen flex-col">
