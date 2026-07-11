@@ -22,6 +22,17 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 7, // 7일
     updateAge: 60 * 60 * 24,     // 하루 지나면 만료시간 갱신
   },
+  
+  // 3.5) 추가 사용자 필드 — 가입 시 휴대폰 번호 수집 (26.07.11)
+  user: {
+    additionalFields: {
+      phoneNumber: {
+        type: "string",
+        required: false, // DB nullable — 필수 강제는 가입 폼에서
+        input: true,     // 클라이언트 signUp 호출에서 값 전달 허용
+      },
+    },
+  },
 
   // 4) 플러그인 — nextCookies()는 항상 마지막
   plugins: [nextCookies()],

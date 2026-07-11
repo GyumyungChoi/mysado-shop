@@ -16,6 +16,7 @@ model User {
   email         String
   emailVerified Boolean   @default(false)
   image         String?
+  phoneNumber   String?   @map("phone_number")  // 추가(26.07.11.토)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
