@@ -82,7 +82,9 @@ model ProductViewLog {
   userId    String?  // 비로그인 조회도 기록 (null 허용)
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   sessionId String?  // 비로그인 방문자 구분용 (쿠키 기반, 추후 활용)
-  productId String   // products.json의 상품 ID (Phase 3에서 FK 전환 예정)
+  
+  productId String?  // 상품 삭제 시 SetNull로 로그 보존 (Phase 3에서 FK 전환 완료)
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
   viewedAt  DateTime @default(now())
 
   @@index([userId, viewedAt])
@@ -124,6 +126,7 @@ model Product {
   deliveryFee      Int      @default(0) @map("delivery_fee")
   returnFee        Int      @default(0) @map("return_fee")
   exchangeFee      Int      @default(0) @map("exchange_fee")
+  viewLogs ProductViewLog[]
   sortOrder        Int      @map("sort_order")
 
   // ── 네이버 채널 필드 (향후 ProductChannel 분리 예정) ──
