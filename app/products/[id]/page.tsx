@@ -8,6 +8,7 @@ import categoriesData from "@/data/categories.json";
 // import productsData from "@/data/products.json";
 import type { Category } from "@/types/product";
 import { getProductById, getRelatedProducts } from "@/lib/products";
+import AddToCartButton from "@/components/products/AddToCartButton";
 
 const categories = categoriesData as Category[];
 // const products = productsData as Product[];
@@ -143,12 +144,16 @@ export default async function ProductDetailPage({
                   ))}
                 </div>
               )}
-
+              <AddToCartButton
+                productId={product.id}
+                stock={product.stock_quantity}
+                isPurchasable={product.status === "SALE" && product.stock_quantity > 0}
+              />
               <a
                 href={product.smartstore_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-8 flex w-full items-center justify-center rounded-lg bg-green-600 px-6 py-4 text-base font-semibold text-white transition-colors hover:bg-green-700 sm:mt-auto"
+                className="mt-3 flex w-full items-center justify-center rounded-lg bg-green-600 px-6 py-4 text-base font-semibold text-white transition-colors hover:bg-green-700 sm:mt-auto"
               >
                 스마트스토어에서 구매하기
               </a>
