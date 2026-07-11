@@ -23,6 +23,8 @@ model User {
   accounts      Account[]
   productViews  ProductViewLog[]   // ← 추가
   searchLogs    SearchLog[]        // ← 추가
+  cartItems     CartItem[]         // ← Phase 4 추가
+  orders        Order[]            // ← Phase 4 추가
 
   @@unique([email])
   @@map("user")
@@ -128,6 +130,8 @@ model Product {
   returnFee        Int      @default(0) @map("return_fee")
   exchangeFee      Int      @default(0) @map("exchange_fee")
   viewLogs ProductViewLog[]
+  cartItems  CartItem[]    // ← Phase 4 추가
+  orderItems OrderItem[]   // ← Phase 4 추가
   sortOrder        Int      @map("sort_order")
 
   // ── 네이버 채널 필드 (향후 ProductChannel 분리 예정) ──
@@ -143,4 +147,92 @@ model Product {
   updatedAt        DateTime @updatedAt @map("updated_at")
 
   @@map("product")
+}
+
+// ─── Phase 4: 장바구니 / 주문 / 결제 ───
+
+enum OrderStatus {
+  PENDING     // 주문 생성 (결제 전)
+  PAID        // 결제 승인 완료
+  PREPARING   // 상품 준비 중
+  SHIPPING    // 배송 중
+  DONE        // 배송 완료
+  FAILED      // 결제 실패
+  CANCELED    // 취소
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  userId    String   @map("user_id")
+  productId String   @map("product_id")           // Product.id = "prod-001" 형식
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])   // 같은 상품은 한 행, 수량만 증가
+  @@map("cart_item")
+}
+
+model Order {
+  id             String      @id @default(cuid())  // 토스 orderId로 그대로 사용 (6~64자 규격 충족)
+  userId         String      @map("user_id")       // NOT NULL — 탈퇴는 Soft Delete로만 (Restrict가 하드삭제 차단)
+  status         OrderStatus @default(PENDING)
+  totalAmount    Int         @map("total_amount")  // 원 단위 정수, confirm 시 amount 재검증 기준
+
+  // 배송지 스냅샷 (주문 시점 고정)
+  recipientName  String      @map("recipient_name")
+  recipientPhone String      @map("recipient_phone")
+  zipCode        String      @map("zip_code")
+  address1       String
+  address2       String?
+  deliveryMemo   String?     @map("delivery_memo")
+
+  // 토스 결제 결과
+  paymentKey     String?     @unique @map("payment_key")   // DB 레벨 중복 승인 차단
+  paidAt         DateTime?   @map("paid_at")
+
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  items       OrderItem[]
+  paymentLogs PaymentLog[]
+
+  @@index([userId, createdAt])   // 마이페이지 "내 주문 최신순" 대비
+  @@map("orders")                // 단수 order는 SQL 예약어 → 복수형 예외
+}
+
+model OrderItem {
+  id          Int     @id @default(autoincrement())
+  orderId     String  @map("order_id")
+  productId   String? @map("product_id")
+
+  // ★ 주문 시점 스냅샷 (상품 삭제/가격 변경과 무관하게 보존)
+  productName String  @map("product_name")
+  unitPrice   Int     @map("unit_price")    // 실결제 단가 (discountedPrice ?? price)
+  quantity    Int
+
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_item")
+}
+
+model PaymentLog {
+  id         Int      @id @default(autoincrement())
+  orderId    String   @map("order_id")
+  type       String                              // 코드 레벨 as const 상수 + UNKNOWN 파서로 관리
+  paymentKey String?  @map("payment_key")
+  payload    Json                                // 토스 요청/응답 원문 그대로
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("payment_log")
 }
