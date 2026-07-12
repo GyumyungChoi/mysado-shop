@@ -1,12 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
 import { getAuthErrorMessage } from "@/lib/auth-errors";
 
-export default function LoginPage() {
+// 오픈 리다이렉트 방어: 내부 경로("/...")만 허용, "//"(프로토콜 상대 URL)는 차단
+function safeRedirectPath(raw: string | null): string {
+  if (raw && raw.startsWith("/") && !raw.startsWith("//")) {
+    return raw;
+  }
+  return "/";
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = safeRedirectPath(searchParams.get("redirect"));
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -30,13 +41,11 @@ export default function LoginPage() {
     setLoading(false);
 
     if (signInError) {
-      // setError(signInError.message ?? "로그인에 실패했습니다.");
-      // 2026.07.09 목 17:18 수정
       setError(getAuthErrorMessage(signInError.code));
       return;
     }
 
-    router.push("/");
+    router.push(redirectTo);
     router.refresh();
   };
 
@@ -81,5 +90,13 @@ export default function LoginPage() {
         </button>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

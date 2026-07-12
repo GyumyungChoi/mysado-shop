@@ -16,9 +16,10 @@ export function middleware(request: NextRequest) {
   const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
   const isAuthPage = AUTH_PATHS.some((p) => pathname.startsWith(p));
 
-  // 비로그인 상태로 보호 경로 접근 → 로그인 페이지로
+  // 비로그인 상태로 보호 경로 접근 → 로그인 페이지로 (원래 목적지를 redirect에 보존)
   if (isProtected && !sessionCookie) {
     const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("redirect", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
