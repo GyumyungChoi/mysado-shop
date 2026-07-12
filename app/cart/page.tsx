@@ -239,11 +239,11 @@ export default function CartPage() {
                 </div>
                 <button
                   type="button"
-                  disabled
-                  className="mt-4 w-full rounded-lg bg-gray-300 px-6 py-4 text-base font-semibold text-gray-500"
-                  title="주문 기능 준비 중"
+                  onClick={() => router.push("/checkout")}
+                  disabled={!cart.items.some((item) => item.isAvailable)}
+                  className="mt-4 w-full rounded-lg bg-gray-900 px-6 py-4 text-base font-semibold text-white transition-colors hover:bg-gray-700 disabled:bg-gray-300 disabled:text-gray-500"
                 >
-                  주문하기 (준비 중)
+                  주문하기
                 </button>
               </div>
             </>
