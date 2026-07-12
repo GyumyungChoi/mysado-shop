@@ -1,14 +1,12 @@
 
 import { prisma } from "@/lib/prisma";
+import { ApiError } from "@/lib/api-helpers";
 
 /** 장바구니 조작 실패 시 던지는 에러 (Route Handler가 status를 그대로 응답코드로 사용) */
-export class CartError extends Error {
-  readonly status: number;
-
+export class CartError extends ApiError {
   constructor(message: string, status: number) {
-    super(message);
+    super(message, status);
     this.name = "CartError";
-    this.status = status;
   }
 }
 
