@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useCartCount } from "@/components/CartCountProvider";
 
 interface AddToCartButtonProps {
   productId: string;
@@ -17,6 +18,7 @@ export default function AddToCartButton({
   isPurchasable,
 }: AddToCartButtonProps) {
   const router = useRouter();
+  const { refreshCartCount } = useCartCount();
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -51,6 +53,7 @@ export default function AddToCartButton({
       }
 
       setMessage("장바구니에 담았습니다.");
+      void refreshCartCount();
     } catch {
       setMessage("잠시 후 다시 시도해주세요.");
     } finally {

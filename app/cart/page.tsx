@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useCartCount } from "@/components/CartCountProvider";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
@@ -29,6 +30,7 @@ interface CartView {
 /** 장바구니 페이지 — 목록/수량변경/삭제/합계 (주문 버튼은 Step 3에서 활성화) */
 export default function CartPage() {
   const router = useRouter();
+  const { refreshCartCount } = useCartCount();
   const [cart, setCart] = useState<CartView | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -83,6 +85,7 @@ export default function CartPage() {
       }
 
       await loadCart();
+      void refreshCartCount();
     } catch {
       setErrorMessage("수량 변경에 실패했습니다.");
     } finally {
@@ -103,6 +106,7 @@ export default function CartPage() {
       }
 
       await loadCart();
+      void refreshCartCount();
     } catch {
       setErrorMessage("삭제에 실패했습니다.");
     } finally {
