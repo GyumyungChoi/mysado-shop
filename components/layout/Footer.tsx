@@ -6,7 +6,7 @@ export default function Footer() {
         <p className="mb-2 font-semibold text-gray-700">마이사도(mysado)</p>
         <div className="space-y-1 leading-relaxed">
           <p>대표자: 우승문</p>
-          <p>고객센터 이메일: contact@mysado.net</p>
+          <p>고객센터 이메일: mysado.shop@gmail.com</p>
           <p>스마트스토어: smartstore.naver.com/mysado</p>
         </div>
         <p className="mt-6 text-xs text-gray-400">

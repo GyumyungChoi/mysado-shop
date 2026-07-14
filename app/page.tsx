@@ -37,8 +37,51 @@ export default async function Home() {
   );
   const bestProducts = await getBestProducts();
 
+  // ── SEO: Organization + WebSite 구조화 데이터 (JSON-LD) ──
+  // sameAs는 의도적으로 비움 — 스마트스토어 royvente는 "같은 개체"가 아니라
+  // "같은 사업자의 다른 스토어"이므로 parentOrganization으로 연결 (브랜드 엔티티 희석 방지)
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://mysado.net/#organization",
+        name: "마이사도(mysado)",
+        alternateName: ["mysado", "마이사도"],
+        url: "https://mysado.net",
+        logo: "https://mysado.net/og-image.png",
+        description:
+          "마이사도(mysado)는 삼성 갤럭시 케이스, 충전기, 워치 액세서리 등 휴대폰 액세서리를 판매하는 온라인 쇼핑몰입니다.",
+        parentOrganization: {
+          "@type": "Organization",
+          name: "(주)주승시스템",
+          alternateName: "Juseungsystem Co., Ltd.",
+        },
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "customer support",
+          email: "mysado.shop@gmail.com",
+          availableLanguage: ["Korean"],
+        },
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://mysado.net/#website",
+        url: "https://mysado.net",
+        name: "마이사도(mysado)",
+        description: "삼성 휴대폰 액세서리 쇼핑몰",
+        publisher: { "@id": "https://mysado.net/#organization" },
+        inLanguage: "ko-KR",
+      },
+    ],
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header />
 
       <main className="flex-1">

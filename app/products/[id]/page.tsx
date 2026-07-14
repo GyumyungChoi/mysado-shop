@@ -56,8 +56,48 @@ export default async function ProductDetailPage({
   const hasDiscount = product.discounted_price !== null;
   const displayPrice = product.discounted_price ?? product.price;
 
+  // ── SEO: Product 구조화 데이터 (JSON-LD) ──
+  // price = discounted_price ?? price (설계 결정 ④와 동일 규칙)
+  // 이 페이지는 is_active=false면 이미 notFound()이므로 여기 도달 = 노출 상품
+  const priceValue = product.discounted_price ?? product.price;
+  const inStock =
+    product.status === "SALE" && product.stock_quantity > 0;
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    image: product.images,
+    description:
+      product.description ||
+      `${product.name} - 마이사도(mysado)에서 판매하는 삼성 휴대폰 액세서리입니다.`,
+    sku: product.sku ?? undefined,
+    brand: {
+      "@type": "Brand",
+      name: product.brand,
+    },
+    offers: {
+      "@type": "Offer",
+      url: `https://mysado.net/products/${product.id}`,
+      priceCurrency: "KRW",
+      price: priceValue,
+      availability: inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      itemCondition: "https://schema.org/NewCondition",
+      seller: {
+        "@type": "Organization",
+        name: "마이사도(mysado)",
+        "@id": "https://mysado.net/#organization",
+      },
+    },
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
       <Header />
 
       <main className="flex-1">
