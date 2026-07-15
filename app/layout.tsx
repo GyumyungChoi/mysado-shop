@@ -43,7 +43,11 @@ export const metadata: Metadata = {
     ],
     locale: "ko_KR",
   },
-  // 세션 B에서 네이버 서치어드바이저 메타태그 확정 시 verification 항목 추가 예정
+  verification: {
+    other: {
+      "naver-site-verification": "7641068d83c968daf7bff70dd421c2b9dad3d9d4",
+    },
+  },
 };
 
 export default function RootLayout({
