@@ -197,6 +197,9 @@ export default async function ProductDetailPage({
               >
                 스마트스토어에서 구매하기
               </a>
+              <p className="mt-2 text-xs text-gray-500">
+                판매 채널에 따라 가격·할인율이 다를 수 있습니다.
+              </p>
             </div>
           </div>
 
