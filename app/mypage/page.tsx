@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { auth } from "@/lib/auth";
 
 export default async function MyPage() {
@@ -26,6 +27,12 @@ export default async function MyPage() {
           가입일: {new Date(session.user.createdAt).toLocaleDateString("ko-KR")}
         </p>
       </div>
+      <Link
+        href="/mypage/orders"
+        className="mt-4 block rounded-lg border border-gray-200 p-4 text-sm font-medium hover:bg-gray-50"
+      >
+        주문 내역 보기 &rarr;
+      </Link>
     </main>
   );
 }
