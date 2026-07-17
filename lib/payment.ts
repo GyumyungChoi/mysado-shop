@@ -116,3 +116,121 @@ export function tossErrorToKorean(code: string | undefined, fallback: string): s
   };
   return (code && messages[code]) ?? fallback ?? "결제 처리 중 오류가 발생했습니다.";
 }
+
+/**
+ * 토스 결제 조회 API (GET /v1/payments/{paymentKey})
+ * - T-5 웹훅 역검증용: 웹훅 페이로드는 신뢰하지 않고, 이 조회 결과만 신뢰
+ * - cache: "no-store" — Next.js fetch 캐싱 차단 (항상 최신 상태 조회)
+ */
+export async function getTossPayment(paymentKey: string): Promise<ConfirmResult> {
+  const secretKey = process.env.TOSS_SECRET_KEY;
+  if (!secretKey) {
+    return {
+      ok: false,
+      code: "CONFIG_ERROR",
+      message: "결제 설정 오류입니다. 관리자에게 문의해주세요.",
+      httpStatus: 500,
+      raw: null,
+    };
+  }
+
+  const basicAuth = Buffer.from(`${secretKey}:`).toString("base64");
+
+  try {
+    const response = await fetch(
+      `https://api.tosspayments.com/v1/payments/${encodeURIComponent(paymentKey)}`,
+      {
+        method: "GET",
+        headers: { Authorization: `Basic ${basicAuth}` },
+        cache: "no-store",
+      }
+    );
+
+    const body = (await response.json()) as unknown;
+
+    if (!response.ok) {
+      const err = body as TossErrorBody;
+      return {
+        ok: false,
+        code: err.code ?? "UNKNOWN",
+        message: tossErrorToKorean(err.code, err.message),
+        httpStatus: response.status,
+        raw: body,
+      };
+    }
+
+    return { ok: true, payment: body as TossPaymentObject };
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    return {
+      ok: false,
+      code: "NETWORK_ERROR",
+      message: "결제 조회 중 통신 오류가 발생했습니다.",
+      httpStatus: 500,
+      raw: { message },
+    };
+  }
+}
+
+/**
+ * 토스 결제 취소 API (POST /v1/payments/{paymentKey}/cancel)
+ * - cancelAmount 생략 = 전액 취소
+ * - Idempotency-Key: "cancel-" prefix — confirm에서 쓴 paymentKey 원본 키와 충돌 방지
+ *   (토스 멱등키는 15일 유효 — 동일 키 재사용 시 이전 응답이 재생될 수 있음)
+ */
+export async function cancelTossPayment(params: {
+  paymentKey: string;
+  cancelReason: string;
+}): Promise<ConfirmResult> {
+  const secretKey = process.env.TOSS_SECRET_KEY;
+  if (!secretKey) {
+    return {
+      ok: false,
+      code: "CONFIG_ERROR",
+      message: "결제 설정 오류입니다. 관리자에게 문의해주세요.",
+      httpStatus: 500,
+      raw: null,
+    };
+  }
+
+  const basicAuth = Buffer.from(`${secretKey}:`).toString("base64");
+
+  try {
+    const response = await fetch(
+      `https://api.tosspayments.com/v1/payments/${encodeURIComponent(params.paymentKey)}/cancel`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${basicAuth}`,
+          "Content-Type": "application/json",
+          "Idempotency-Key": `cancel-${params.paymentKey}`,
+        },
+        body: JSON.stringify({ cancelReason: params.cancelReason }),
+      }
+    );
+
+    const body = (await response.json()) as unknown;
+
+    if (!response.ok) {
+      const err = body as TossErrorBody;
+      return {
+        ok: false,
+        code: err.code ?? "UNKNOWN",
+        message: tossErrorToKorean(err.code, err.message),
+        httpStatus: response.status,
+        raw: body,
+      };
+    }
+
+    return { ok: true, payment: body as TossPaymentObject };
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    return {
+      ok: false,
+      code: "NETWORK_ERROR",
+      message: "결제 취소 중 통신 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+      httpStatus: 500,
+      raw: { message },
+    };
+  }
+}
