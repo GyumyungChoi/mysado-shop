@@ -17,9 +17,12 @@ export default function AuthStatus() {
   if (session) {
     return (
       <div className="flex items-center gap-3 text-sm">
-        <span className="font-medium text-gray-900">
+        <Link
+          href="/mypage"
+          className="font-medium text-gray-900 transition-colors hover:text-blue-600"
+        >
           {session.user.name}님
-        </span>
+        </Link>
         <button
           onClick={async () => {
             await signOut();
