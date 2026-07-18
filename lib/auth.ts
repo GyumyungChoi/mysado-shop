@@ -31,6 +31,13 @@ export const auth = betterAuth({
         required: false, // DB nullable — 필수 강제는 가입 폼에서
         input: true,     // 클라이언트 signUp 호출에서 값 전달 허용
       },
+      // 권한 필드 — Phase 5 추가 (26.07.18)
+      role: {
+        type: "string",
+        required: false,
+        defaultValue: "user",
+        input: false,    // ★ 클라이언트 입력 차단 — psql로만 변경 (권한 상승 방지)
+      },
     },
   },
 

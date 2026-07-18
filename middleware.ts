@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
 /** 로그인해야만 접근 가능한 경로 (앞으로 여기에 추가) */
-const PROTECTED_PATHS = ["/mypage", "/cart", "/checkout"];
+const PROTECTED_PATHS = ["/mypage", "/cart", "/checkout", "/admin"]; // /admin — Phase 5 추가(26.07.18)
 
 /** 로그인 상태면 접근할 필요 없는 경로 */
 const AUTH_PATHS = ["/login", "/signup"];
@@ -33,5 +33,5 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   // middleware를 실행할 경로만 지정 (정적 파일/이미지 등 제외)
-  matcher: ["/mypage/:path*", "/cart/:path*", "/checkout/:path*", "/login", "/signup"],
+  matcher: ["/mypage/:path*", "/cart/:path*", "/checkout/:path*", "/admin/:path*", "/login", "/signup"],
 };
