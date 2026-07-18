@@ -51,6 +51,10 @@ export default function AboutPage() {
               품질과 실용성을 최우선으로, 갤럭시와 함께하는 모든 순간이
               더 특별해질 수 있도록 마이사도가 함께하겠습니다.
             </p>
+            <p>
+              마이사도는 (주)주승시스템이 운영하는 삼성 모바일 액세서리
+              전문 브랜드이며, mysado.net은 마이사도의 공식 자사몰입니다.
+            </p>
           </div>
         </section>
 
@@ -80,7 +84,8 @@ export default function AboutPage() {
             운영 채널
           </h2>
           <p className="mb-8 text-gray-500">
-            네이버 스마트스토어에서도 마이사도 제품을 만나보실 수 있습니다.
+            공식 자사몰 mysado.net 외에도 네이버 스마트스토어와 쿠팡에서
+            마이사도 제품을 만나보실 수 있습니다.
           </p>
           <a
             href="https://smartstore.naver.com/mysado"
