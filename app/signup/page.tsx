@@ -13,6 +13,8 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState(""); // 26.07.11 추가
   const [showPassword, setShowPassword] = useState(false);    // 26.07.11 추가
+  const [agreeTerms, setAgreeTerms] = useState(false);        // 26.07.18 추가
+  const [agreePrivacy, setAgreePrivacy] = useState(false);    // 26.07.18 추가
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -41,6 +43,14 @@ export default function SignupPage() {
     }
     if (password !== passwordConfirm) {
       setError("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+    if (!agreeTerms) {
+      setError("이용약관에 동의해주세요.");
+      return;
+    }
+    if (!agreePrivacy) {
+      setError("개인정보 수집·이용에 동의해주세요.");
       return;
     }
     setLoading(true);
@@ -134,6 +144,36 @@ export default function SignupPage() {
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           style={inputStyle}
         />
+
+        {/* 약관·개인정보 동의 (26.07.18 추가) */}
+        <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14 }}>
+          <input
+            type="checkbox"
+            checked={agreeTerms}
+            onChange={(e) => setAgreeTerms(e.target.checked)}
+          />
+          <span>
+            [필수]{" "}
+            <a href="/terms" target="_blank" rel="noreferrer" style={{ textDecoration: "underline" }}>
+              이용약관
+            </a>
+            에 동의합니다
+          </span>
+        </label>
+        <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14 }}>
+          <input
+            type="checkbox"
+            checked={agreePrivacy}
+            onChange={(e) => setAgreePrivacy(e.target.checked)}
+          />
+          <span>
+            [필수]{" "}
+            <a href="/privacy" target="_blank" rel="noreferrer" style={{ textDecoration: "underline" }}>
+              개인정보 수집·이용
+            </a>
+            에 동의합니다
+          </span>
+        </label>
 
         {error && (
           <p style={{ color: "crimson", fontSize: 14 }}>{error}</p>
