@@ -179,6 +179,7 @@ model CartItem {
 
 model Order {
   id             String      @id @default(cuid())  // 토스 orderId로 그대로 사용 (6~64자 규격 충족)
+  orderNumber    String?     @unique @map("order_number")  // 사람이 읽는 주문번호 MYSADO-YYMMDD-NNNN (backfill 전 null 허용)
   userId         String      @map("user_id")       // NOT NULL — 탈퇴는 Soft Delete로만 (Restrict가 하드삭제 차단)
   status         OrderStatus @default(PENDING)
   totalAmount    Int         @map("total_amount")  // 원 단위 정수, confirm 시 amount 재검증 기준
@@ -236,4 +237,19 @@ model PaymentLog {
 
   @@index([orderId])
   @@map("payment_log")
+}
+
+model AdminAuditLog {
+  id         String   @id @default(cuid())
+  adminId    String   @map("admin_id")     // FK 없음 — 계정 삭제와 무관하게 기록 보존
+  adminEmail String   @map("admin_email")  // 시점 스냅샷
+  action     String                        // 예: "ORDER_STATUS_CHANGE"
+  targetType String   @map("target_type")  // 예: "Order"
+  targetId   String   @map("target_id")
+  fromValue  String?  @map("from_value")
+  toValue    String?  @map("to_value")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([targetType, targetId])
+  @@map("admin_audit_log")
 }

@@ -2,10 +2,18 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import type { OrderStatus } from "@prisma/client";
 import { requireAdminPage } from "@/lib/admin-guard";
+import StatusChangeButton from "./StatusChangeButton";
 
 // admin 주문 목록 — Phase 5 (26.07.18)
 // 접근 제어: middleware(1차) + requireAdminPage(2차)
 export const dynamic = "force-dynamic";
+
+// UI 노출용 다음 상태 매핑 — 최종 검증은 서버 API (어긋나도 409로 차단됨)
+const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
+  PAID: "PREPARING",
+  PREPARING: "SHIPPING",
+  SHIPPING: "DONE",
+};
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
   PENDING: "결제 대기",
@@ -128,7 +136,16 @@ export default async function AdminOrdersPage({
                 {order.recipientName} / {order.recipientPhone} / ({order.zipCode}) {order.address1} {order.address2 ?? ""}
               </p>
 
-              <p className="mt-2 text-xs text-gray-400">주문번호 {order.id}</p>
+              <p className="mt-2 text-xs text-gray-400">
+                주문번호 {order.orderNumber ?? order.id}
+              </p>
+              {NEXT_STATUS[order.status] && (
+                <StatusChangeButton
+                  orderId={order.id}
+                  nextStatus={NEXT_STATUS[order.status]!}
+                  nextLabel={STATUS_LABEL[NEXT_STATUS[order.status]!]}
+                />
+              )}
             </li>
           ))}
         </ul>

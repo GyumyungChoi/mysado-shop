@@ -87,10 +87,27 @@ export async function createOrder(
       0
     );
 
-    // 4) Order + OrderItem을 한 번에 생성 (nested create — 원자성 보장)
+    // 4) 사람이 읽는 주문번호 발급 — MYSADO-YYMMDD-NNNN (KST 날짜 기준)
+    //    동시 주문 시 동일 번호 계산 가능성 있으나 order_number UNIQUE 제약이 최후 방어
+    //    (라이브 전 트래픽에선 사실상 미발생 — 필요 시 재시도 로직 추가 예정)
+    const kstNow = new Date(Date.now() + 9 * 60 * 60 * 1000);
+    const datePart = kstNow.toISOString().slice(2, 10).replace(/-/g, ""); // "260718"
+    const prefix = `MYSADO-${datePart}-`;
+    const lastToday = await tx.order.findFirst({
+      where: { orderNumber: { startsWith: prefix } },
+      orderBy: { orderNumber: "desc" },
+      select: { orderNumber: true },
+    });
+    const nextSeq = lastToday?.orderNumber
+      ? parseInt(lastToday.orderNumber.slice(prefix.length), 10) + 1
+      : 1;
+    const orderNumber = `${prefix}${String(nextSeq).padStart(4, "0")}`;
+
+    // 5) Order + OrderItem을 한 번에 생성 (nested create — 원자성 보장)
     const order = await tx.order.create({
       data: {
         userId,
+        orderNumber,
         totalAmount,
         recipientName: shipping.recipientName,
         recipientPhone: shipping.recipientPhone,
@@ -103,7 +120,7 @@ export async function createOrder(
       select: { id: true, totalAmount: true },
     });
 
-    // 5) 토스 결제창 표시용 주문명
+    // 6) 토스 결제창 표시용 주문명
     const orderName =
       itemsData.length === 1
         ? itemsData[0].productName
