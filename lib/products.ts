@@ -80,3 +80,16 @@ export async function getRelatedProducts(
   });
   return rows.map(toProduct);
 }
+/** 상품명 부분 일치 검색 (대소문자 무시 — PostgreSQL ILIKE)
+ *  한국어는 대소문자 개념이 없어 mode 옵션이 무의미하지만
+ *  영문 상품명(브랜드 등) 검색을 위해 insensitive 유지 */
+export async function searchProducts(keyword: string): Promise<Product[]> {
+  const rows = await prisma.product.findMany({
+    where: {
+      isVisible: true,
+      name: { contains: keyword, mode: "insensitive" },
+    },
+    orderBy: { sortOrder: "asc" },
+  });
+  return rows.map(toProduct);
+}

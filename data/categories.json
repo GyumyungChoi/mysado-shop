@@ -1,8 +1,9 @@
 [
-  { "id": "cat-001", "name": "케이스",        "slug": "cases",       "sort_order": 1 },
-  { "id": "cat-002", "name": "충전기",        "slug": "chargers",    "sort_order": 2 },
-  { "id": "cat-003", "name": "이어폰",        "slug": "earphones",   "sort_order": 3 },
-  { "id": "cat-004", "name": "워치 액세서리", "slug": "watch",       "sort_order": 4 },
-  { "id": "cat-005", "name": "보호필름",      "slug": "films",       "sort_order": 5 },
-  { "id": "cat-006", "name": "기타 액세서리", "slug": "others",      "sort_order": 6 }
+  { "id": "cat-001", "name": "케이스",        "slug": "cases",         "sort_order": 1 },
+  { "id": "cat-002", "name": "충전기",        "slug": "chargers",      "sort_order": 2 },
+  { "id": "cat-003", "name": "이어폰",        "slug": "earphones",     "sort_order": 3 },
+  { "id": "cat-004", "name": "워치 액세서리", "slug": "watch",          "sort_order": 4 },
+  { "id": "cat-005", "name": "보호필름",      "slug": "films",          "sort_order": 5 },
+  { "id": "cat-006", "name": "기타 액세서리", "slug": "others",          "sort_order": 6 },
+  { "id": "cat-007", "name": "보안용지",      "slug": "security-paper",  "sort_order": 7 }
 ]

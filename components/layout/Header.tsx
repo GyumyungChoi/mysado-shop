@@ -1,34 +1,27 @@
 import Link from "next/link";
-import AuthStatus from "@/components/AuthStatus";
 import CartBadge from "@/components/layout/CartBadge";
+import SearchToggle from "@/components/layout/SearchToggle";
+import HeaderMenu from "@/components/layout/HeaderMenu";
+import UserIcon from "@/components/layout/UserIcon";
+import categoriesData from "@/data/categories.json";
+import type { Category } from "@/types/product";
 
-/** 사이트 상단 헤더 (로고 + 네비게이션) */
+const categories = (categoriesData as Category[])
+  .slice()
+  .sort((a, b) => a.sort_order - b.sort_order)
+  .map(({ id, name }) => ({ id, name }));
+
+/** 사이트 상단 헤더 (로고 + 검색/장바구니/메뉴 아이콘) */
 export default function Header() {
-  const navItems = [
-    { href: "/", label: "홈" },
-    { href: "/about", label: "회사소개" },
-    { href: "/products", label: "상품" },
-    { href: "/contact", label: "문의하기" },
-  ];
-
   return (
     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+      <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="text-xl font-bold tracking-tight text-gray-900">
           마이사도
         </Link>
-        <nav className="flex items-center gap-4 text-sm font-medium text-gray-600 sm:gap-6">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="transition-colors hover:text-gray-900"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 sm:gap-5">
+          <SearchToggle />
+          <UserIcon />
           <Link
             href="/cart"
             aria-label="장바구니"
@@ -52,7 +45,7 @@ export default function Header() {
             </svg>
             <CartBadge />
           </Link>
-          <AuthStatus />
+          <HeaderMenu categories={categories} />
         </div>
       </div>
     </header>
