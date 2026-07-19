@@ -98,7 +98,7 @@ export default async function OrdersPage() {
               {order.status === "PAID" && <CancelOrderButton orderId={order.id} />}
 
               {/* 주문번호 (문의 대응용 — cuid라 작게 표시) */}
-              <p className="mt-3 text-xs text-gray-400">주문번호 {order.id}</p>
+              <p className="mt-3 text-xs text-gray-400">주문번호 {order.orderNumber ?? order.id}</p>
             </li>
           ))}
         </ul>
