@@ -36,6 +36,9 @@ export default function PrivacyPage() {
               서비스 이용 과정에서 자동 수집: 접속 기록, 상품 조회 기록,
               쿠키, 서비스 이용 기록(Google Analytics를 통한 행태정보 포함)
             </li>
+            <li>
+              [선택] 회원가입 시: 마케팅 정보 수신 동의 여부 및 동의 일시
+            </li>
           </ul>
         </section>
 
@@ -48,6 +51,11 @@ export default function PrivacyPage() {
             <li>주문·배송: 상품 주문 처리, 결제, 배송, 환불 및 고객 상담</li>
             <li>
               서비스 개선: 접속 통계 분석, 서비스 이용 현황 파악 및 품질 개선
+            </li>
+            <li>
+              (선택) 마케팅 활용: 신상품·할인 등 광고성 정보 발송(수신에
+              동의한 회원에 한하며, 고객 문의를 통해 언제든지 철회할 수
+              있습니다)
             </li>
           </ul>
         </section>
