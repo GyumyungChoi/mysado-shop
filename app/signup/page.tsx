@@ -15,6 +15,7 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);    // 26.07.11 추가
   const [agreeTerms, setAgreeTerms] = useState(false);        // 26.07.18 추가
   const [agreePrivacy, setAgreePrivacy] = useState(false);    // 26.07.18 추가
+  const [agreeMarketing, setAgreeMarketing] = useState(false); // 26.07.19 추가 (선택)
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -60,6 +61,7 @@ export default function SignupPage() {
       email,
       password,
       phoneNumber: phoneDigits, // 하이픈 제거된 숫자만 저장 (01012345678)
+      marketingAgreed: agreeMarketing, // 선택 동의 — 시각은 서버 훅이 기록 (26.07.19)
     });
 
     setLoading(false);
@@ -173,6 +175,14 @@ export default function SignupPage() {
             </a>
             에 동의합니다
           </span>
+        </label>
+        <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14 }}>
+          <input
+            type="checkbox"
+            checked={agreeMarketing}
+            onChange={(e) => setAgreeMarketing(e.target.checked)}
+          />
+          <span>[선택] 할인·신상품 소식 등 마케팅 정보 수신에 동의합니다</span>
         </label>
 
         {error && (

@@ -38,6 +38,42 @@ export const auth = betterAuth({
         defaultValue: "user",
         input: false,    // ★ 클라이언트 입력 차단 — psql로만 변경 (권한 상승 방지)
       },
+      // 동의 관련 필드 — Phase 5 추가 (26.07.19)
+      marketingAgreed: {
+        type: "boolean",
+        required: false,
+        defaultValue: false,
+        input: true,     // 가입 폼 체크박스 값 수신 (선택 동의)
+      },
+      agreedAt: {
+        type: "date",
+        required: false,
+        input: false,    // ★ 시각은 서버가 기록 — 클라이언트 조작 차단 (role과 동일 원리)
+      },
+      marketingAgreedAt: {
+        type: "date",
+        required: false,
+        input: false,    // ★ 시각은 서버가 기록 — 클라이언트 조작 차단
+      },
+    },
+  },
+
+  // 3.7) DB 훅 — 가입 시 동의 시각을 서버 시계로 기록 (26.07.19)
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          const now = new Date();
+          return {
+            data: {
+              ...user,
+              agreedAt: now, // 필수 동의는 가입 성립 = 동의 완료 (폼에서 미체크 시 가입 불가)
+              // 선택 동의: 체크한 경우에만 시각 기록
+              ...(user.marketingAgreed === true ? { marketingAgreedAt: now } : {}),
+            },
+          };
+        },
+      },
     },
   },
 

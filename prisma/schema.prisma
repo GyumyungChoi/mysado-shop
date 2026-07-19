@@ -18,6 +18,9 @@ model User {
   image         String?
   phoneNumber   String?   @map("phone_number")  // 추가(26.07.11.토)
   role          String    @default("user")      // "user" | "admin" — Phase 5 추가(26.07.18.토)
+  agreedAt          DateTime? @map("agreed_at")           // 필수 동의(약관+개인정보) 시각 — Phase 5 추가(26.07.19.일)
+  marketingAgreed   Boolean   @default(false) @map("marketing_agreed")     // 마케팅 수신 동의 — Phase 5 추가(26.07.19.일)
+  marketingAgreedAt DateTime? @map("marketing_agreed_at") // 마케팅 동의 시각 — Phase 5 추가(26.07.19.일)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
