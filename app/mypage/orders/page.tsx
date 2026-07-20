@@ -3,33 +3,11 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import type { OrderStatus } from "@prisma/client";
+import { STATUS_LABEL, STATUS_COLOR } from "@/lib/order-status";
 import CancelOrderButton from "./CancelOrderButton";
 
 // 주문 데이터는 항상 최신 상태여야 함 (취소 직후 refresh 반영) — 캐싱 차단
 export const dynamic = "force-dynamic";
-
-// 상태 → 한글 라벨 (한 줄 유지: heredoc 멀티라인 제네릭 취약점 회피)
-const STATUS_LABEL: Record<OrderStatus, string> = {
-  PENDING: "결제 대기",
-  PAID: "결제 완료",
-  PREPARING: "상품 준비 중",
-  SHIPPING: "배송 중",
-  DONE: "배송 완료",
-  FAILED: "결제 실패",
-  CANCELED: "취소됨",
-};
-
-// 상태별 뱃지 색 (기본 회색, 의미 있는 상태만 구분)
-const STATUS_COLOR: Record<OrderStatus, string> = {
-  PENDING: "bg-gray-100 text-gray-600",
-  PAID: "bg-blue-50 text-blue-700",
-  PREPARING: "bg-blue-50 text-blue-700",
-  SHIPPING: "bg-blue-50 text-blue-700",
-  DONE: "bg-green-50 text-green-700",
-  FAILED: "bg-red-50 text-red-600",
-  CANCELED: "bg-gray-100 text-gray-500",
-};
 
 export default async function OrdersPage() {
   // 2차 검증: middleware(쿠키 존재)와 별개로 DB 세션 유효성 확인

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import type { OrderStatus } from "@prisma/client";
+import { STATUS_LABEL, STATUS_COLOR } from "@/lib/order-status";
 import { requireAdminPage } from "@/lib/admin-guard";
 import StatusChangeButton from "./StatusChangeButton";
 
@@ -13,26 +14,6 @@ const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
   PAID: "PREPARING",
   PREPARING: "SHIPPING",
   SHIPPING: "DONE",
-};
-
-const STATUS_LABEL: Record<OrderStatus, string> = {
-  PENDING: "결제 대기",
-  PAID: "결제 완료",
-  PREPARING: "상품 준비 중",
-  SHIPPING: "배송 중",
-  DONE: "배송 완료",
-  FAILED: "결제 실패",
-  CANCELED: "취소됨",
-};
-
-const STATUS_COLOR: Record<OrderStatus, string> = {
-  PENDING: "bg-gray-100 text-gray-600",
-  PAID: "bg-blue-50 text-blue-700",
-  PREPARING: "bg-blue-50 text-blue-700",
-  SHIPPING: "bg-blue-50 text-blue-700",
-  DONE: "bg-green-50 text-green-700",
-  FAILED: "bg-red-50 text-red-600",
-  CANCELED: "bg-gray-100 text-gray-500",
 };
 
 // 필터 탭 순서 (운영 흐름 순)
