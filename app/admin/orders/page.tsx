@@ -104,7 +104,7 @@ export default async function AdminOrdersPage({
                       {item.productName}{" "}
                       <span className="text-gray-400">x{item.quantity}</span>
                     </span>
-                    <span>{(item.unitPrice * item.quantity).toLocaleString("ko-KR")}원</span>
+                    <span className="whitespace-nowrap">{(item.unitPrice * item.quantity).toLocaleString("ko-KR")}원</span>
                   </li>
                 ))}
               </ul>
@@ -112,7 +112,7 @@ export default async function AdminOrdersPage({
               {/* 합계 + 배송지 */}
               <div className="flex justify-between border-t border-gray-100 pt-3 text-sm font-medium">
                 <span>총 결제 금액</span>
-                <span>{order.totalAmount.toLocaleString("ko-KR")}원</span>
+                <span className="whitespace-nowrap">{order.totalAmount.toLocaleString("ko-KR")}원</span>
               </div>
               <p className="mt-2 text-xs text-gray-500">
                 {order.recipientName} / {order.recipientPhone} / ({order.zipCode}) {order.address1} {order.address2 ?? ""}

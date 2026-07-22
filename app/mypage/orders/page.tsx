@@ -62,7 +62,7 @@ export default async function OrdersPage() {
                       {item.productName}{" "}
                       <span className="text-gray-400">x{item.quantity}</span>
                     </span>
-                    <span>{(item.unitPrice * item.quantity).toLocaleString("ko-KR")}원</span>
+                    <span className="whitespace-nowrap">{(item.unitPrice * item.quantity).toLocaleString("ko-KR")}원</span>
                   </li>
                 ))}
               </ul>
@@ -70,7 +70,7 @@ export default async function OrdersPage() {
               {/* 합계 */}
               <div className="flex justify-between border-t border-gray-100 pt-3 text-sm font-medium">
                 <span>총 결제 금액</span>
-                <span>{order.totalAmount.toLocaleString("ko-KR")}원</span>
+                <span className="whitespace-nowrap">{order.totalAmount.toLocaleString("ko-KR")}원</span>
               </div>
 
               {/* 취소 버튼: API가 PAID만 허용하므로 UI 노출 조건도 일치 */}
