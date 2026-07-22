@@ -21,6 +21,7 @@ model User {
   agreedAt          DateTime? @map("agreed_at")           // 필수 동의(약관+개인정보) 시각 — Phase 5 추가(26.07.19.일)
   marketingAgreed   Boolean   @default(false) @map("marketing_agreed")     // 마케팅 수신 동의 — Phase 5 추가(26.07.19.일)
   marketingAgreedAt DateTime? @map("marketing_agreed_at") // 마케팅 동의 시각 — Phase 5 추가(26.07.19.일)
+  deletedAt     DateTime? @map("deleted_at")  // 탈퇴 Soft Delete — Phase 7 추가(26.07.22.수)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
@@ -29,6 +30,8 @@ model User {
   searchLogs    SearchLog[]        // ← 추가
   cartItems     CartItem[]         // ← Phase 4 추가
   orders        Order[]            // ← Phase 4 추가
+
+  addresses     Address[]          // Phase 7 추가(26.07.22.수)
 
   @@unique([email])
   @@map("user")
@@ -163,6 +166,29 @@ enum OrderStatus {
   DONE        // 배송 완료
   FAILED      // 결제 실패
   CANCELED    // 취소
+}
+
+// 배송지 주소록 (Phase 7)
+// - 필드명은 Order의 배송지 스냅샷과 100% 동일 — 체크아웃 pre-fill 시 매핑 없이 복사
+// - ★ Order에 addressId FK를 추가하지 말 것: 주문은 스냅샷 보존이 원칙
+model Address {
+  id             String   @id @default(cuid())            // 개인정보 보유 → 순번 추측 방지(cuid)
+  userId         String   @map("user_id")
+  label          String?                                   // 별칭: "집", "회사" 등 (선택)
+  recipientName  String   @map("recipient_name")
+  recipientPhone String   @map("recipient_phone")
+  zipCode        String   @map("zip_code")
+  address1       String                                    // 기본주소 (카카오 우편번호 API)
+  address2       String?                                   // 상세주소 (동/호수)
+  deliveryMemo   String?  @map("delivery_memo")
+  isDefault      Boolean  @default(false) @map("is_default")  // 유일성은 앱 트랜잭션 보장(FOR UPDATE)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("address")
 }
 
 model CartItem {
