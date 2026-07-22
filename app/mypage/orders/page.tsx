@@ -4,6 +4,7 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { STATUS_LABEL, STATUS_COLOR } from "@/lib/order-status";
+import { formatDateTime } from "@/lib/format-date";
 import CancelOrderButton from "./CancelOrderButton";
 
 // 주문 데이터는 항상 최신 상태여야 함 (취소 직후 refresh 반영) — 캐싱 차단
@@ -46,7 +47,7 @@ export default async function OrdersPage() {
               {/* 헤더: 주문일 + 상태 뱃지 */}
               <div className="mb-3 flex items-center justify-between">
                 <span className="text-sm text-gray-500">
-                  {new Date(order.createdAt).toLocaleDateString("ko-KR")}
+                  {formatDateTime(order.createdAt)}
                 </span>
                 <span className={"rounded-full px-2.5 py-0.5 text-xs font-medium " + STATUS_COLOR[order.status]}>
                   {STATUS_LABEL[order.status]}

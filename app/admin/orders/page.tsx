@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import type { OrderStatus } from "@prisma/client";
 import { STATUS_LABEL, STATUS_COLOR } from "@/lib/order-status";
+import { formatDateTime } from "@/lib/format-date";
 import { requireAdminPage } from "@/lib/admin-guard";
 import StatusChangeButton from "./StatusChangeButton";
 
@@ -85,7 +86,7 @@ export default async function AdminOrdersPage({
               {/* 헤더: 주문일시 + 주문자 + 상태 뱃지 */}
               <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                 <div className="text-sm text-gray-500">
-                  <span>{new Date(order.createdAt).toLocaleString("ko-KR")}</span>
+                  <span>{formatDateTime(order.createdAt)}</span>
                   <span className="mx-2 text-gray-300">|</span>
                   <span className="font-medium text-gray-700">{order.user.name}</span>
                   <span className="ml-1">({order.user.email})</span>

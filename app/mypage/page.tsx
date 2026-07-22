@@ -4,6 +4,7 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { STATUS_LABEL, STATUS_COLOR } from "@/lib/order-status";
+import { formatDate, formatDateTime } from "@/lib/format-date";
 
 // 주문 요약은 항상 최신이어야 함 (취소 직후 등) — 캐싱 차단
 export const dynamic = "force-dynamic";
@@ -41,7 +42,7 @@ export default async function MyPage() {
       <p className="mb-6 text-sm text-gray-500">
         안녕하세요, <span className="font-medium text-gray-900">{session.user.name}</span>님
         {" · "}{session.user.email}
-        {" · "}가입 {new Date(session.user.createdAt).toLocaleDateString("ko-KR")}
+        {" · "}가입 {formatDate(session.user.createdAt)}
       </p>
 
       {/* 최근 주문 요약 */}
@@ -68,7 +69,7 @@ export default async function MyPage() {
               {recentOrder.items[0]?.productName ?? "주문 상품"}
               {recentOrder.items.length > 1 && ` 외 ${recentOrder.items.length - 1}건`}
               {" · "}{recentOrder.totalAmount.toLocaleString("ko-KR")}원
-              {" · "}{new Date(recentOrder.createdAt).toLocaleDateString("ko-KR")}
+              {" · "}{formatDateTime(recentOrder.createdAt)}
             </p>
           </div>
         ) : (
