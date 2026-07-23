@@ -2,29 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Script from "next/script";
+import PostcodeSearchButton from "@/components/PostcodeSearchButton";
 import { formatPhone } from "@/lib/format-phone";
 import { DELIVERY_MEMO_OPTIONS, DELIVERY_MEMO_CUSTOM } from "@/lib/delivery-memo";
-
-// 카카오(다음) 우편번호 서비스 — 앱 키 불필요. 파라미터를 붙이면 호출이 거부되므로 URL 고정
-const POSTCODE_SCRIPT = "https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
-
-// 외부 스크립트라 타입 정의가 없어 필요한 필드만 직접 선언한다
-interface PostcodeData {
-  zonecode: string;
-  roadAddress: string;
-  jibunAddress: string;
-}
-
-interface PostcodeInstance {
-  open: () => void;
-}
-
-interface PostcodeWindow {
-  daum?: {
-    Postcode?: new (options: { oncomplete: (data: PostcodeData) => void }) => PostcodeInstance;
-  };
-}
 
 interface AddressItem {
   id: string;
@@ -117,25 +97,6 @@ export default function AddressList(props: Props) {
     setForm(EMPTY_FORM);
   }
 
-  // 우편번호 팝업 — 스크립트가 준비된 뒤에만 동작
-  function openPostcode() {
-    const daum = (window as unknown as PostcodeWindow).daum;
-    if (!daum || !daum.Postcode) {
-      setError("주소 검색을 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
-      return;
-    }
-    new daum.Postcode({
-      oncomplete: function (data: PostcodeData) {
-        setForm(function (prev) {
-          return Object.assign({}, prev, {
-            zipCode: data.zonecode,
-            address1: data.roadAddress || data.jibunAddress,
-          });
-        });
-      },
-    }).open();
-  }
-
   async function handleSave() {
     setSaving(true);
     setError("");
@@ -195,7 +156,7 @@ export default function AddressList(props: Props) {
   // 별도 컴포넌트로 분리하면 렌더마다 새 타입이 되어 입력 포커스가 끊기므로 함수로 둔다.
   function renderForm() {
     return (
-      <div className="rounded-lg border border-gray-300 p-4">
+      <div className="rounded-lg border border-gray-300 bg-gray-50 p-4">
           <p className="mb-4 text-sm font-semibold">
             {editingId ? "배송지 수정" : "새 배송지"}
           </p>
@@ -249,13 +210,14 @@ export default function AddressList(props: Props) {
                   placeholder="우편번호"
                   className="w-28 shrink-0 rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm"
                 />
-                <button
-                  type="button"
-                  onClick={openPostcode}
-                  className="shrink-0 rounded-md border border-gray-900 px-3 py-2 text-sm font-medium hover:bg-gray-900 hover:text-white"
-                >
-                  우편번호 찾기
-                </button>
+                <PostcodeSearchButton
+                  onComplete={function (r) {
+                    setForm(function (prev) {
+                      return Object.assign({}, prev, r);
+                    });
+                  }}
+                  onError={setError}
+                />
               </div>
               <input
                 type="text"
@@ -345,8 +307,6 @@ export default function AddressList(props: Props) {
 
   return (
     <div>
-      <Script src={POSTCODE_SCRIPT} strategy="lazyOnload" />
-
       {message ? (
         <p className="mb-4 rounded-md bg-green-50 px-4 py-3 text-sm text-green-700">{message}</p>
       ) : null}
