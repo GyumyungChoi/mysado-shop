@@ -69,7 +69,7 @@ export default async function MyPage() {
             <p className="text-gray-700">
               {recentOrder.items[0]?.productName ?? "주문 상품"}
               {recentOrder.items.length > 1 && ` 외 ${recentOrder.items.length - 1}건`}
-              {" · "}{recentOrder.totalAmount.toLocaleString("ko-KR")}원
+              {" · "}<span className="font-medium tabular-nums">{recentOrder.totalAmount.toLocaleString("ko-KR")}원</span>
               {" · "}{formatDateTime(recentOrder.createdAt)}
             </p>
           </div>

@@ -62,7 +62,7 @@ export default async function OrdersPage() {
                       {item.productName}{" "}
                       <span className="text-gray-400">x{item.quantity}</span>
                     </span>
-                    <span className="whitespace-nowrap">{(item.unitPrice * item.quantity).toLocaleString("ko-KR")}원</span>
+                    <span className="whitespace-nowrap tabular-nums">{(item.unitPrice * item.quantity).toLocaleString("ko-KR")}원</span>
                   </li>
                 ))}
               </ul>
@@ -70,7 +70,7 @@ export default async function OrdersPage() {
               {/* 합계 */}
               <div className="flex justify-between border-t border-gray-100 pt-3 text-sm font-medium">
                 <span>총 결제 금액</span>
-                <span className="whitespace-nowrap">{order.totalAmount.toLocaleString("ko-KR")}원</span>
+                <span className="whitespace-nowrap font-semibold tabular-nums">{order.totalAmount.toLocaleString("ko-KR")}원</span>
               </div>
 
               {/* 취소 버튼: API가 PAID만 허용하므로 UI 노출 조건도 일치 */}
@@ -82,6 +82,19 @@ export default async function OrdersPage() {
           ))}
         </ul>
       )}
+
+      {/* 교환·반품 안내 (주문이 있을 때만 의미가 있으나, 정책 안내는 상시 노출이 안전) */}
+      <p className="mt-8 border-t border-gray-100 pt-5 text-center text-xs text-gray-500">
+        교환·반품은{" "}
+        <Link href="/shipping" className="underline hover:text-gray-900">
+          배송·교환/환불 안내
+        </Link>
+        를 확인하신 후{" "}
+        <Link href="/contact" className="underline hover:text-gray-900">
+          문의하기
+        </Link>
+        로 접수해주세요.
+      </p>
     </main>
   );
 }
