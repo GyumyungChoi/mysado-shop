@@ -9,6 +9,23 @@ import { DELIVERY_MEMO_OPTIONS, DELIVERY_MEMO_CUSTOM } from "@/lib/delivery-memo
 // 카카오(다음) 우편번호 서비스 — 앱 키 불필요. 파라미터를 붙이면 호출이 거부되므로 URL 고정
 const POSTCODE_SCRIPT = "https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
 
+// 외부 스크립트라 타입 정의가 없어 필요한 필드만 직접 선언한다
+interface PostcodeData {
+  zonecode: string;
+  roadAddress: string;
+  jibunAddress: string;
+}
+
+interface PostcodeInstance {
+  open: () => void;
+}
+
+interface PostcodeWindow {
+  daum?: {
+    Postcode?: new (options: { oncomplete: (data: PostcodeData) => void }) => PostcodeInstance;
+  };
+}
+
 interface AddressItem {
   id: string;
   label: string | null;
@@ -55,7 +72,6 @@ export default function AddressList(props: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
-  const [scriptReady, setScriptReady] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -103,13 +119,13 @@ export default function AddressList(props: Props) {
 
   // 우편번호 팝업 — 스크립트가 준비된 뒤에만 동작
   function openPostcode() {
-    const daum = (window as any).daum;
+    const daum = (window as unknown as PostcodeWindow).daum;
     if (!daum || !daum.Postcode) {
       setError("주소 검색을 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
       return;
     }
     new daum.Postcode({
-      oncomplete: function (data: any) {
+      oncomplete: function (data: PostcodeData) {
         setForm(function (prev) {
           return Object.assign({}, prev, {
             zipCode: data.zonecode,
@@ -145,7 +161,7 @@ export default function AddressList(props: Props) {
       setMessage(json.message);
       closeForm();
       router.refresh();
-    } catch (e) {
+    } catch {
       setError("네트워크 오류가 발생했습니다.");
     } finally {
       setSaving(false);
@@ -170,18 +186,14 @@ export default function AddressList(props: Props) {
 
       setMessage(json.message);
       router.refresh();
-    } catch (e) {
+    } catch {
       setError("네트워크 오류가 발생했습니다.");
     }
   }
 
   return (
     <div>
-      <Script
-        src={POSTCODE_SCRIPT}
-        strategy="lazyOnload"
-        onLoad={() => setScriptReady(true)}
-      />
+      <Script src={POSTCODE_SCRIPT} strategy="lazyOnload" />
 
       {message ? (
         <p className="mb-4 rounded-md bg-green-50 px-4 py-3 text-sm text-green-700">{message}</p>
