@@ -14,6 +14,7 @@ export const dynamic = "force-dynamic";
 const CARDS = [
   { href: "/mypage/orders", title: "주문 내역", desc: "주문·배송 조회 및 취소" },
   { href: "/mypage/profile", title: "내 정보 수정", desc: "전화번호 · 마케팅 수신 설정" },
+  { href: "/mypage/addresses", title: "배송지 관리", desc: "자주 쓰는 주소 저장" },
   { href: "/contact", title: "문의하기", desc: "1:1 문의" },
 ];
 

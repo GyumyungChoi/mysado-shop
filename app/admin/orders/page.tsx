@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import type { OrderStatus } from "@prisma/client";
 import { STATUS_LABEL, STATUS_COLOR } from "@/lib/order-status";
 import { formatDateTime } from "@/lib/format-date";
+import { formatPhone } from "@/lib/format-phone";
 import { requireAdminPage } from "@/lib/admin-guard";
 import StatusChangeButton from "./StatusChangeButton";
 
@@ -115,7 +116,7 @@ export default async function AdminOrdersPage({
                 <span className="whitespace-nowrap">{order.totalAmount.toLocaleString("ko-KR")}원</span>
               </div>
               <p className="mt-2 text-xs text-gray-500">
-                {order.recipientName} / {order.recipientPhone} / ({order.zipCode}) {order.address1} {order.address2 ?? ""}
+                {order.recipientName} / {formatPhone(order.recipientPhone)} / ({order.zipCode}) {order.address1} {order.address2 ?? ""}
               </p>
 
               <p className="mt-2 text-xs text-gray-400">
