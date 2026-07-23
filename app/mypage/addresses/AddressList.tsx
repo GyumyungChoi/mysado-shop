@@ -191,80 +191,11 @@ export default function AddressList(props: Props) {
     }
   }
 
-  return (
-    <div>
-      <Script src={POSTCODE_SCRIPT} strategy="lazyOnload" />
-
-      {message ? (
-        <p className="mb-4 rounded-md bg-green-50 px-4 py-3 text-sm text-green-700">{message}</p>
-      ) : null}
-      {error ? (
-        <p className="mb-4 rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
-      ) : null}
-
-      {addresses.length === 0 && !formOpen ? (
-        <p className="rounded-lg border border-dashed border-gray-300 px-4 py-10 text-center text-sm text-gray-500">
-          등록된 배송지가 없습니다.
-        </p>
-      ) : null}
-
-      <ul className="space-y-3">
-        {addresses.map((item) => (
-          <li key={item.id} className="rounded-lg border border-gray-200 p-4">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="flex flex-wrap items-center gap-2 text-sm font-semibold">
-                  {item.recipientName}
-                  {item.label ? (
-                    <span className="text-xs font-normal text-gray-500">{item.label}</span>
-                  ) : null}
-                  {item.isDefault ? (
-                    <span className="rounded bg-gray-900 px-1.5 py-0.5 text-xs font-medium text-white">
-                      기본
-                    </span>
-                  ) : null}
-                </p>
-                <p className="mt-1 text-sm text-gray-600">{formatPhone(item.recipientPhone)}</p>
-                <p className="mt-1 text-sm text-gray-600">
-                  ({item.zipCode}) {item.address1} {item.address2 || ""}
-                </p>
-                {item.deliveryMemo ? (
-                  <p className="mt-1 text-xs text-gray-500">메모: {item.deliveryMemo}</p>
-                ) : null}
-              </div>
-              <div className="flex shrink-0 gap-2">
-                <button
-                  type="button"
-                  onClick={() => openEdit(item)}
-                  className="text-xs text-gray-500 hover:text-gray-900"
-                >
-                  수정
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(item.id)}
-                  className="text-xs text-gray-400 hover:text-red-600"
-                >
-                  삭제
-                </button>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
-
-      {!formOpen ? (
-        <button
-          type="button"
-          onClick={openCreate}
-          className="mt-4 w-full rounded-lg border border-gray-300 py-3 text-sm font-medium hover:bg-gray-50"
-        >
-          + 배송지 추가
-        </button>
-      ) : null}
-
-      {formOpen ? (
-        <div className="mt-4 rounded-lg border border-gray-300 p-4">
+  // 폼 JSX는 카드 자리(수정)와 하단(신규) 두 곳에서 쓴다.
+  // 별도 컴포넌트로 분리하면 렌더마다 새 타입이 되어 입력 포커스가 끊기므로 함수로 둔다.
+  function renderForm() {
+    return (
+      <div className="rounded-lg border border-gray-300 p-4">
           <p className="mb-4 text-sm font-semibold">
             {editingId ? "배송지 수정" : "새 배송지"}
           </p>
@@ -409,7 +340,84 @@ export default function AddressList(props: Props) {
             </button>
           </div>
         </div>
+    );
+  }
+
+  return (
+    <div>
+      <Script src={POSTCODE_SCRIPT} strategy="lazyOnload" />
+
+      {message ? (
+        <p className="mb-4 rounded-md bg-green-50 px-4 py-3 text-sm text-green-700">{message}</p>
       ) : null}
+      {error ? (
+        <p className="mb-4 rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+      ) : null}
+
+      {addresses.length === 0 && !formOpen ? (
+        <p className="rounded-lg border border-dashed border-gray-300 px-4 py-10 text-center text-sm text-gray-500">
+          등록된 배송지가 없습니다.
+        </p>
+      ) : null}
+
+      <ul className="space-y-3">
+        {addresses.map((item) => (
+          <li key={item.id} className={editingId === item.id ? "" : "rounded-lg border border-gray-200 p-4"}>
+            {editingId === item.id ? renderForm() : (
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="flex flex-wrap items-center gap-2 text-sm font-semibold">
+                  {item.recipientName}
+                  {item.label ? (
+                    <span className="text-xs font-normal text-gray-500">{item.label}</span>
+                  ) : null}
+                  {item.isDefault ? (
+                    <span className="rounded bg-gray-900 px-1.5 py-0.5 text-xs font-medium text-white">
+                      기본
+                    </span>
+                  ) : null}
+                </p>
+                <p className="mt-1 text-sm text-gray-600">{formatPhone(item.recipientPhone)}</p>
+                <p className="mt-1 text-sm text-gray-600">
+                  ({item.zipCode}) {item.address1} {item.address2 || ""}
+                </p>
+                {item.deliveryMemo ? (
+                  <p className="mt-1 text-xs text-gray-500">메모: {item.deliveryMemo}</p>
+                ) : null}
+              </div>
+              <div className="flex shrink-0 gap-2">
+                <button
+                  type="button"
+                  onClick={() => openEdit(item)}
+                  className="text-xs text-gray-500 hover:text-gray-900"
+                >
+                  수정
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(item.id)}
+                  className="text-xs text-gray-400 hover:text-red-600"
+                >
+                  삭제
+                </button>
+              </div>
+            </div>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      {!formOpen ? (
+        <button
+          type="button"
+          onClick={openCreate}
+          className="mt-4 w-full rounded-lg border border-gray-300 py-3 text-sm font-medium hover:bg-gray-50"
+        >
+          + 배송지 추가
+        </button>
+      ) : null}
+
+      {formOpen && editingId === null ? <div className="mt-4">{renderForm()}</div> : null}
     </div>
   );
 }
