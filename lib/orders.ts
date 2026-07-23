@@ -14,10 +14,10 @@ export function validateShippingInfo(raw: Partial<ShippingInfo>): ShippingInfo {
   const recipientName = raw.recipientName?.trim();
   if (!recipientName) throw new ApiError("수령인 이름을 입력해주세요.", 400);
 
-  // 하이픈/공백 제거 후 010 + 8자리 (회원가입과 동일 규칙)
+  // 하이픈/공백 제거 후 0 시작 9~11자리 — 배송 연락처는 유선번호 허용 (address-validation.ts와 동일 규칙)
   const recipientPhone = raw.recipientPhone?.replace(/[-\s]/g, "") ?? "";
-  if (!/^010\d{8}$/.test(recipientPhone)) {
-    throw new ApiError("연락처는 010으로 시작하는 11자리 번호여야 합니다.", 400);
+  if (!/^0\d{8,10}$/.test(recipientPhone)) {
+    throw new ApiError("연락처 형식이 올바르지 않습니다. (예: 010-1234-5678)", 400);
   }
 
   const zipCode = raw.zipCode?.trim();

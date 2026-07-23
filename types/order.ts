@@ -5,7 +5,7 @@
  */
 export interface ShippingInfo {
   recipientName: string;   // 수령인 이름
-  recipientPhone: string;  // 수령인 연락처 (숫자만, 01012345678 형식)
+  recipientPhone: string;  // 수령인 연락처 (숫자만, 0 시작 9~11자리 — 유선번호 허용)
   zipCode: string;         // 우편번호
   address1: string;        // 기본 주소
   address2?: string;       // 상세 주소 (선택)
