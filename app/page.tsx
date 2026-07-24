@@ -87,7 +87,7 @@ export default async function Home() {
       <main className="flex-1">
         {/* 히어로 배너 */}
         <section className="bg-gradient-to-b from-blue-50 to-white px-4 py-16 text-center sm:px-6 sm:py-24">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+          <h1 className="break-keep text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">
             삼성 휴대폰을 더 특별하게,
             <br />
             마이사도
