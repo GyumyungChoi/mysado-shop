@@ -10,10 +10,11 @@ import { formatDate, formatDateTime } from "@/lib/format-date";
 export const dynamic = "force-dynamic";
 
 // 허브 카드 목록 — 기능 추가 시 여기에 1줄 추가 (24차 확정 구조)
-// 예정: 배송지 관리(25차) / 나의 리뷰(Phase 8) / 수신 설정(Phase 10)
+// 예정: 나의 리뷰(Phase 8) / 수신 설정(Phase 10)
 const CARDS = [
   { href: "/mypage/orders", title: "주문 내역", desc: "주문·배송 조회 및 취소" },
   { href: "/mypage/profile", title: "내 정보 수정", desc: "전화번호 · 마케팅 수신 설정" },
+  { href: "/mypage/password", title: "비밀번호 변경", desc: "다른 기기 로그아웃 포함" },
   { href: "/mypage/addresses", title: "배송지 관리", desc: "자주 쓰는 주소 저장" },
   { href: "/contact", title: "문의하기", desc: "1:1 문의" },
 ];
