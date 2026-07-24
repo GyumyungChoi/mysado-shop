@@ -272,7 +272,9 @@ export default function CheckoutPage() {
         successUrl: `${window.location.origin}/payment/success`,
         failUrl: `${window.location.origin}/payment/fail`,
         customerEmail: session?.user?.email ?? undefined,
-        customerName: shipping.recipientName || undefined,
+        // 토스 customerName은 구매자(결제자) 필드 — 현금영수증 발급 명의로도 쓰임.
+        // 수령인이 아니라 주문자를 넘긴다 (28차 정정). 주문자 정보 구획 표시와 동일 출처
+        customerName: session?.user?.name || undefined,
       });
       // requestPayment 성공 시 페이지가 이동하므로 이후 코드는 실행되지 않음
     } catch (error) {
