@@ -4,7 +4,7 @@ import type { ShippingInfo } from "@/types/order";
 
 /** 주문 생성 API가 돌려줄 최소 정보 */
 export interface CreateOrderResult {
-  orderId: string;      // Order.id (cuid) — Step 4에서 토스 orderId로 그대로 사용
+  orderId: string;      // 토스 orderId — 주문번호 MYSADO-YYMMDD-NNNN (28차 전환, 토스 메일 노출값)
   totalAmount: number;  // 서버가 재계산한 결제 금액
   orderName: string;    // 토스 결제창 표시용 (예: "상품명 외 2건")
 }
@@ -126,6 +126,8 @@ export async function createOrder(
         ? itemsData[0].productName
         : `${itemsData[0].productName} 외 ${itemsData.length - 1}건`;
 
-    return { orderId: order.id, totalAmount: order.totalAmount, orderName };
+    // 토스 orderId로 고객용 주문번호를 사용 (28차) — 토스 발송 메일에 이 값이 찍힘
+    // 내부 조회는 confirm/webhook이 orderNumber 기준으로 처리
+    return { orderId: orderNumber, totalAmount: order.totalAmount, orderName };
   });
 }
