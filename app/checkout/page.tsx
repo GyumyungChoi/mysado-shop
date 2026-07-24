@@ -11,6 +11,9 @@ import {
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { useSession } from "@/lib/auth-client";
+import PostcodeSearchButton from "@/components/PostcodeSearchButton";
+import { DELIVERY_MEMO_OPTIONS, DELIVERY_MEMO_CUSTOM } from "@/lib/delivery-memo";
+import { formatPhone } from "@/lib/format-phone";
 
 /** GET /api/cart 응답 항목 (app/cart/page.tsx와 동일 형태) */
 interface CartItemView {
@@ -44,6 +47,19 @@ interface TossError {
   message?: string;
 }
 
+/** GET /api/mypage/addresses 응답 항목 (AddressList와 동일 형태) */
+interface AddressItem {
+  id: string;
+  label: string | null;
+  recipientName: string;
+  recipientPhone: string;
+  zipCode: string;
+  address1: string;
+  address2: string | null;
+  deliveryMemo: string | null;
+  isDefault: boolean;
+}
+
 /** 주문서 페이지 — 배송지 입력 + 주문 요약 + 결제위젯 (토스페이먼츠 SDK v2) */
 export default function CheckoutPage() {
   const router = useRouter();
@@ -67,6 +83,12 @@ export default function CheckoutPage() {
   const [address1, setAddress1] = useState("");
   const [address2, setAddress2] = useState("");
   const [deliveryMemo, setDeliveryMemo] = useState("");
+  const [memoCustom, setMemoCustom] = useState(false);
+  // 저장 배송지 — 로드 완료 전에는 pre-fill 판단을 보류한다
+  const [addresses, setAddresses] = useState<AddressItem[]>([]);
+  const [addressesLoaded, setAddressesLoaded] = useState(false);
+  /** 선택된 저장 배송지 id. null = 직접 입력 모드 */
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   /** 연락처 pre-fill을 1회만 수행 (세션 갱신이 사용자 입력을 덮어쓰지 않도록) */
   const [phonePrefilled, setPhonePrefilled] = useState(false);
 
@@ -98,15 +120,51 @@ export default function CheckoutPage() {
     loadCart();
   }, [loadCart]);
 
-  // 세션의 phoneNumber가 도착하면 연락처를 1회만 pre-fill
+  // 저장 배송지 로드 — 실패해도 직접 입력으로 진행 가능하므로 치명 처리하지 않음
   useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("/api/mypage/addresses");
+        if (res.ok) {
+          const json = (await res.json()) as { addresses: AddressItem[] };
+          setAddresses(json.addresses);
+          // 정렬에 의존하지 않고 isDefault를 명시적으로 찾는다
+          const def = json.addresses.find((a) => a.isDefault);
+          if (def) {
+            setSelectedAddressId(def.id);
+            const memo = def.deliveryMemo || "";
+            setDeliveryMemo(memo);
+            setMemoCustom(memo !== "" && DELIVERY_MEMO_OPTIONS.indexOf(memo) === -1);
+          }
+        }
+      } catch {
+        // 무시 — 직접 입력 폼이 기본 경로로 남는다
+      } finally {
+        setAddressesLoaded(true);
+      }
+    })();
+  }, []);
+
+  /** 배송지 선택 전환 — 메모는 해당 배송지의 기본 메모로 초기화 (주문별 수정 가능) */
+  function selectAddress(id: string | null) {
+    setSelectedAddressId(id);
+    const item = id ? addresses.find((a) => a.id === id) : null;
+    const memo = (item && item.deliveryMemo) || "";
+    setDeliveryMemo(memo);
+    setMemoCustom(memo !== "" && DELIVERY_MEMO_OPTIONS.indexOf(memo) === -1);
+  }
+
+  // 저장 배송지가 없을 때만 세션 phoneNumber로 연락처 pre-fill
+  // (기본 배송지의 연락처를 세션 값이 덮어쓰지 않도록 목록 로드 완료 후 판단)
+  useEffect(() => {
+    if (!addressesLoaded || addresses.length > 0) return;
     if (phonePrefilled) return;
     const phone = session?.user?.phoneNumber;
     if (phone) {
       setRecipientPhone(phone);
       setPhonePrefilled(true);
     }
-  }, [session, phonePrefilled]);
+  }, [addressesLoaded, addresses, session, phonePrefilled]);
 
   // 결제위젯 초기화 — 세션(customerKey)과 장바구니(금액)가 모두 준비된 뒤 1회만
   useEffect(() => {
@@ -161,21 +219,35 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
     setErrorMessage(null);
 
+    // 저장 배송지 모드면 선택된 배송지에서, 직접 입력 모드면 폼 state에서 값을 가져온다
+    // (필드명이 Address와 동일하므로 매핑 코드 불필요 — 설계 결정 ㊾)
+    const selected = selectedAddressId
+      ? addresses.find((a) => a.id === selectedAddressId)
+      : null;
+    const shipping = selected
+      ? {
+          recipientName: selected.recipientName,
+          recipientPhone: selected.recipientPhone,
+          zipCode: selected.zipCode,
+          address1: selected.address1,
+          address2: selected.address2 || undefined,
+          deliveryMemo: deliveryMemo || undefined,
+        }
+      : {
+          recipientName,
+          recipientPhone,
+          zipCode,
+          address1,
+          // 빈 문자열은 보내지 않음 → 서버에서 undefined ?? null 처리
+          address2: address2 || undefined,
+          deliveryMemo: deliveryMemo || undefined,
+        };
+
     try {
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          shipping: {
-            recipientName,
-            recipientPhone,
-            zipCode,
-            address1,
-            // 빈 문자열은 보내지 않음 → 서버에서 undefined ?? null 처리
-            address2: address2 || undefined,
-            deliveryMemo: deliveryMemo || undefined,
-          },
-        }),
+        body: JSON.stringify({ shipping: shipping }),
       });
 
       if (response.status === 401) {
@@ -200,7 +272,7 @@ export default function CheckoutPage() {
         successUrl: `${window.location.origin}/payment/success`,
         failUrl: `${window.location.origin}/payment/fail`,
         customerEmail: session?.user?.email ?? undefined,
-        customerName: recipientName || undefined,
+        customerName: shipping.recipientName || undefined,
       });
       // requestPayment 성공 시 페이지가 이동하므로 이후 코드는 실행되지 않음
     } catch (error) {
@@ -257,9 +329,85 @@ export default function CheckoutPage() {
             </div>
           ) : (
             <form onSubmit={submitOrder} className="mt-6 grid gap-8 lg:grid-cols-5">
-              {/* ── 배송지 입력 ── */}
+              {/* ── 주문자 · 배송지 ── */}
               <div className="lg:col-span-3">
-                <h2 className="text-lg font-semibold text-gray-900">배송지 정보</h2>
+                <h2 className="text-lg font-semibold text-gray-900">주문자 정보</h2>
+                <div className="mt-3 rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-700">
+                  <p className="font-medium text-gray-900">{session?.user?.name}</p>
+                  <p className="mt-0.5">{session?.user?.email}</p>
+                  {session?.user?.phoneNumber ? (
+                    <p className="mt-0.5">{formatPhone(session.user.phoneNumber)}</p>
+                  ) : null}
+                </div>
+
+                <h2 className="mt-8 text-lg font-semibold text-gray-900">배송지 정보</h2>
+
+                {addresses.length > 0 ? (
+                  <div className="mt-4 space-y-2">
+                    {addresses.map((item) => (
+                      <label
+                        key={item.id}
+                        className={
+                          "flex cursor-pointer items-start gap-3 rounded-lg border p-4 " +
+                          (selectedAddressId === item.id
+                            ? "border-gray-900"
+                            : "border-gray-200")
+                        }
+                      >
+                        <input
+                          type="radio"
+                          name="shippingAddress"
+                          checked={selectedAddressId === item.id}
+                          onChange={() => selectAddress(item.id)}
+                          className="mt-1 h-4 w-4"
+                        />
+                        <span className="min-w-0 text-sm">
+                          <span className="flex flex-wrap items-center gap-2 font-semibold text-gray-900">
+                            {item.recipientName}
+                            {item.label ? (
+                              <span className="text-xs font-normal text-gray-500">
+                                {item.label}
+                              </span>
+                            ) : null}
+                            {item.isDefault ? (
+                              <span className="rounded bg-gray-900 px-1.5 py-0.5 text-xs font-medium text-white">
+                                기본
+                              </span>
+                            ) : null}
+                          </span>
+                          <span className="mt-1 block text-gray-600">
+                            {formatPhone(item.recipientPhone)}
+                          </span>
+                          <span className="mt-1 block text-gray-600">
+                            ({item.zipCode}) {item.address1} {item.address2 || ""}
+                          </span>
+                        </span>
+                      </label>
+                    ))}
+
+                    <label
+                      className={
+                        "flex cursor-pointer items-center gap-3 rounded-lg border p-4 text-sm " +
+                        (selectedAddressId === null
+                          ? "border-gray-900"
+                          : "border-gray-200")
+                      }
+                    >
+                      <input
+                        type="radio"
+                        name="shippingAddress"
+                        checked={selectedAddressId === null}
+                        onChange={() => selectAddress(null)}
+                        className="h-4 w-4"
+                      />
+                      <span className="font-medium text-gray-900">
+                        다른 곳으로 배송 (직접 입력)
+                      </span>
+                    </label>
+                  </div>
+                ) : null}
+
+                {selectedAddressId === null ? (
                 <div className="mt-4 space-y-4">
                   <div>
                     <label htmlFor="recipientName" className="text-sm font-medium text-gray-700">
@@ -295,17 +443,24 @@ export default function CheckoutPage() {
                     <label htmlFor="zipCode" className="text-sm font-medium text-gray-700">
                       우편번호 <span className="text-red-500">*</span>
                     </label>
-                    <input
-                      id="zipCode"
-                      type="text"
-                      value={zipCode}
-                      onChange={(e) => setZipCode(e.target.value)}
-                      className={`${inputClass} max-w-[10rem]`}
-                      placeholder="5자리 숫자"
-                      inputMode="numeric"
-                      maxLength={5}
-                      autoComplete="postal-code"
-                    />
+                    <div className="mt-1 flex gap-2">
+                      <input
+                        id="zipCode"
+                        type="text"
+                        value={zipCode}
+                        readOnly
+                        className="w-28 shrink-0 rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm"
+                        placeholder="우편번호"
+                        autoComplete="postal-code"
+                      />
+                      <PostcodeSearchButton
+                        onComplete={(r) => {
+                          setZipCode(r.zipCode);
+                          setAddress1(r.address1);
+                        }}
+                        onError={setErrorMessage}
+                      />
+                    </div>
                   </div>
 
                   <div>
@@ -316,9 +471,9 @@ export default function CheckoutPage() {
                       id="address1"
                       type="text"
                       value={address1}
-                      onChange={(e) => setAddress1(e.target.value)}
-                      className={inputClass}
-                      placeholder="도로명 주소"
+                      readOnly
+                      className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm"
+                      placeholder="우편번호 찾기로 입력됩니다"
                       autoComplete="address-line1"
                     />
                   </div>
@@ -338,19 +493,47 @@ export default function CheckoutPage() {
                     />
                   </div>
 
-                  <div>
-                    <label htmlFor="deliveryMemo" className="text-sm font-medium text-gray-700">
-                      배송 메모
-                    </label>
+                </div>
+                ) : null}
+
+                {/* 배송 메모 — 두 모드 공통. 선택 배송지의 기본 메모로 초기화되며 주문별 수정 가능 */}
+                <div className="mt-4">
+                  <label htmlFor="deliveryMemo" className="text-sm font-medium text-gray-700">
+                    배송 메모
+                  </label>
+                  <select
+                    id="deliveryMemo"
+                    value={memoCustom ? DELIVERY_MEMO_CUSTOM : deliveryMemo}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (v === DELIVERY_MEMO_CUSTOM) {
+                        setMemoCustom(true);
+                        setDeliveryMemo("");
+                      } else {
+                        setMemoCustom(false);
+                        setDeliveryMemo(v);
+                      }
+                    }}
+                    className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:border-gray-900 focus:outline-none"
+                  >
+                    <option value="">선택 안 함</option>
+                    {DELIVERY_MEMO_OPTIONS.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                    <option value={DELIVERY_MEMO_CUSTOM}>직접 입력</option>
+                  </select>
+                  {memoCustom ? (
                     <input
-                      id="deliveryMemo"
                       type="text"
                       value={deliveryMemo}
                       onChange={(e) => setDeliveryMemo(e.target.value)}
+                      autoComplete="off"
+                      placeholder="예: 공동현관 비밀번호 1234#"
                       className={inputClass}
-                      placeholder="예: 부재 시 문 앞에 놓아주세요 (선택)"
                     />
-                  </div>
+                  ) : null}
                 </div>
               </div>
 
