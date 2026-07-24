@@ -497,7 +497,7 @@ export default function CheckoutPage() {
                 ) : null}
 
                 {/* 배송 메모 — 두 모드 공통. 선택 배송지의 기본 메모로 초기화되며 주문별 수정 가능 */}
-                <div className="mt-4">
+                <div className="mt-6">
                   <label htmlFor="deliveryMemo" className="text-sm font-medium text-gray-700">
                     배송 메모
                   </label>

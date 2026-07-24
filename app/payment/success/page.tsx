@@ -9,6 +9,7 @@ import { useCartCount } from "@/components/CartCountProvider";
 
 interface ConfirmResponse {
   orderId: string;
+  orderNumber: string;
   orderName: string;
   totalAmount: number;
   alreadyPaid: boolean;
@@ -94,7 +95,7 @@ function SuccessContent() {
             </div>
             <div className="flex justify-between gap-4">
               <dt className="shrink-0 text-gray-500">주문번호</dt>
-              <dd className="break-all font-mono text-xs text-gray-700">{result.orderId}</dd>
+              <dd className="text-gray-700">{result.orderNumber}</dd>
             </div>
             <div className="flex justify-between gap-4">
               <dt className="shrink-0 text-gray-500">결제 금액</dt>

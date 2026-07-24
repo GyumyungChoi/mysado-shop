@@ -44,10 +44,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "주문을 찾을 수 없습니다." }, { status: 404 });
   }
 
+  // 고객용 주문번호 — 도입(20차) 이전 주문은 null일 수 있어 내부 id로 폴백
+  const orderNumber = order.orderNumber ?? order.id;
+
   // 이미 승인된 주문의 재요청(새로고침 등)은 성공으로 응답 — 멱등성
   if (order.status === "PAID") {
     return NextResponse.json({
       orderId: order.id,
+      orderNumber: orderNumber,
       orderName: buildOrderName(order.items.map((i) => i.productName)),
       totalAmount: order.totalAmount,
       alreadyPaid: true,
@@ -141,7 +145,7 @@ export async function POST(request: Request) {
       subject: `[마이사도] 주문이 완료되었습니다 (${order.totalAmount.toLocaleString("ko-KR")}원)`,
       html: buildOrderEmailHtml({
         orderName,
-        orderId: order.id,
+        orderNumber: orderNumber,
         totalAmount: order.totalAmount,
         recipientName: order.recipientName,
         address: `(${order.zipCode}) ${order.address1} ${order.address2 ?? ""}`.trim(),
@@ -151,6 +155,7 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     orderId: order.id,
+    orderNumber: orderNumber,
     orderName,
     totalAmount: order.totalAmount,
     alreadyPaid: false,
@@ -166,7 +171,7 @@ function buildOrderName(productNames: string[]): string {
 
 function buildOrderEmailHtml(params: {
   orderName: string;
-  orderId: string;
+  orderNumber: string;
   totalAmount: number;
   recipientName: string;
   address: string;
@@ -177,7 +182,7 @@ function buildOrderEmailHtml(params: {
       <p style="color:#555;">마이사도를 이용해 주셔서 감사합니다. 아래 주문 내역을 확인해주세요.</p>
       <table style="width:100%;border-collapse:collapse;margin-top:16px;font-size:14px;">
         <tr><td style="padding:8px 0;color:#888;width:110px;">주문명</td><td>${params.orderName}</td></tr>
-        <tr><td style="padding:8px 0;color:#888;">주문번호</td><td style="font-family:monospace;">${params.orderId}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;">주문번호</td><td>${params.orderNumber}</td></tr>
         <tr><td style="padding:8px 0;color:#888;">결제 금액</td><td><strong>${params.totalAmount.toLocaleString("ko-KR")}원</strong></td></tr>
         <tr><td style="padding:8px 0;color:#888;">받는 분</td><td>${params.recipientName}</td></tr>
         <tr><td style="padding:8px 0;color:#888;">배송지</td><td>${params.address}</td></tr>
