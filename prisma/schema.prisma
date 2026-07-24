@@ -213,6 +213,11 @@ model Order {
   status         OrderStatus @default(PENDING)
   totalAmount    Int         @map("total_amount")  // 원 단위 정수, confirm 시 amount 재검증 기준
 
+  // 주문자 스냅샷 (주문 시점 고정) — 탈퇴 마스킹 후에도 거래기록이 자기완결되도록 (29차)
+  ordererName    String?     @map("orderer_name")
+  ordererEmail   String?     @map("orderer_email")
+  ordererPhone   String?     @map("orderer_phone")
+
   // 배송지 스냅샷 (주문 시점 고정)
   recipientName  String      @map("recipient_name")
   recipientPhone String      @map("recipient_phone")

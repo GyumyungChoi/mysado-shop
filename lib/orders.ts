@@ -103,12 +103,23 @@ export async function createOrder(
       : 1;
     const orderNumber = `${prefix}${String(nextSeq).padStart(4, "0")}`;
 
-    // 5) Order + OrderItem을 한 번에 생성 (nested create — 원자성 보장)
+    // 5) 주문자 스냅샷 조회 — 탈퇴 마스킹 후에도 거래기록이 자기완결되도록 (29차)
+    //    OrThrow: 없으면 트랜잭션 롤백. FK가 존재를 강제하므로 실제 발생 불가이나,
+    //    주문자 미상 주문이 조용히 저장되는 경로를 원천 차단
+    const orderer = await tx.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { name: true, email: true, phoneNumber: true },
+    });
+
+    // 6) Order + OrderItem을 한 번에 생성 (nested create — 원자성 보장)
     const order = await tx.order.create({
       data: {
         userId,
         orderNumber,
         totalAmount,
+        ordererName: orderer.name,
+        ordererEmail: orderer.email,
+        ordererPhone: orderer.phoneNumber,
         recipientName: shipping.recipientName,
         recipientPhone: shipping.recipientPhone,
         zipCode: shipping.zipCode,
@@ -117,10 +128,10 @@ export async function createOrder(
         deliveryMemo: shipping.deliveryMemo ?? null,
         items: { create: itemsData },
       },
-      select: { id: true, totalAmount: true },
+      select: { totalAmount: true },
     });
 
-    // 6) 토스 결제창 표시용 주문명
+    // 7) 토스 결제창 표시용 주문명
     const orderName =
       itemsData.length === 1
         ? itemsData[0].productName

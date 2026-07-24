@@ -39,7 +39,7 @@ export default async function AdminOrdersPage({
     where: statusFilter ? { status: statusFilter } : undefined,
     include: {
       items: true,
-      user: { select: { name: true, email: true } }, // 주문자 표시용 최소 필드
+      // 주문자는 Order 스냅샷(orderer*) 사용 — 탈퇴 마스킹 후에도 거래기록 보존 (29차)
     },
     orderBy: { createdAt: "desc" },
   });
@@ -89,8 +89,8 @@ export default async function AdminOrdersPage({
                 <div className="text-sm text-gray-500">
                   <span>{formatDateTime(order.createdAt)}</span>
                   <span className="mx-2 text-gray-300">|</span>
-                  <span className="font-medium text-gray-700">{order.user.name}</span>
-                  <span className="ml-1">({order.user.email})</span>
+                  <span className="font-medium text-gray-700">{order.ordererName ?? "-"}</span>
+                  <span className="ml-1">({order.ordererEmail ?? "-"})</span>
                 </div>
                 <span className={"rounded-full px-2.5 py-0.5 text-xs font-medium " + STATUS_COLOR[order.status]}>
                   {STATUS_LABEL[order.status]}
