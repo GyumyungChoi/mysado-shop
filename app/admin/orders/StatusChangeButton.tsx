@@ -15,7 +15,7 @@ export default function StatusChangeButton({
 }: {
   orderId: string;
   nextStatus: string; // 예: "PREPARING"
-  nextLabel: string;  // 예: "상품 준비 중"
+  nextLabel: string;  // 예: "배송 준비 중"
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);

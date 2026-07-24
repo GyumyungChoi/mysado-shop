@@ -8,7 +8,7 @@ import type { OrderStatus } from "@prisma/client";
 export const STATUS_LABEL: Record<OrderStatus, string> = {
   PENDING: "결제 대기",
   PAID: "결제 완료",
-  PREPARING: "상품 준비 중",
+  PREPARING: "배송 준비 중",
   SHIPPING: "배송 중",
   DONE: "배송 완료",
   FAILED: "결제 실패",
