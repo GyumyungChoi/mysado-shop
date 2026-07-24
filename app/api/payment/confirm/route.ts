@@ -35,8 +35,12 @@ export async function POST(request: Request) {
   }
 
   // ── 1. 주문 조회 + 소유자 확인 ──
+  // 토스 orderId 전환(28차) — 신규 주문은 MYSADO-..., 전환 이전 주문은 cuid
+  // 전환 폴백: Phase 8 라이브 후 cuid 분기 제거 예정
   const order = await prisma.order.findUnique({
-    where: { id: orderId },
+    where: orderId.startsWith("MYSADO-")
+      ? { orderNumber: orderId }
+      : { id: orderId },
     include: { items: { select: { productId: true, productName: true } } },
   });
 
