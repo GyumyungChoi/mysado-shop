@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/.env*)",
+      "Bash(cat *.env*)",
+      "Bash(grep *.env*)",
+      "Bash(head *.env*)",
+      "Bash(tail *.env*)",
+      "Bash(npx prisma migrate:*)",
+      "Bash(prisma migrate:*)",
+      "Bash(npx prisma db push:*)",
+      "Bash(prisma db push:*)",
+      "Bash(psql:*)",
+      "Bash(pm2:*)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(*git reset --hard*)",
+      "Bash(*git clean*)",
+      "Bash(rm:*)",
+      "Bash(sudo:*)",
+      "Bash(*nginx*)",
+      "Bash(*systemctl*)",
+      "Bash(cd ../mysado-shop-prod:*)"
+    ],
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Bash(npx tsc --noEmit)",
+      "Bash(npm run typecheck)",
+      "Bash(npm run lint)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)"
+    ]
+  }
+}
