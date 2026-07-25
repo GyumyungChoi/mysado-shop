@@ -76,6 +76,11 @@ export default function PrivacyPage() {
             </li>
             <li>접속에 관한 기록: 3개월 (통신비밀보호법)</li>
           </ul>
+          <p className="mt-2">
+            주문 등 거래가 있었던 경우, 회원 계정의 식별정보(이름·이메일·연락처 등)는
+            파기하되, 거래기록에 포함된 주문 당시의 정보는 위 법령에서 정한 기간 동안
+            분리하여 보존합니다.
+          </p>
         </section>
 
         <section>
