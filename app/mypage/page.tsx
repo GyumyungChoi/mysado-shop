@@ -92,6 +92,15 @@ export default async function MyPage() {
           </Link>
         ))}
       </div>
+
+      {/* 위험구역 — 일상 기능과 시각적으로 분리. admin은 API에서도 차단되지만 UI에서도 숨김(이중 방어) */}
+      {session.user.role !== "admin" && (
+        <div className="mt-8 border-t border-gray-100 pt-4">
+          <Link href="/mypage/withdraw" className="text-xs text-gray-500 hover:text-gray-700">
+            회원 탈퇴 <span className="text-gray-400">· 계정을 삭제합니다</span>
+          </Link>
+        </div>
+      )}
     </main>
   );
 }
