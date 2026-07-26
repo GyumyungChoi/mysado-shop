@@ -141,6 +141,18 @@ model Product {
   orderItems OrderItem[]   // ← Phase 4 추가
   sortOrder        Int      @map("sort_order")
 
+  // ── 콘텐츠/SEO 정형 필드 (Phase 7 32차 — 상품 자동생성) ──
+  // 사실 tier (규칙추출→사람검증→잠금; AI write 금지)
+  compatibleModels String[] @default([]) @map("compatible_models")
+  specs            Json?    @map("specs")
+  // 서술 tier (사실로부터 규칙/AI 생성; unlocked 필드만 write)
+  highlights       String[] @default([]) @map("highlights")
+  seoTitle         String?  @map("seo_title")
+  seoDescription   String?  @map("seo_description")
+  // 거버넌스 2컬럼 (필드별 컬럼 폭발 회피)
+  contentMeta      Json?    @map("content_meta")
+  contentStatus    String   @default("raw") @map("content_status")
+
   // ── 네이버 채널 필드 (향후 ProductChannel 분리 예정) ──
   originProductNo  String   @map("origin_product_no")
   channelProductNo String   @map("channel_product_no")

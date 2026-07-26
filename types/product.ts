@@ -25,6 +25,13 @@ export interface Product {
   smartstore_url: string;
   sort_order: number;
   created_at: string;             // 스토어 등록일
+
+  // ── Phase 7 32차: 콘텐츠/SEO 정형 필드 ──
+  compatible_models: string[];
+  specs: Record<string, unknown> | null;
+  highlights: string[];
+  seo_title: string | null;
+  seo_description: string | null;
 }
 
 /** 카테고리 데이터 타입 */

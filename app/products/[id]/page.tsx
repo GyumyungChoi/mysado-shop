@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ProductCard from "@/components/products/ProductCard";
+import Highlights from "@/components/products/detail/Highlights";
+import Compatibility from "@/components/products/detail/Compatibility";
+import SpecTable from "@/components/products/detail/SpecTable";
+import Notice from "@/components/products/detail/Notice";
+import ShippingReturn from "@/components/products/detail/ShippingReturn";
 import categoriesData from "@/data/categories.json";
 // import productsData from "@/data/products.json";
 import type { Category } from "@/types/product";
@@ -39,6 +45,27 @@ function getCategory(categoryId: string): Category | undefined {
 
 /** 상품 상세 페이지 */
 export const revalidate = 60;
+
+export async function generateMetadata(
+  { params }: { params: { id: string } }
+): Promise<Metadata> {
+  const p = await getProductById(params.id);
+  if (!p) return { title: "상품을 찾을 수 없습니다 | 마이사도(mysado)" };
+  const title = p.seo_title || `${p.name} | 마이사도(mysado)`;
+  const description =
+    p.seo_description || p.description ||
+    `마이사도(mysado)에서 판매하는 ${p.name}. 호환 모델·가격·배송 정보를 확인하세요.`;
+  const url = `https://mysado.net/products/${p.id}`;
+  return {
+    title: { absolute: title },
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title, description, url, type: "website",
+      images: p.images?.[0] ? [p.images[0]] : [],
+    },
+  };
+}
 
 export default async function ProductDetailPage({
   params,
@@ -202,6 +229,24 @@ export default async function ProductDetailPage({
               </p>
             </div>
           </div>
+
+          <Highlights items={product.highlights} />
+          <Compatibility models={product.compatible_models} />
+          <SpecTable specs={product.specs} />
+          <ShippingReturn
+            deliveryFee={product.delivery_fee}
+            returnFee={product.return_fee}
+            exchangeFee={product.exchange_fee}
+          />
+          <Notice />
+
+          {/* 상세 이미지 (보조) */}
+          {product.detail_html && (
+            <div className="mt-8 border-t border-gray-100 pt-8">
+              <h2 className="mb-3 text-lg font-bold text-gray-900">상세 정보</h2>
+              <div dangerouslySetInnerHTML={{ __html: product.detail_html }} />
+            </div>
+          )}
 
           {/* 관련 상품 */}
           {relatedProducts.length > 0 && (

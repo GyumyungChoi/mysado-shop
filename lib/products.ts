@@ -31,6 +31,11 @@ function toProduct(row: ProductRow): Product {
     smartstore_url: row.smartstoreUrl,
     sort_order: row.sortOrder,
     created_at: row.registeredAt.toISOString(),
+    compatible_models: row.compatibleModels,
+    specs: row.specs as Record<string, unknown> | null,
+    highlights: row.highlights,
+    seo_title: row.seoTitle,
+    seo_description: row.seoDescription,
   };
 }
 

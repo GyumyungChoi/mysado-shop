@@ -38,3 +38,4 @@ logs/*.log
 
 /app/generated/prisma
 .env
+outputs/
