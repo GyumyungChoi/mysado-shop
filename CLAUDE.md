@@ -20,8 +20,11 @@
 - 서버: BOSGAME P4 Ultra, Windows 11 + WSL2 Ubuntu 24.04 / Nginx / PM2 / Let's Encrypt
 
 ## 현재 단계
-Phase 7 (마이페이지). Phase 1~6 완료(정적페이지·인증·상품DB·장바구니/주문/Toss결제·
-webhook/취소·admin·상품검색). 진행 중: 탈퇴 Soft Delete 구현.
+Phase 7 거의 완료 (회원 탈퇴 Soft Delete 완료).
+다음 작업: ① 소셜로그인(카카오 → 네이버) ② 상품 상세 자동생성 시스템 ③ 기술 SEO / AI 검색 노출
+(결제 라이브 전환은 연기 — 유입 → 콘텐츠 → 전환 순서로 재정비)
+
+완료 내용: Phase 1~6 완료(정적페이지·인증·상품DB·장바구니/주문/Toss결제·webhook/취소·admin·상품검색), Phase 7 마이페이지·회원 탈퇴(Soft Delete) 완료.
 
 ## 코딩 규칙 (기존 유지)
 - TypeScript, `any` 금지. 주석·에러 메시지는 한국어.
@@ -34,6 +37,16 @@ webhook/취소·admin·상품검색). 진행 중: 탈퇴 Soft Delete 구현.
   product는 `@map("is_active")`. 코드는 Prisma명, psql은 컬럼명.
 - `Order`는 테이블 `"orders"`(SQL 예약어). SearchLog 컬럼은 camelCase(psql에서 쌍따옴표).
 
+### DB 컬럼 명명 규칙 혼재 (psql 작업 시 필수 확인)
+- Better Auth 생성 테이블(user, session, account) → camelCase 컬럼(userId, emailVerified, createdAt). psql에서 쌍따옴표 필수: s."userId".
+- 우리가 Prisma로 만든 테이블(orders, address, cart_item 등) → snake_case @map 컬럼(user_id, created_at). 쌍따옴표 불필요.
+- user 테이블은 혼재: 코어 필드(camelCase) + @map 추가 필드(snake_case: phone_number, marketing_agreed, deleted_at).
+- 실무 규칙: 쿼리 전 "Better Auth 것 vs 우리 것" 판별 → 헷갈리면 \d "테이블명"으로 실제 컬럼명 확인. 에러 시 psql HINT가 올바른 컬럼명 제시.
+- 테이블 목록: user(단수 @@map), orders(복수·예약어 회피), session, account, address, cart_item, order_item, product, payment_log, product_view_log, search_log, verification, admin_audit_log.
+
+## 기술부채 (정리 대상, 선택)
+- lib/admin-guard.ts의 (session.user as { role?: string }) 캐스트는 불필요 — 30차 검증상 session.user.role 직접 접근 가능(타입 string | null | undefined). 소규모 리팩터링으로 제거 가능.
+
 ## 진행 방식
 - 설계 결정은 Chat(웹)에서 내려온다. 여기서는 지시서대로 **파일 조사·수정만** 수행.
 - 추측 금지 — 확인 명령(grep/cat/tsc) 먼저. 커밋은 Chris가 직접(메시지 초안만 제시).
@@ -42,4 +55,4 @@ webhook/취소·admin·상품검색). 진행 중: 탈퇴 Soft Delete 구현.
 ## 주요 파일
 - `lib/auth.ts`(Better Auth) / `lib/prisma.ts`(싱글톤) / `lib/api-helpers.ts`(API 공용)
 - `lib/admin-guard.ts`(requireAdminPage/Api) / `middleware.ts`(PROTECTED_PATHS) / `prisma/schema.prisma`
-- `.env.local` — **읽지 말 것**(시크릿 포함, deny 대상). 앱
+- `.env.local` — **읽지 말 것**(시크릿 포함, deny 대상).
