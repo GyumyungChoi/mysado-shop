@@ -1,0 +1,1807 @@
+[
+ {
+  "id": "prod-001",
+  "name": "삼성 갤럭시 워치 충전독 거치대 워치 8 7 6 5 호환 리본 춘식 블랙",
+  "compatibleModels": [
+   "갤럭시 워치8",
+   "갤럭시 워치7",
+   "갤럭시 워치6",
+   "갤럭시 워치5",
+   "갤럭시 워치4",
+   "갤럭시 워치3"
+  ],
+  "modelSource": "human",
+  "color": "블랙",
+  "_pendingAttachType": "dock-mounted"
+ },
+ {
+  "id": "prod-002",
+  "name": "삼성 갤럭시 워치 충전독 거치대 워치 8 7 6 5 호환 춘식 옐로우",
+  "compatibleModels": [
+   "갤럭시 워치8",
+   "갤럭시 워치7",
+   "갤럭시 워치6",
+   "갤럭시 워치5",
+   "갤럭시 워치4",
+   "갤럭시 워치3"
+  ],
+  "modelSource": "human",
+  "color": "옐로우",
+  "_pendingAttachType": "dock-mounted"
+ },
+ {
+  "id": "prod-003",
+  "name": "삼성 갤럭시 워치 충전독 거치대 워치 8 7 6 5 호환 에스더버니 핑크",
+  "compatibleModels": [
+   "갤럭시 워치8",
+   "갤럭시 워치7",
+   "갤럭시 워치6",
+   "갤럭시 워치5",
+   "갤럭시 워치4",
+   "갤럭시 워치3"
+  ],
+  "modelSource": "human",
+  "color": "핑크",
+  "_pendingAttachType": "dock-mounted"
+ },
+ {
+  "id": "prod-004",
+  "name": "삼성 갤럭시 워치 충전독 거치대 (스테이플러) 워치 울트라 8 7 6 5 호환",
+  "compatibleModels": [
+   "갤럭시 워치8",
+   "갤럭시 워치7",
+   "갤럭시 워치6",
+   "갤럭시 워치5"
+  ],
+  "modelSource": "human",
+  "_pendingAttachType": "dock-mounted"
+ },
+ {
+  "id": "prod-005",
+  "name": "삼성 정품 갤럭시 S25 FE 월렛 플립 케이스 카드 수납",
+  "compatibleModels": [
+   "갤럭시 S25 FE"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-006",
+  "name": "삼성 정품 갤럭시 S25 FE 클리어 마그넷 케이스",
+  "compatibleModels": [
+   "갤럭시 S25 FE"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-007",
+  "name": "삼성 갤럭시 Z플립7 플립수트 카드 with 케이스 카카오프렌즈 춘식 옐로우, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "옐로우"
+ },
+ {
+  "id": "prod-008",
+  "name": "삼성 갤럭시 Z플립7 플립수트 카드 with 케이스 카카오프렌즈 치얼업 블루, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블루"
+ },
+ {
+  "id": "prod-009",
+  "name": "삼성 갤럭시 Z플립7 플립수트 카드 with 케이스 조구만 레인 그린/핑크, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": [
+   "그린",
+   "핑크"
+  ]
+ },
+ {
+  "id": "prod-010",
+  "name": "삼성 갤럭시 Z플립7 플립수트 카드 with 케이스 조구만 브라키오 우디 네이비, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": [
+   "네이비",
+   "우디"
+  ]
+ },
+ {
+  "id": "prod-011",
+  "name": "삼성 갤럭시 Z플립7 플립수트 카드 with 케이스 캐치 티니핑 로열핑/뱅 핑크, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "핑크"
+ },
+ {
+  "id": "prod-012",
+  "name": "삼성 갤럭시 Z플립7 플립수트 카드 with 케이스 캐치 티니핑 로열핑 핑크, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "핑크"
+ },
+ {
+  "id": "prod-013",
+  "name": "삼성 정품 갤럭시 Z폴드7 클리어 마그넷 케이스(AR 전면 액정보호필름 2매 포함)",
+  "compatibleModels": [
+   "갤럭시 Z 폴드7"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-014",
+  "name": "삼성 정품 갤럭시 S25 FE 카인드수트 케이스 다크 블루, 갤럭시S25 FE",
+  "compatibleModels": [
+   "갤럭시 S25 FE"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블루"
+ },
+ {
+  "id": "prod-015",
+  "name": "삼성 정품 갤럭시 S25 FE 카인드수트 케이스 블랙, 갤럭시S25 FE",
+  "compatibleModels": [
+   "갤럭시 S25 FE"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-016",
+  "name": "삼성 정품 갤럭시 S25 FE 카인드수트 케이스 브라운, 갤럭시S25 FE",
+  "compatibleModels": [
+   "갤럭시 S25 FE"
+  ],
+  "modelSource": "sku-decode",
+  "color": "브라운"
+ },
+ {
+  "id": "prod-017",
+  "name": "삼성 정품 갤럭시 S25 FE 실리콘 케이스 화이트, 갤럭시S25 FE",
+  "compatibleModels": [
+   "갤럭시 S25 FE"
+  ],
+  "modelSource": "sku-decode",
+  "color": "화이트"
+ },
+ {
+  "id": "prod-018",
+  "name": "삼성 정품 갤럭시 S25 FE 실리콘 케이스 다크 블루, 갤럭시S25 FE",
+  "compatibleModels": [
+   "갤럭시 S25 FE"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블루"
+ },
+ {
+  "id": "prod-019",
+  "name": "삼성 정품 갤럭시 S25 FE 실리콘 케이스 민트, 갤럭시S25 FE",
+  "compatibleModels": [
+   "갤럭시 S25 FE"
+  ],
+  "modelSource": "sku-decode",
+  "color": "민트"
+ },
+ {
+  "id": "prod-020",
+  "name": "삼성 정품 갤럭시 S25 FE 실리콘 케이스 라이트 블루, 갤럭시S25 FE",
+  "compatibleModels": [
+   "갤럭시 S25 FE"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블루"
+ },
+ {
+  "id": "prod-021",
+  "name": "삼성 정품 갤럭시 S25 FE 실리콘 케이스 블랙, 갤럭시S25 FE",
+  "compatibleModels": [
+   "갤럭시 S25 FE"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-022",
+  "name": "삼성 정품 갤럭시 Z플립7 카인드수트 케이스 토프, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-023",
+  "name": "삼성 정품 갤럭시 Z플립7 카인드수트 케이스 블랙, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-024",
+  "name": "삼성 정품 갤럭시 Z플립7 카인드수트 케이스 카멜, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-025",
+  "name": "SeEco 출력물 유출 방지 일반 A4 보안용지 (고평량-2000매)",
+  "compatibleModels": [],
+  "modelSource": "none"
+ },
+ {
+  "id": "prod-026",
+  "name": "삼성 갤럭시 S26 범퍼 마그넷 케이스 블랙, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-027",
+  "name": "삼성 갤럭시 S26 범퍼 마그넷 케이스 바이올렛, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "바이올렛"
+ },
+ {
+  "id": "prod-028",
+  "name": "삼성 갤럭시 S26 범퍼 마그넷 케이스 라이트블루, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "라이트블루"
+ },
+ {
+  "id": "prod-029",
+  "name": "삼성 갤럭시 S26 범퍼 마그넷 케이스 화이트, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "화이트"
+ },
+ {
+  "id": "prod-030",
+  "name": "삼성 갤럭시 S26 범퍼 마그넷 케이스 블랙, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-031",
+  "name": "삼성 갤럭시 S26 범퍼 마그넷 케이스 바이올렛, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "바이올렛"
+ },
+ {
+  "id": "prod-032",
+  "name": "삼성 갤럭시 S26 범퍼 마그넷 케이스 라이트블루, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "라이트블루"
+ },
+ {
+  "id": "prod-033",
+  "name": "삼성 갤럭시 S26 범퍼 마그넷 케이스 화이트, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "화이트"
+ },
+ {
+  "id": "prod-034",
+  "name": "삼성 갤럭시 S26 범퍼 마그넷 케이스 블랙, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-035",
+  "name": "삼성 갤럭시 S26 범퍼 마그넷 케이스 바이올렛, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "바이올렛"
+ },
+ {
+  "id": "prod-036",
+  "name": "삼성 갤럭시 S26 범퍼 마그넷 케이스 라이트블루, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "라이트블루"
+ },
+ {
+  "id": "prod-037",
+  "name": "삼성 갤럭시 S26 범퍼 마그넷 케이스 화이트, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "화이트"
+ },
+ {
+  "id": "prod-038",
+  "name": "삼성 갤럭시 S26 카본 마그넷 케이스 레드, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "레드"
+ },
+ {
+  "id": "prod-039",
+  "name": "삼성 갤럭시 S26 카본 마그넷 케이스 다크 그레이, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "그레이"
+ },
+ {
+  "id": "prod-040",
+  "name": "삼성 갤럭시 S26 카본 마그넷 케이스 다크 블루, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블루"
+ },
+ {
+  "id": "prod-041",
+  "name": "삼성 갤럭시 S26 카본 마그넷 케이스 블랙, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-042",
+  "name": "삼성 갤럭시 S26 카본 마그넷 케이스 레드, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "레드"
+ },
+ {
+  "id": "prod-043",
+  "name": "삼성 갤럭시 S26 카본 마그넷 케이스 다크 그레이, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "그레이"
+ },
+ {
+  "id": "prod-044",
+  "name": "삼성 갤럭시 S26 카본 마그넷 케이스 다크 블루, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블루"
+ },
+ {
+  "id": "prod-045",
+  "name": "삼성 갤럭시 S26 카본 마그넷 케이스 블랙, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-046",
+  "name": "삼성 갤럭시 S26 카본 마그넷 케이스 레드, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "레드"
+ },
+ {
+  "id": "prod-047",
+  "name": "삼성 갤럭시 S26 카본 마그넷 케이스 다크 그레이, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "그레이"
+ },
+ {
+  "id": "prod-048",
+  "name": "삼성 갤럭시 S26 카본 마그넷 케이스 다크 블루, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블루"
+ },
+ {
+  "id": "prod-049",
+  "name": "삼성 갤럭시 S26 카본 마그넷 케이스 블랙, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-050",
+  "name": "단순개봉미사용상품 삼성 정품 갤럭시S26 러기드 마그넷 케이스 블랙",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "human",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-051",
+  "name": "단순개봉미사용상품 삼성 정품 갤럭시S26 클리어 케이스 투명",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-052",
+  "name": "삼성 정품 갤럭시 버즈4｜버즈4 프로 케이스 (호랑이 전통 문양)",
+  "compatibleModels": [
+   "갤럭시 버즈4",
+   "갤럭시 버즈4 프로"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-053",
+  "name": "삼성 정품 갤럭시 버즈4｜버즈4 프로 케이스 (꽃 전통 문양)",
+  "compatibleModels": [
+   "갤럭시 버즈4",
+   "갤럭시 버즈4 프로"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-054",
+  "name": "삼성 정품 갤럭시 버즈4｜버즈4 프로 케이스 (레트로 픽셀 레벨업)",
+  "compatibleModels": [
+   "갤럭시 버즈4",
+   "갤럭시 버즈4 프로"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-055",
+  "name": "삼성 정품 갤럭시 버즈4｜버즈4 프로 케이스 (레트로 픽셀 메뉴)",
+  "compatibleModels": [
+   "갤럭시 버즈4",
+   "갤럭시 버즈4 프로"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-056",
+  "name": "삼성 정품 갤럭시 버즈4｜버즈4 프로 케이스 (레트로 픽셀 숲)",
+  "compatibleModels": [
+   "갤럭시 버즈4",
+   "갤럭시 버즈4 프로"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-057",
+  "name": "삼성 정품 갤럭시 버즈4 | 버즈4 프로 클리어 케이스",
+  "compatibleModels": [
+   "갤럭시 버즈4",
+   "갤럭시 버즈4 프로"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-058",
+  "name": "삼성 정품 갤럭시 S26 사생활 보호 필름 갤럭시S26 플러스, 2매입",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-059",
+  "name": "삼성 정품 갤럭시 S26 사생활 보호 필름 갤럭시S26, 2매입",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-060",
+  "name": "삼성 정품 갤럭시 S26 마그넷 케이스 르망 네이비, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "네이비"
+ },
+ {
+  "id": "prod-061",
+  "name": "삼성 정품 갤럭시 S26 마그넷 케이스 르망 네이비, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "네이비"
+ },
+ {
+  "id": "prod-062",
+  "name": "삼성 정품 갤럭시 S26 마그넷 케이스 르망 네이비, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "네이비"
+ },
+ {
+  "id": "prod-063",
+  "name": "삼성 정품 갤럭시 S26 미러 마그넷 케이스 카카오프렌즈, 춘식 실버, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "실버"
+ },
+ {
+  "id": "prod-064",
+  "name": "삼성 정품 갤럭시 S26 미러 마그넷 케이스 카카오프렌즈, 춘식 실버, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "실버"
+ },
+ {
+  "id": "prod-065",
+  "name": "삼성 정품 갤럭시 S26 미러 마그넷 케이스 카카오프렌즈, 춘식 실버, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "실버"
+ },
+ {
+  "id": "prod-066",
+  "name": "삼성 정품 갤럭시 액정 보호필름 AR 스크린 프로텍터 갤럭시S26 울트라, 2매입",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-067",
+  "name": "삼성 정품 갤럭시 액정 보호필름 AR 스크린 프로텍터 갤럭시S26 플러스, 2매입",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-068",
+  "name": "삼성 정품 갤럭시 액정 보호필름 AR 스크린 프로텍터 갤럭시S26, 2매입",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-069",
+  "name": "삼성 정품 갤럭시 슬림 마그넷 케이스 라이트 바이올렛, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "바이올렛"
+ },
+ {
+  "id": "prod-070",
+  "name": "삼성 정품 갤럭시 슬림 마그넷 케이스 라이트 블루, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블루"
+ },
+ {
+  "id": "prod-071",
+  "name": "삼성 정품 갤럭시 슬림 마그넷 케이스 그레이, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "그레이"
+ },
+ {
+  "id": "prod-072",
+  "name": "삼성 정품 갤럭시 슬림 마그넷 케이스 블랙, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-073",
+  "name": "삼성 정품 갤럭시 슬림 마그넷 케이스 라이트 바이올렛, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "바이올렛"
+ },
+ {
+  "id": "prod-074",
+  "name": "삼성 정품 갤럭시 슬림 마그넷 케이스 라이트 블루, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블루"
+ },
+ {
+  "id": "prod-075",
+  "name": "삼성 정품 갤럭시 슬림 마그넷 케이스 그레이, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "그레이"
+ },
+ {
+  "id": "prod-076",
+  "name": "삼성 정품 갤럭시 슬림 마그넷 케이스 블랙, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-077",
+  "name": "삼성 정품 갤럭시 슬림 마그넷 케이스 라이트 바이올렛, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "바이올렛"
+ },
+ {
+  "id": "prod-078",
+  "name": "삼성 정품 갤럭시 슬림 마그넷 케이스 라이트 블루, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블루"
+ },
+ {
+  "id": "prod-079",
+  "name": "삼성 정품 갤럭시 슬림 마그넷 케이스 그레이, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "그레이"
+ },
+ {
+  "id": "prod-080",
+  "name": "삼성 정품 갤럭시 슬림 마그넷 케이스 블랙, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-081",
+  "name": "삼성 정품 갤럭시 러기드 마그넷 케이스 블랙, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-082",
+  "name": "삼성 정품 갤럭시 러기드 마그넷 케이스 블랙, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-083",
+  "name": "삼성 정품 갤럭시 러기드 마그넷 케이스 블랙, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-084",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 화이트, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "화이트"
+ },
+ {
+  "id": "prod-085",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 블루 바이올렛, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": [
+   "바이올렛",
+   "블루"
+  ]
+ },
+ {
+  "id": "prod-086",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 코랄 레드, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": [
+   "코랄",
+   "레드"
+  ]
+ },
+ {
+  "id": "prod-087",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 라이트 블루, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블루"
+ },
+ {
+  "id": "prod-088",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 그레이, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "그레이"
+ },
+ {
+  "id": "prod-089",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 블랙, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-090",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 화이트, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "화이트"
+ },
+ {
+  "id": "prod-091",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 블루 바이올렛, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": [
+   "바이올렛",
+   "블루"
+  ]
+ },
+ {
+  "id": "prod-092",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 코랄 레드, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": [
+   "코랄",
+   "레드"
+  ]
+ },
+ {
+  "id": "prod-093",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 라이트 블루, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블루"
+ },
+ {
+  "id": "prod-094",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 그레이, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "그레이"
+ },
+ {
+  "id": "prod-095",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 블랙, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-096",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 화이트, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "화이트"
+ },
+ {
+  "id": "prod-097",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 블루 바이올렛, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": [
+   "바이올렛",
+   "블루"
+  ]
+ },
+ {
+  "id": "prod-098",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 코랄 레드, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": [
+   "코랄",
+   "레드"
+  ]
+ },
+ {
+  "id": "prod-099",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 라이트 블루, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블루"
+ },
+ {
+  "id": "prod-100",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 그레이, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "그레이"
+ },
+ {
+  "id": "prod-101",
+  "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 블랙, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-102",
+  "name": "삼성 정품 갤럭시 클리어 마그넷 케이스 투명, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-103",
+  "name": "삼성 정품 갤럭시 클리어 마그넷 케이스 투명, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-104",
+  "name": "삼성 정품 갤럭시 클리어 마그넷 케이스 투명, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-105",
+  "name": "삼성 정품 갤럭시 클리어 케이스 투명, 갤럭시S26 울트라",
+  "compatibleModels": [
+   "갤럭시 S26 울트라"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-106",
+  "name": "삼성 정품 갤럭시 클리어 케이스 투명, 갤럭시S26 플러스",
+  "compatibleModels": [
+   "갤럭시 S26+"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-107",
+  "name": "삼성 정품 갤럭시 클리어 케이스 투명, 갤럭시S26",
+  "compatibleModels": [
+   "갤럭시 S26"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-108",
+  "name": "삼성 정품 갤럭시 Z폴드2 아라미드 스탠딩 커버",
+  "compatibleModels": [
+   "갤럭시 Z 폴드2"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-109",
+  "name": "삼성 정품 갤럭시 Z플립6-Z플립7 FE 공용 카인드수트 케이스 힌지보호",
+  "compatibleModels": [
+   "갤럭시 Z 플립7 FE",
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-110",
+  "name": "삼성 정품 갤럭시 S25 카인드수트 케이스",
+  "compatibleModels": [
+   "갤럭시 S25"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-111",
+  "name": "삼성 정품 갤럭시 S25 엣지 카인드수트 케이스",
+  "compatibleModels": [
+   "갤럭시 S25 엣지"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-112",
+  "name": "삼성 정품 갤럭시 S25 Ultra 카인드수트 케이스",
+  "compatibleModels": [
+   "갤럭시 S25 울트라"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-113",
+  "name": "삼성 정품 갤럭시 S25+ 카인드수트 케이스",
+  "compatibleModels": [
+   "갤럭시 S25+"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-114",
+  "name": "삼성 정품 맥세이프 갤럭시 S25 엣지 마그넷 클리어 케이스",
+  "compatibleModels": [
+   "갤럭시 S25 엣지"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-115",
+  "name": "삼성 정품 맥세이프 마그네틱 월렛 카드 지갑 케이스",
+  "compatibleModels": [
+   "갤럭시 S25",
+   "갤럭시 S25+",
+   "갤럭시 S25 울트라"
+  ],
+  "modelSource": "human",
+  "_pendingAttachType": "case-mounted"
+ },
+ {
+  "id": "prod-116",
+  "name": "정품 갤럭시 z폴드7 실리콘 케이스 with 스탠드(AR 전면 액정보호필름 포함)",
+  "compatibleModels": [
+   "갤럭시 Z 폴드7"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-117",
+  "name": "삼성 정품 갤럭시 Z폴드7 클리어 그립 케이스(AR 전면 액정보호필름 2매 포함)",
+  "compatibleModels": [
+   "갤럭시 Z 폴드7"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-118",
+  "name": "삼성 정품 갤럭시 Z폴드7 클리어 케이스(AR 전면 액정보호필름 2매 포함)",
+  "compatibleModels": [
+   "갤럭시 Z 폴드7"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-119",
+  "name": "정품 갤럭시 z폴드7 카본 쉴드 케이스(AR 전면 액정보호필름 포함)",
+  "compatibleModels": [
+   "갤럭시 Z 폴드7"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-120",
+  "name": "정품 z폴드7 버라이어티 마그넷 케이스 카카오프렌즈 춘식 앤 라이언",
+  "compatibleModels": [
+   "갤럭시 Z 폴드7"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-121",
+  "name": "삼성 갤럭시 Z폴드7 버라이어티 마그넷 케이스 마인드어데이 레드, 갤럭시Z 폴드7",
+  "compatibleModels": [
+   "갤럭시 Z 폴드7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "레드"
+ },
+ {
+  "id": "prod-122",
+  "name": "삼성 갤럭시 Z폴드7 버라이어티 마그넷 케이스 조구만 브라키오 그린, 갤럭시Z 폴드7",
+  "compatibleModels": [
+   "갤럭시 Z 폴드7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "그린"
+ },
+ {
+  "id": "prod-123",
+  "name": "삼성 갤럭시 Z폴드7 버라이어티 마그넷 케이스 플라베어 투명, 갤럭시Z 폴드7",
+  "compatibleModels": [
+   "갤럭시 Z 폴드7"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-124",
+  "name": "삼성 갤럭시 Z폴드7 버라이어티 마그넷 케이스 조구만 테니스공 그린, 갤럭시Z 폴드7",
+  "compatibleModels": [
+   "갤럭시 Z 폴드7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "그린"
+ },
+ {
+  "id": "prod-125",
+  "name": "삼성 정품 갤럭시 Z폴드7 버라이어티 맥세이프 마그넷 케이스 카카오프렌즈 춘식",
+  "compatibleModels": [
+   "갤럭시 Z 폴드7"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-126",
+  "name": "삼성 정품 갤럭시 Z플립7 플립수트 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-127",
+  "name": "삼성 갤럭시 Z플립7 버라이어티 마그넷 케이스 니니즈 조르디와 친구들 투명, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-128",
+  "name": "삼성 갤럭시 Z플립7 버라이어티 마그넷 케이스 카카오프렌즈 춘식버스 옐로우, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "옐로우"
+ },
+ {
+  "id": "prod-129",
+  "name": "삼성 갤럭시 Z플립7 버라이어티 마그넷 케이스 조구만 브라키오 앤 우디 그린, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": [
+   "그린",
+   "우디"
+  ]
+ },
+ {
+  "id": "prod-130",
+  "name": "삼성 갤럭시 Z플립7 버라이어티 마그넷 케이스 니니즈 조르디 민트, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "민트"
+ },
+ {
+  "id": "prod-131",
+  "name": "삼성 갤럭시 Z플립7 버라이어티 마그넷 케이스 캐치 티니핑 하츄핑 핑크, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "핑크"
+ },
+ {
+  "id": "prod-132",
+  "name": "삼성 갤럭시 Z플립7 버라이어티 마그넷 케이스 에스더버니 띵킹오브유 핑크, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "핑크"
+ },
+ {
+  "id": "prod-133",
+  "name": "삼성 갤럭시 Z플립7 버라이어티 마그넷 케이스 카카오프렌즈 춘식 옐로우, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "옐로우"
+ },
+ {
+  "id": "prod-134",
+  "name": "삼성 갤럭시 Z플립7 버라이어티 마그넷 케이스 캐치 티니핑 프렌즈 핑크, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "핑크"
+ },
+ {
+  "id": "prod-135",
+  "name": "삼성 갤럭시 Z플립7 버라이어티 마그넷 케이스 조구만 브라키오 그린, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "그린"
+ },
+ {
+  "id": "prod-136",
+  "name": "삼성 갤럭시 Z플립7 버라이어티 마그넷 케이스 에스더버니 버니월드 핑크, 갤럭시Z 플립7",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode",
+  "color": "핑크"
+ },
+ {
+  "id": "prod-137",
+  "name": "정품 갤럭시 z플립7 AR 필름 2매",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-138",
+  "name": "삼성 정품 갤럭시 Z플립7 클리어 케이스 with 링",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-139",
+  "name": "삼성 정품 갤럭시 Z플립7 클리어 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-140",
+  "name": "정품 갤럭시 z플립7 실리콘 케이스 커버 with 링",
+  "compatibleModels": [
+   "갤럭시 Z 플립7"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-141",
+  "name": "정품 갤럭시 탭 S9 탭S9FE 토일렛페이퍼 엔벨롭 커버 호환 갤럭시탭 S8, S7",
+  "compatibleModels": [
+   "갤럭시 탭 S9"
+  ],
+  "modelSource": "human",
+  "_pendingUnverified": [
+   "갤럭시 탭 S9 FE",
+   "갤럭시 탭 S8",
+   "갤럭시 탭 S7"
+  ]
+ },
+ {
+  "id": "prod-142",
+  "name": "정품 갤럭시탭S9 탭S9FE 세서미 스트리트 케이스 엔벨롭 전면 북커버 호환 갤럭시탭S8 S7",
+  "compatibleModels": [
+   "갤럭시 탭 S9"
+  ],
+  "modelSource": "human",
+  "_pendingUnverified": [
+   "갤럭시 탭 S9 FE",
+   "갤럭시 탭 S8",
+   "갤럭시 탭 S7"
+  ]
+ },
+ {
+  "id": "prod-143",
+  "name": "정품 갤럭시 탭 S9 조구만 스튜디오 엔벨롭 커버 호환 갤럭시탭 S8, S7",
+  "compatibleModels": [
+   "갤럭시 탭 S9"
+  ],
+  "modelSource": "human",
+  "_pendingUnverified": [
+   "갤럭시 탭 S8",
+   "갤럭시 탭 S7"
+  ]
+ },
+ {
+  "id": "prod-144",
+  "name": "정품 갤럭시 탭 S9 플러스 토일렛페이퍼 엔벨롭 커버 호환 갤럭시탭 S8+, S7+",
+  "compatibleModels": [
+   "갤럭시 탭 S9+"
+  ],
+  "modelSource": "human",
+  "_pendingUnverified": [
+   "갤럭시 탭 S8+",
+   "갤럭시 탭 S7+"
+  ]
+ },
+ {
+  "id": "prod-145",
+  "name": "정품 갤럭시 탭 S9 플러스 조구만 스튜디오 엔벨롭 커버 호환 갤럭시탭 S8+, S7+",
+  "compatibleModels": [
+   "갤럭시 탭 S9+"
+  ],
+  "modelSource": "human",
+  "_pendingUnverified": [
+   "갤럭시 탭 S8+",
+   "갤럭시 탭 S7+"
+  ]
+ },
+ {
+  "id": "prod-146",
+  "name": "정품 갤럭시 탭 S9 울트라 토일렛페이퍼 엔벨롭 커버 호환 갤럭시탭 S8 Ultra",
+  "compatibleModels": [
+   "갤럭시 탭 S9 울트라"
+  ],
+  "modelSource": "human",
+  "_pendingUnverified": [
+   "갤럭시 탭 S8 울트라"
+  ]
+ },
+ {
+  "id": "prod-147",
+  "name": "삼성 정품 갤럭시 탭 S9 충격 방지 스탠딩 케이스 매직 엠보 커버 호환 갤럭시탭 S9 S10 FE",
+  "compatibleModels": [
+   "갤럭시 탭 S9",
+   "갤럭시 탭 S9 FE",
+   "갤럭시 탭 S10 FE"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-148",
+  "name": "삼성 정품 갤럭시탭S9 플러스 스탠딩 케이스 매직 엠보 커버 호환 S9 FE 플러스 S10 플러스",
+  "compatibleModels": [
+   "갤럭시 탭 S9+",
+   "갤럭시 탭 S9 FE+",
+   "갤럭시 탭 S10+"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-149",
+  "name": "삼성정품 갤럭시 S25 스탠딩 그립 케이스",
+  "compatibleModels": [
+   "갤럭시 S25"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-150",
+  "name": "갤럭시 S25 러기드 플립수트 케이스",
+  "compatibleModels": [
+   "갤럭시 S25"
+  ],
+  "modelSource": "name-rule",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-151",
+  "name": "삼성 갤럭시 S25 플립수트 케이스 화이트",
+  "compatibleModels": [
+   "갤럭시 S25"
+  ],
+  "modelSource": "name-rule",
+  "color": "화이트"
+ },
+ {
+  "id": "prod-152",
+  "name": "삼성 정품 갤럭시 S25 실리콘 케이스",
+  "compatibleModels": [
+   "갤럭시 S25"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-153",
+  "name": "삼성 정품 갤럭시 S25 클리어 케이스",
+  "compatibleModels": [
+   "갤럭시 S25"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-154",
+  "name": "갤럭시 카인드수트 케이스 블랙, 갤럭시S25",
+  "compatibleModels": [
+   "갤럭시 S25"
+  ],
+  "modelSource": "sku-decode",
+  "color": [
+   "그레이",
+   "블랙"
+  ]
+ },
+ {
+  "id": "prod-155",
+  "name": "갤럭시 S25 플러스 러기드 플립수트 케이스",
+  "compatibleModels": [
+   "갤럭시 S25+"
+  ],
+  "modelSource": "name-rule",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-156",
+  "name": "삼성 정품 플립수트 케이스 화이트, 갤럭시 S25 플러스",
+  "compatibleModels": [
+   "갤럭시 S25+"
+  ],
+  "modelSource": "name-rule",
+  "color": "화이트"
+ },
+ {
+  "id": "prod-157",
+  "name": "갤럭시 S25 플러스 실리콘 케이스",
+  "compatibleModels": [
+   "갤럭시 S25+"
+  ],
+  "modelSource": "name-rule",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-158",
+  "name": "삼성 정품 갤럭시 S25 플러스 클리어 케이스",
+  "compatibleModels": [
+   "갤럭시 S25+"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-159",
+  "name": "갤럭시 S25 Ultra 러기드 플립수트 케이스",
+  "compatibleModels": [
+   "갤럭시 S25 울트라"
+  ],
+  "modelSource": "name-rule",
+  "color": "블랙"
+ },
+ {
+  "id": "prod-160",
+  "name": "갤럭시 S25 Ultra 실리콘 케이스",
+  "compatibleModels": [
+   "갤럭시 S25 울트라"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-161",
+  "name": "삼성 SMAPP 정품 갤럭시 워치 울트라 링크 브레이슬릿 밴드",
+  "compatibleModels": [
+   "갤럭시 워치 울트라"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-162",
+  "name": "삼성 정품 갤럭시 워치 울트라 벨크로 밴드",
+  "compatibleModels": [
+   "갤럭시 워치 울트라"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-163",
+  "name": "삼성 정품 갤럭시 S25 엣지 실리콘 케이스",
+  "compatibleModels": [
+   "갤럭시 S25 엣지"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-164",
+  "name": "삼성 정품 갤럭시 S25 엣지 클리어 마그넷 케이스",
+  "compatibleModels": [
+   "갤럭시 S25 엣지"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-165",
+  "name": "삼성 정품 갤럭시S25엣지 필름 AR 스크린 프로텍터 2매",
+  "compatibleModels": [
+   "갤럭시 S25 엣지"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-166",
+  "name": "삼성 갤럭시 Z플립6 Z플립7FE 정품 케이스 클리어 케이스 with 링 커버",
+  "compatibleModels": [
+   "갤럭시 Z 플립7 FE",
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-167",
+  "name": "삼성 정품 원클릭 갤럭시 워치6 패브릭 스트랩 밴드 호환 갤럭시 워치5 워치7 워치4",
+  "compatibleModels": [
+   "갤럭시 워치6",
+   "갤럭시 워치5",
+   "갤럭시 워치7",
+   "갤럭시 워치4"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-168",
+  "name": "삼성 정품 푸바오 에디션 패키지 갤럭시S23울트라 케이스 + 무선충전기 + 악세서리 / GP-TKS918SBATK",
+  "compatibleModels": [
+   "갤럭시 S23 울트라"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-169",
+  "name": "삼성 정품 푸바오 에디션 패키지 갤럭시S23플러스 케이스 + 무선충전기 + 악세서리  / GP-TKS916SBATK",
+  "compatibleModels": [
+   "갤럭시 S23+"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-170",
+  "name": "삼성 정품 푸바오 에디션 패키지 갤럭시S23 케이스 + 무선충전기 + 악세서리 / GP-TKS911SBATK",
+  "compatibleModels": [
+   "갤럭시 S23"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-171",
+  "name": "에버랜드 푸바오 아크릴 스마트톡",
+  "compatibleModels": [],
+  "modelSource": "none"
+ },
+ {
+  "id": "prod-172",
+  "name": "에버랜드 푸바오 아크릴 키링",
+  "compatibleModels": [],
+  "modelSource": "none"
+ },
+ {
+  "id": "prod-173",
+  "name": "삼성 정품 갤럭시워치7 워치6 클래식 워치5 프로 워치4 클래식 스포츠 스트랩 실리콘 원클릭 밴드",
+  "compatibleModels": [
+   "갤럭시 워치7",
+   "갤럭시 워치6 클래식",
+   "갤럭시 워치5 프로",
+   "갤럭시 워치4 클래식"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-174",
+  "name": "갤럭시 버즈2 프로 버즈 FE 매일우유 케이스 매일유업",
+  "compatibleModels": [
+   "갤럭시 버즈 FE",
+   "갤럭시 버즈2 프로",
+   "갤럭시 버즈2",
+   "갤럭시 버즈 프로",
+   "갤럭시 버즈 라이브"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-175",
+  "name": "정품 삼성 갤럭시 버즈2 프로 메타몽 케이스 버즈 FE 호환",
+  "compatibleModels": [
+   "갤럭시 버즈2 프로",
+   "갤럭시 버즈2",
+   "갤럭시 버즈 프로",
+   "갤럭시 버즈 라이브"
+  ],
+  "modelSource": "human"
+ },
+ {
+  "id": "prod-176",
+  "name": "삼성정품 갤럭시 워치7 나토 밴드 호환 갤럭시 워치5 워치6 워치4",
+  "compatibleModels": [
+   "갤럭시 워치7",
+   "갤럭시 워치5",
+   "갤럭시 워치6",
+   "갤럭시 워치4"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-177",
+  "name": "삼성 정품 갤럭시워치7 레더 스트랩 가죽 밴드 갤럭시 워치6 워치5 워치4 호환",
+  "compatibleModels": [
+   "갤럭시 워치7",
+   "갤럭시 워치6",
+   "갤럭시 워치5",
+   "갤럭시 워치4"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-178",
+  "name": "정품 갤럭시 워치 울트라 나토 밴드 스트랩",
+  "compatibleModels": [
+   "갤럭시 워치 울트라"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-179",
+  "name": "삼성 정품 갤럭시워치7 디월트 밴드 스트랩 타이탄 호환 갤럭시 워치6 워치5 워치4",
+  "compatibleModels": [
+   "갤럭시 워치7",
+   "갤럭시 워치6",
+   "갤럭시 워치5",
+   "갤럭시 워치4"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-180",
+  "name": "정품 갤럭시 워치 울트라 레더 밴드 가죽 스트랩",
+  "compatibleModels": [
+   "갤럭시 워치 울트라"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-181",
+  "name": "정품 갤럭시 Z플립6 피클스 더 프로그 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-182",
+  "name": "정품 갤럭시 Z플립6 내셔널지오그래픽 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-183",
+  "name": "정품 갤럭시 워치 울트라 스트랩 디월트 타이탄 밴드",
+  "compatibleModels": [
+   "갤럭시 워치 울트라"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-184",
+  "name": "정품 갤럭시 Z 폴드6 조구만 케이스 슬림 임프레션",
+  "compatibleModels": [
+   "갤럭시 Z 폴드6"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-185",
+  "name": "정품 갤럭시 Z 폴드6 배트맨 케이스 슬림 임프레션",
+  "compatibleModels": [
+   "갤럭시 Z 폴드6"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-186",
+  "name": "삼성정품 갤럭시 Z플립6 케이스 디월트 타이탄 Z플립5 호환",
+  "compatibleModels": [
+   "갤럭시 Z 플립6",
+   "갤럭시 Z 플립5"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-187",
+  "name": "정품 갤럭시 Z플립6 마블 데드풀 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-188",
+  "name": "정품 갤럭시 Z플립6 마인드어데이 커버캣 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-189",
+  "name": "정품 갤럭시 Z플립6 빵빵이의 일상 빵빵이 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-190",
+  "name": "정품 갤럭시 Z플립6 빵빵이의 일상 옥지 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-191",
+  "name": "정품 갤럭시 Z플립6 스티키 몬스터랩 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "name-rule"
+ },
+ {
+  "id": "prod-192",
+  "name": "정품 갤럭시 Z플립6 아티스트 모니카 포스버그 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-193",
+  "name": "정품 갤럭시 Z플립6 아티스트 일리아 밀스타인 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-194",
+  "name": "정품 갤럭시 Z플립6 아티스트 플라베어 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-195",
+  "name": "정품 갤럭시 Z플립6 아티스트 하와이안샐러드 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-196",
+  "name": "정품 갤럭시 Z플립6 포차코 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-197",
+  "name": "정품 갤럭시 Z플립6 플레이모빌 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-198",
+  "name": "정품 갤럭시 Z플립6 픽사 인사이드 아웃2 케이스",
+  "compatibleModels": [
+   "갤럭시 Z 플립6"
+  ],
+  "modelSource": "sku-decode"
+ },
+ {
+  "id": "prod-199",
+  "name": "삼성 정품 갤럭시 워치6 디버클 하이브리드 비건 레더 스트랩 갤럭시 워치7 워치5 워치4 호환",
+  "compatibleModels": [
+   "갤럭시 워치6",
+   "갤럭시 워치7",
+   "갤럭시 워치5",
+   "갤럭시 워치4"
+  ],
+  "modelSource": "name-rule"
+ }
+]
