@@ -11,27 +11,27 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  phoneNumber   String?   @map("phone_number")  // 추가(26.07.11.토)
-  role          String    @default("user")      // "user" | "admin" — Phase 5 추가(26.07.18.토)
-  agreedAt          DateTime? @map("agreed_at")           // 필수 동의(약관+개인정보) 시각 — Phase 5 추가(26.07.19.일)
-  marketingAgreed   Boolean   @default(false) @map("marketing_agreed")     // 마케팅 수신 동의 — Phase 5 추가(26.07.19.일)
-  marketingAgreedAt DateTime? @map("marketing_agreed_at") // 마케팅 동의 시각 — Phase 5 추가(26.07.19.일)
-  deletedAt     DateTime? @map("deleted_at")  // 탈퇴 Soft Delete — Phase 7 추가(26.07.22.수)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  productViews  ProductViewLog[]   // ← 추가
-  searchLogs    SearchLog[]        // ← 추가
-  cartItems     CartItem[]         // ← Phase 4 추가
-  orders        Order[]            // ← Phase 4 추가
+  id                String           @id
+  name              String
+  email             String
+  emailVerified     Boolean          @default(false)
+  image             String?
+  phoneNumber       String?          @map("phone_number") // 추가(26.07.11.토)
+  role              String           @default("user") // "user" | "admin" — Phase 5 추가(26.07.18.토)
+  agreedAt          DateTime?        @map("agreed_at") // 필수 동의(약관+개인정보) 시각 — Phase 5 추가(26.07.19.일)
+  marketingAgreed   Boolean          @default(false) @map("marketing_agreed") // 마케팅 수신 동의 — Phase 5 추가(26.07.19.일)
+  marketingAgreedAt DateTime?        @map("marketing_agreed_at") // 마케팅 동의 시각 — Phase 5 추가(26.07.19.일)
+  deletedAt         DateTime?        @map("deleted_at") // 탈퇴 Soft Delete — Phase 7 추가(26.07.22.수)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  sessions          Session[]
+  accounts          Account[]
+  productViews      ProductViewLog[] // ← 추가
+  searchLogs        SearchLog[] // ← 추가
+  cartItems         CartItem[] // ← Phase 4 추가
+  orders            Order[] // ← Phase 4 추가
 
-  addresses     Address[]          // Phase 7 추가(26.07.22.수)
+  addresses Address[] // Phase 7 추가(26.07.22.수)
 
   @@unique([email])
   @@map("user")
@@ -88,12 +88,12 @@ model Verification {
 // ─── 행동 로그 (AI 개인화 추천용 데이터 수집) ───
 
 model ProductViewLog {
-  id        Int      @id @default(autoincrement())
-  userId    String?  // 비로그인 조회도 기록 (null 허용)
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  sessionId String?  // 비로그인 방문자 구분용 (쿠키 기반, 추후 활용)
-  
-  productId String?  // 상품 삭제 시 SetNull로 로그 보존 (Phase 3에서 FK 전환 완료)
+  id        Int     @id @default(autoincrement())
+  userId    String? // 비로그인 조회도 기록 (null 허용)
+  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  sessionId String? // 비로그인 방문자 구분용 (쿠키 기반, 추후 활용)
+
+  productId String? // 상품 삭제 시 SetNull로 로그 보존 (Phase 3에서 FK 전환 완료)
   product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
   viewedAt  DateTime @default(now())
 
@@ -107,7 +107,7 @@ model SearchLog {
   userId      String?
   user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   keyword     String
-  resultCount Int?     // 검색 결과 개수 (0이면 "없는 상품 수요" 신호!), 검색했는데 결과가 0인 키워드는 "손님이 찾는데 우리 가게에 없는 상품" 목록
+  resultCount Int? // 검색 결과 개수 (0이면 "없는 상품 수요" 신호!), 검색했는데 결과가 0인 키워드는 "손님이 찾는데 우리 가게에 없는 상품" 목록
   createdAt   DateTime @default(now())
 
   @@index([userId, createdAt])
@@ -116,30 +116,30 @@ model SearchLog {
 }
 
 model Product {
-  id               String   @id                      // prod-001 (URL/로그 호환)
-  sku              String?                           // null 50건, @unique 불가
-  categoryId       String   @map("category_id")
-  categoryName     String   @map("category_name")
+  id               String           @id // prod-001 (URL/로그 호환)
+  sku              String? // null 50건, @unique 불가
+  categoryId       String           @map("category_id")
+  categoryName     String           @map("category_name")
   name             String
   price            Int
-  discountedPrice  Int?     @map("discounted_price")
-  stock            Int      @default(0) @map("stock_quantity")
-  status           String   @default("SALE")         // SALE/OUTOFSTOCK/SUSPENSION
-  isVisible        Boolean  @default(true) @map("is_active")
-  description      String   @default("")             // AI 설명 생성용
-  detailHtml       String   @default("") @map("detail_html")
+  discountedPrice  Int?             @map("discounted_price")
+  stock            Int              @default(0) @map("stock_quantity")
+  status           String           @default("SALE") // SALE/OUTOFSTOCK/SUSPENSION
+  isVisible        Boolean          @default(true) @map("is_active")
+  description      String           @default("") // AI 설명 생성용
+  detailHtml       String           @default("") @map("detail_html")
   images           String[]
   brand            String
-  manufacturerName String   @default("") @map("manufacturer_name")
-  modelName        String   @default("") @map("model_name")
+  manufacturerName String           @default("") @map("manufacturer_name")
+  modelName        String           @default("") @map("model_name")
   tags             String[]
-  deliveryFee      Int      @default(0) @map("delivery_fee")
-  returnFee        Int      @default(0) @map("return_fee")
-  exchangeFee      Int      @default(0) @map("exchange_fee")
-  viewLogs ProductViewLog[]
-  cartItems  CartItem[]    // ← Phase 4 추가
-  orderItems OrderItem[]   // ← Phase 4 추가
-  sortOrder        Int      @map("sort_order")
+  deliveryFee      Int              @default(0) @map("delivery_fee")
+  returnFee        Int              @default(0) @map("return_fee")
+  exchangeFee      Int              @default(0) @map("exchange_fee")
+  viewLogs         ProductViewLog[]
+  cartItems        CartItem[] // ← Phase 4 추가
+  orderItems       OrderItem[] // ← Phase 4 추가
+  sortOrder        Int              @map("sort_order")
 
   // ── 콘텐츠/SEO 정형 필드 (Phase 7 32차 — 상품 자동생성) ──
   // 사실 tier (규칙추출→사람검증→잠금; AI write 금지)
@@ -153,47 +153,69 @@ model Product {
   contentMeta      Json?    @map("content_meta")
   contentStatus    String   @default("raw") @map("content_status")
 
+  // ── 상품 그룹 (Phase 7 35차 — ProductGroup additive 2026.07.30) ──
+  groupId      String?       @map("group_id")
+  variantLabel String?       @map("variant_label") // 색상/디자인 변별
+  groupRole    String?       @map("group_role") // PRIMARY | VARIANT
+  group        ProductGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+
   // ── 네이버 채널 필드 (향후 ProductChannel 분리 예정) ──
-  originProductNo  String   @map("origin_product_no")
-  channelProductNo String   @map("channel_product_no")
-  naverCategoryId  String   @map("naver_category_id")
+  originProductNo      String @map("origin_product_no")
+  channelProductNo     String @map("channel_product_no")
+  naverCategoryId      String @map("naver_category_id")
   naverWholeCategoryId String @map("naver_whole_category_id")
-  smartstoreUrl    String   @map("smartstore_url")
+  smartstoreUrl        String @map("smartstore_url")
 
-  registeredAt     DateTime @map("registered_at")    // 스토어 등록일 (JSON created_at)
+  registeredAt      DateTime @map("registered_at") // 스토어 등록일 (JSON created_at)
   channelModifiedAt DateTime @map("channel_modified_at") // JSON modified_at
-  createdAt        DateTime @default(now()) @map("created_at")  // DB 삽입 시각
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  createdAt         DateTime @default(now()) @map("created_at") // DB 삽입 시각
+  updatedAt         DateTime @updatedAt @map("updated_at")
 
+  @@index([groupId]) // 2026.07.30 추가
   @@map("product")
+}
+
+// ─── Phase 7 35차 ProductGroup 2026.07.30 추가 ───
+model ProductGroup {
+  id               String    @id @default(cuid())
+  groupKey         String    @unique @map("group_key") // SKU 공통접두 (예: GP-FPF766HI)
+  title            String // 그룹 표시명 (baseName 시드 → 검수)
+  representativeId String?   @map("representative_id") // 대표 상품 id (plain pointer, FK 아님)
+  category         String? // leaf 카테고리 (조회 편의)
+  contentStatus    String    @default("raw") @map("content_status") // Layer3b 워크플로 재사용
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  products         Product[]
+
+  @@map("product_group")
 }
 
 // ─── Phase 4: 장바구니 / 주문 / 결제 ───
 
 enum OrderStatus {
-  PENDING     // 주문 생성 (결제 전)
-  PAID        // 결제 승인 완료
-  PREPARING   // 상품 준비 중
-  SHIPPING    // 배송 중
-  DONE        // 배송 완료
-  FAILED      // 결제 실패
-  CANCELED    // 취소
+  PENDING // 주문 생성 (결제 전)
+  PAID // 결제 승인 완료
+  PREPARING // 상품 준비 중
+  SHIPPING // 배송 중
+  DONE // 배송 완료
+  FAILED // 결제 실패
+  CANCELED // 취소
 }
 
 // 배송지 주소록 (Phase 7)
 // - 필드명은 Order의 배송지 스냅샷과 100% 동일 — 체크아웃 pre-fill 시 매핑 없이 복사
 // - ★ Order에 addressId FK를 추가하지 말 것: 주문은 스냅샷 보존이 원칙
 model Address {
-  id             String   @id @default(cuid())            // 개인정보 보유 → 순번 추측 방지(cuid)
+  id             String   @id @default(cuid()) // 개인정보 보유 → 순번 추측 방지(cuid)
   userId         String   @map("user_id")
-  label          String?                                   // 별칭: "집", "회사" 등 (선택)
+  label          String? // 별칭: "집", "회사" 등 (선택)
   recipientName  String   @map("recipient_name")
   recipientPhone String   @map("recipient_phone")
   zipCode        String   @map("zip_code")
-  address1       String                                    // 기본주소 (카카오 우편번호 API)
-  address2       String?                                   // 상세주소 (동/호수)
+  address1       String // 기본주소 (카카오 우편번호 API)
+  address2       String? // 상세주소 (동/호수)
   deliveryMemo   String?  @map("delivery_memo")
-  isDefault      Boolean  @default(false) @map("is_default")  // 유일성은 앱 트랜잭션 보장(FOR UPDATE)
+  isDefault      Boolean  @default(false) @map("is_default") // 유일성은 앱 트랜잭션 보장(FOR UPDATE)
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
@@ -206,7 +228,7 @@ model Address {
 model CartItem {
   id        Int      @id @default(autoincrement())
   userId    String   @map("user_id")
-  productId String   @map("product_id")           // Product.id = "prod-001" 형식
+  productId String   @map("product_id") // Product.id = "prod-001" 형식
   quantity  Int      @default(1)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -214,53 +236,53 @@ model CartItem {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, productId])   // 같은 상품은 한 행, 수량만 증가
+  @@unique([userId, productId]) // 같은 상품은 한 행, 수량만 증가
   @@map("cart_item")
 }
 
 model Order {
-  id             String      @id @default(cuid())  // 토스 orderId로 그대로 사용 (6~64자 규격 충족)
-  orderNumber    String?     @unique @map("order_number")  // 사람이 읽는 주문번호 MYSADO-YYMMDD-NNNN (backfill 전 null 허용)
-  userId         String      @map("user_id")       // NOT NULL — 탈퇴는 Soft Delete로만 (Restrict가 하드삭제 차단)
-  status         OrderStatus @default(PENDING)
-  totalAmount    Int         @map("total_amount")  // 원 단위 정수, confirm 시 amount 재검증 기준
+  id          String      @id @default(cuid()) // 토스 orderId로 그대로 사용 (6~64자 규격 충족)
+  orderNumber String?     @unique @map("order_number") // 사람이 읽는 주문번호 MYSADO-YYMMDD-NNNN (backfill 전 null 허용)
+  userId      String      @map("user_id") // NOT NULL — 탈퇴는 Soft Delete로만 (Restrict가 하드삭제 차단)
+  status      OrderStatus @default(PENDING)
+  totalAmount Int         @map("total_amount") // 원 단위 정수, confirm 시 amount 재검증 기준
 
   // 주문자 스냅샷 (주문 시점 고정) — 탈퇴 마스킹 후에도 거래기록이 자기완결되도록 (29차)
-  ordererName    String?     @map("orderer_name")
-  ordererEmail   String?     @map("orderer_email")
-  ordererPhone   String?     @map("orderer_phone")
+  ordererName  String? @map("orderer_name")
+  ordererEmail String? @map("orderer_email")
+  ordererPhone String? @map("orderer_phone")
 
   // 배송지 스냅샷 (주문 시점 고정)
-  recipientName  String      @map("recipient_name")
-  recipientPhone String      @map("recipient_phone")
-  zipCode        String      @map("zip_code")
+  recipientName  String  @map("recipient_name")
+  recipientPhone String  @map("recipient_phone")
+  zipCode        String  @map("zip_code")
   address1       String
   address2       String?
-  deliveryMemo   String?     @map("delivery_memo")
+  deliveryMemo   String? @map("delivery_memo")
 
   // 토스 결제 결과
-  paymentKey     String?     @unique @map("payment_key")   // DB 레벨 중복 승인 차단
-  paidAt         DateTime?   @map("paid_at")
+  paymentKey String?   @unique @map("payment_key") // DB 레벨 중복 승인 차단
+  paidAt     DateTime? @map("paid_at")
 
-  createdAt      DateTime    @default(now()) @map("created_at")
-  updatedAt      DateTime    @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   user        User         @relation(fields: [userId], references: [id], onDelete: Restrict)
   items       OrderItem[]
   paymentLogs PaymentLog[]
 
-  @@index([userId, createdAt])   // 마이페이지 "내 주문 최신순" 대비
-  @@map("orders")                // 단수 order는 SQL 예약어 → 복수형 예외
+  @@index([userId, createdAt]) // 마이페이지 "내 주문 최신순" 대비
+  @@map("orders") // 단수 order는 SQL 예약어 → 복수형 예외
 }
 
 model OrderItem {
-  id          Int     @id @default(autoincrement())
-  orderId     String  @map("order_id")
-  productId   String? @map("product_id")
+  id        Int     @id @default(autoincrement())
+  orderId   String  @map("order_id")
+  productId String? @map("product_id")
 
   // ★ 주문 시점 스냅샷 (상품 삭제/가격 변경과 무관하게 보존)
-  productName String  @map("product_name")
-  unitPrice   Int     @map("unit_price")    // 실결제 단가 (discountedPrice ?? price)
+  productName String @map("product_name")
+  unitPrice   Int    @map("unit_price") // 실결제 단가 (discountedPrice ?? price)
   quantity    Int
 
   order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
@@ -274,9 +296,9 @@ model OrderItem {
 model PaymentLog {
   id         Int      @id @default(autoincrement())
   orderId    String   @map("order_id")
-  type       String                              // 코드 레벨 as const 상수 + UNKNOWN 파서로 관리
+  type       String // 코드 레벨 as const 상수 + UNKNOWN 파서로 관리
   paymentKey String?  @map("payment_key")
-  payload    Json                                // 토스 요청/응답 원문 그대로
+  payload    Json // 토스 요청/응답 원문 그대로
   createdAt  DateTime @default(now()) @map("created_at")
 
   order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
@@ -287,10 +309,10 @@ model PaymentLog {
 
 model AdminAuditLog {
   id         String   @id @default(cuid())
-  adminId    String   @map("admin_id")     // FK 없음 — 계정 삭제와 무관하게 기록 보존
-  adminEmail String   @map("admin_email")  // 시점 스냅샷
-  action     String                        // 예: "ORDER_STATUS_CHANGE"
-  targetType String   @map("target_type")  // 예: "Order"
+  adminId    String   @map("admin_id") // FK 없음 — 계정 삭제와 무관하게 기록 보존
+  adminEmail String   @map("admin_email") // 시점 스냅샷
+  action     String // 예: "ORDER_STATUS_CHANGE"
+  targetType String   @map("target_type") // 예: "Order"
   targetId   String   @map("target_id")
   fromValue  String?  @map("from_value")
   toValue    String?  @map("to_value")
