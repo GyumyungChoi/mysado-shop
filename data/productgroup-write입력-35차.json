@@ -1,0 +1,739 @@
+{
+ "generatedAt": "2026-07-30",
+ "note": "중복SKU 오탐 2그룹(EF-RS942CBEG/EF-QS942CTEG) 제외. 4상품(prod-050/051/083/107)은 단독.",
+ "excludedGroups": [
+  "EF-QS942CTEG",
+  "EF-RS942CBEG"
+ ],
+ "stats": {
+  "groups": 18,
+  "groupedProducts": 90,
+  "singletons": 109,
+  "total": 199
+ },
+ "groups": [
+  {
+   "groupKey": "GP-FPF766HI",
+   "title": "삼성 갤럭시 Z플립7",
+   "representativeId": "prod-007",
+   "category": "갤럭시 케이스",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-007",
+     "role": "PRIMARY",
+     "variantLabel": "플립수트 카드 with 케이스 카카오프렌즈 춘식 옐로우, 갤럭시Z 플립7"
+    },
+    {
+     "id": "prod-008",
+     "role": "VARIANT",
+     "variantLabel": "플립수트 카드 with 케이스 카카오프렌즈 치얼업 블루, 갤럭시Z 플립7"
+    },
+    {
+     "id": "prod-009",
+     "role": "VARIANT",
+     "variantLabel": "플립수트 카드 with 케이스 조구만 레인 그린/핑크, 갤럭시Z 플립7"
+    },
+    {
+     "id": "prod-010",
+     "role": "VARIANT",
+     "variantLabel": "플립수트 카드 with 케이스 조구만 브라키오 우디 네이비, 갤럭시Z 플"
+    },
+    {
+     "id": "prod-011",
+     "role": "VARIANT",
+     "variantLabel": "플립수트 카드 with 케이스 캐치 티니핑 로열핑/뱅 핑크, 갤럭시Z 플"
+    },
+    {
+     "id": "prod-012",
+     "role": "VARIANT",
+     "variantLabel": "플립수트 카드 with 케이스 캐치 티니핑 로열핑 핑크, 갤럭시Z 플립7"
+    },
+    {
+     "id": "prod-127",
+     "role": "VARIANT",
+     "variantLabel": "버라이어티 마그넷 케이스 니니즈 조르디와 친구들 투명, 갤럭시Z 플립7"
+    },
+    {
+     "id": "prod-128",
+     "role": "VARIANT",
+     "variantLabel": "버라이어티 마그넷 케이스 카카오프렌즈 춘식버스 옐로우, 갤럭시Z 플립7"
+    },
+    {
+     "id": "prod-129",
+     "role": "VARIANT",
+     "variantLabel": "버라이어티 마그넷 케이스 조구만 브라키오 앤 우디 그린, 갤럭시Z 플립7"
+    },
+    {
+     "id": "prod-130",
+     "role": "VARIANT",
+     "variantLabel": "버라이어티 마그넷 케이스 니니즈 조르디 민트, 갤럭시Z 플립7"
+    },
+    {
+     "id": "prod-131",
+     "role": "VARIANT",
+     "variantLabel": "버라이어티 마그넷 케이스 캐치 티니핑 하츄핑 핑크, 갤럭시Z 플립7"
+    },
+    {
+     "id": "prod-132",
+     "role": "VARIANT",
+     "variantLabel": "버라이어티 마그넷 케이스 에스더버니 띵킹오브유 핑크, 갤럭시Z 플립7"
+    },
+    {
+     "id": "prod-133",
+     "role": "VARIANT",
+     "variantLabel": "버라이어티 마그넷 케이스 카카오프렌즈 춘식 옐로우, 갤럭시Z 플립7"
+    },
+    {
+     "id": "prod-134",
+     "role": "VARIANT",
+     "variantLabel": "버라이어티 마그넷 케이스 캐치 티니핑 프렌즈 핑크, 갤럭시Z 플립7"
+    },
+    {
+     "id": "prod-135",
+     "role": "VARIANT",
+     "variantLabel": "버라이어티 마그넷 케이스 조구만 브라키오 그린, 갤럭시Z 플립7"
+    },
+    {
+     "id": "prod-136",
+     "role": "VARIANT",
+     "variantLabel": "버라이어티 마그넷 케이스 에스더버니 버니월드 핑크, 갤럭시Z 플립7"
+    }
+   ]
+  },
+  {
+   "groupKey": "EF-ES948C",
+   "title": "삼성 정품 갤럭시 실리콘 마그넷 케이스",
+   "representativeId": "prod-084",
+   "category": "갤럭시 케이스",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-084",
+     "role": "PRIMARY",
+     "variantLabel": "화이트, 갤럭시S26 울트라"
+    },
+    {
+     "id": "prod-085",
+     "role": "VARIANT",
+     "variantLabel": "블루 바이올렛, 갤럭시S26 울트라"
+    },
+    {
+     "id": "prod-086",
+     "role": "VARIANT",
+     "variantLabel": "코랄 레드, 갤럭시S26 울트라"
+    },
+    {
+     "id": "prod-087",
+     "role": "VARIANT",
+     "variantLabel": "라이트 블루, 갤럭시S26 울트라"
+    },
+    {
+     "id": "prod-088",
+     "role": "VARIANT",
+     "variantLabel": "그레이, 갤럭시S26 울트라"
+    },
+    {
+     "id": "prod-089",
+     "role": "VARIANT",
+     "variantLabel": "블랙, 갤럭시S26 울트라"
+    }
+   ]
+  },
+  {
+   "groupKey": "EF-ES947C",
+   "title": "삼성 정품 갤럭시 실리콘 마그넷 케이스",
+   "representativeId": "prod-090",
+   "category": "갤럭시 케이스",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-090",
+     "role": "PRIMARY",
+     "variantLabel": "화이트, 갤럭시S26 플러스"
+    },
+    {
+     "id": "prod-091",
+     "role": "VARIANT",
+     "variantLabel": "블루 바이올렛, 갤럭시S26 플러스"
+    },
+    {
+     "id": "prod-092",
+     "role": "VARIANT",
+     "variantLabel": "코랄 레드, 갤럭시S26 플러스"
+    },
+    {
+     "id": "prod-093",
+     "role": "VARIANT",
+     "variantLabel": "라이트 블루, 갤럭시S26 플러스"
+    },
+    {
+     "id": "prod-094",
+     "role": "VARIANT",
+     "variantLabel": "그레이, 갤럭시S26 플러스"
+    },
+    {
+     "id": "prod-095",
+     "role": "VARIANT",
+     "variantLabel": "블랙, 갤럭시S26 플러스"
+    }
+   ]
+  },
+  {
+   "groupKey": "EF-ES942C",
+   "title": "삼성 정품 갤럭시 실리콘 마그넷 케이스",
+   "representativeId": "prod-096",
+   "category": "갤럭시 케이스",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-096",
+     "role": "PRIMARY",
+     "variantLabel": "화이트, 갤럭시S26"
+    },
+    {
+     "id": "prod-097",
+     "role": "VARIANT",
+     "variantLabel": "블루 바이올렛, 갤럭시S26"
+    },
+    {
+     "id": "prod-098",
+     "role": "VARIANT",
+     "variantLabel": "코랄 레드, 갤럭시S26"
+    },
+    {
+     "id": "prod-099",
+     "role": "VARIANT",
+     "variantLabel": "라이트 블루, 갤럭시S26"
+    },
+    {
+     "id": "prod-100",
+     "role": "VARIANT",
+     "variantLabel": "그레이, 갤럭시S26"
+    },
+    {
+     "id": "prod-101",
+     "role": "VARIANT",
+     "variantLabel": "블랙, 갤럭시S26"
+    }
+   ]
+  },
+  {
+   "groupKey": "GP-FPF741HI",
+   "title": "정품 갤럭시 Z플립6",
+   "representativeId": "prod-192",
+   "category": "갤럭시 케이스",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-192",
+     "role": "PRIMARY",
+     "variantLabel": "아티스트 모니카 포스버그 케이스"
+    },
+    {
+     "id": "prod-193",
+     "role": "VARIANT",
+     "variantLabel": "아티스트 일리아 밀스타인 케이스"
+    },
+    {
+     "id": "prod-194",
+     "role": "VARIANT",
+     "variantLabel": "아티스트 플라베어 케이스"
+    },
+    {
+     "id": "prod-195",
+     "role": "VARIANT",
+     "variantLabel": "아티스트 하와이안샐러드 케이스"
+    },
+    {
+     "id": "prod-197",
+     "role": "VARIANT",
+     "variantLabel": "플레이모빌 케이스"
+    },
+    {
+     "id": "prod-198",
+     "role": "VARIANT",
+     "variantLabel": "픽사 인사이드 아웃2 케이스"
+    }
+   ]
+  },
+  {
+   "groupKey": "EF-PS731C",
+   "title": "삼성 정품 갤럭시 S25 FE 실리콘 케이스",
+   "representativeId": "prod-017",
+   "category": "갤럭시 케이스",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-017",
+     "role": "PRIMARY",
+     "variantLabel": "화이트, 갤럭시S25 FE"
+    },
+    {
+     "id": "prod-018",
+     "role": "VARIANT",
+     "variantLabel": "다크 블루, 갤럭시S25 FE"
+    },
+    {
+     "id": "prod-019",
+     "role": "VARIANT",
+     "variantLabel": "민트, 갤럭시S25 FE"
+    },
+    {
+     "id": "prod-020",
+     "role": "VARIANT",
+     "variantLabel": "라이트 블루, 갤럭시S25 FE"
+    },
+    {
+     "id": "prod-021",
+     "role": "VARIANT",
+     "variantLabel": "블랙, 갤럭시S25 FE"
+    }
+   ]
+  },
+  {
+   "groupKey": "GP-FPR640AM",
+   "title": "삼성 정품 갤럭시 버즈4｜버즈4 프로 케이스 (",
+   "representativeId": "prod-052",
+   "category": "케이스/파우치",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-052",
+     "role": "PRIMARY",
+     "variantLabel": "호랑이 전통 문양)"
+    },
+    {
+     "id": "prod-053",
+     "role": "VARIANT",
+     "variantLabel": "꽃 전통 문양)"
+    },
+    {
+     "id": "prod-054",
+     "role": "VARIANT",
+     "variantLabel": "레트로 픽셀 레벨업)"
+    },
+    {
+     "id": "prod-055",
+     "role": "VARIANT",
+     "variantLabel": "레트로 픽셀 메뉴)"
+    },
+    {
+     "id": "prod-056",
+     "role": "VARIANT",
+     "variantLabel": "레트로 픽셀 숲)"
+    }
+   ]
+  },
+  {
+   "groupKey": "GP-FPS948KDF",
+   "title": "삼성 갤럭시 S26 범퍼 마그넷 케이스",
+   "representativeId": "prod-026",
+   "category": "갤럭시 케이스",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-026",
+     "role": "PRIMARY",
+     "variantLabel": "블랙, 갤럭시S26 울트라"
+    },
+    {
+     "id": "prod-027",
+     "role": "VARIANT",
+     "variantLabel": "바이올렛, 갤럭시S26 울트라"
+    },
+    {
+     "id": "prod-028",
+     "role": "VARIANT",
+     "variantLabel": "라이트블루, 갤럭시S26 울트라"
+    },
+    {
+     "id": "prod-029",
+     "role": "VARIANT",
+     "variantLabel": "화이트, 갤럭시S26 울트라"
+    }
+   ]
+  },
+  {
+   "groupKey": "GP-FPS947KDF",
+   "title": "삼성 갤럭시 S26 범퍼 마그넷 케이스",
+   "representativeId": "prod-030",
+   "category": "갤럭시 케이스",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-030",
+     "role": "PRIMARY",
+     "variantLabel": "블랙, 갤럭시S26 플러스"
+    },
+    {
+     "id": "prod-031",
+     "role": "VARIANT",
+     "variantLabel": "바이올렛, 갤럭시S26 플러스"
+    },
+    {
+     "id": "prod-032",
+     "role": "VARIANT",
+     "variantLabel": "라이트블루, 갤럭시S26 플러스"
+    },
+    {
+     "id": "prod-033",
+     "role": "VARIANT",
+     "variantLabel": "화이트, 갤럭시S26 플러스"
+    }
+   ]
+  },
+  {
+   "groupKey": "GP-FPS942KDF",
+   "title": "삼성 갤럭시 S26 범퍼 마그넷 케이스",
+   "representativeId": "prod-034",
+   "category": "갤럭시 케이스",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-034",
+     "role": "PRIMARY",
+     "variantLabel": "블랙, 갤럭시S26"
+    },
+    {
+     "id": "prod-035",
+     "role": "VARIANT",
+     "variantLabel": "바이올렛, 갤럭시S26"
+    },
+    {
+     "id": "prod-036",
+     "role": "VARIANT",
+     "variantLabel": "라이트블루, 갤럭시S26"
+    },
+    {
+     "id": "prod-037",
+     "role": "VARIANT",
+     "variantLabel": "화이트, 갤럭시S26"
+    }
+   ]
+  },
+  {
+   "groupKey": "EF-KS942S",
+   "title": "삼성 갤럭시 S26 카본 마그넷 케이스",
+   "representativeId": "prod-046",
+   "category": "갤럭시 케이스",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-046",
+     "role": "PRIMARY",
+     "variantLabel": "레드, 갤럭시S26"
+    },
+    {
+     "id": "prod-047",
+     "role": "VARIANT",
+     "variantLabel": "다크 그레이, 갤럭시S26"
+    },
+    {
+     "id": "prod-048",
+     "role": "VARIANT",
+     "variantLabel": "다크 블루, 갤럭시S26"
+    },
+    {
+     "id": "prod-049",
+     "role": "VARIANT",
+     "variantLabel": "블랙, 갤럭시S26"
+    }
+   ]
+  },
+  {
+   "groupKey": "EF-SS948C",
+   "title": "삼성 정품 갤럭시 슬림 마그넷 케이스",
+   "representativeId": "prod-069",
+   "category": "갤럭시 케이스",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-069",
+     "role": "PRIMARY",
+     "variantLabel": "라이트 바이올렛, 갤럭시S26 울트라"
+    },
+    {
+     "id": "prod-070",
+     "role": "VARIANT",
+     "variantLabel": "라이트 블루, 갤럭시S26 울트라"
+    },
+    {
+     "id": "prod-071",
+     "role": "VARIANT",
+     "variantLabel": "그레이, 갤럭시S26 울트라"
+    },
+    {
+     "id": "prod-072",
+     "role": "VARIANT",
+     "variantLabel": "블랙, 갤럭시S26 울트라"
+    }
+   ]
+  },
+  {
+   "groupKey": "EF-SS947C",
+   "title": "삼성 정품 갤럭시 슬림 마그넷 케이스",
+   "representativeId": "prod-073",
+   "category": "갤럭시 케이스",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-073",
+     "role": "PRIMARY",
+     "variantLabel": "라이트 바이올렛, 갤럭시S26 플러스"
+    },
+    {
+     "id": "prod-074",
+     "role": "VARIANT",
+     "variantLabel": "라이트 블루, 갤럭시S26 플러스"
+    },
+    {
+     "id": "prod-075",
+     "role": "VARIANT",
+     "variantLabel": "그레이, 갤럭시S26 플러스"
+    },
+    {
+     "id": "prod-076",
+     "role": "VARIANT",
+     "variantLabel": "블랙, 갤럭시S26 플러스"
+    }
+   ]
+  },
+  {
+   "groupKey": "EF-SS942C",
+   "title": "삼성 정품 갤럭시 슬림 마그넷 케이스",
+   "representativeId": "prod-077",
+   "category": "갤럭시 케이스",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-077",
+     "role": "PRIMARY",
+     "variantLabel": "라이트 바이올렛, 갤럭시S26"
+    },
+    {
+     "id": "prod-078",
+     "role": "VARIANT",
+     "variantLabel": "라이트 블루, 갤럭시S26"
+    },
+    {
+     "id": "prod-079",
+     "role": "VARIANT",
+     "variantLabel": "그레이, 갤럭시S26"
+    },
+    {
+     "id": "prod-080",
+     "role": "VARIANT",
+     "variantLabel": "블랙, 갤럭시S26"
+    }
+   ]
+  },
+  {
+   "groupKey": "GP-FPF966HI",
+   "title": "삼성 갤럭시 Z폴드7 버라이어티 마그넷 케이스",
+   "representativeId": "prod-121",
+   "category": "갤럭시 케이스",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-121",
+     "role": "PRIMARY",
+     "variantLabel": "마인드어데이 레드, 갤럭시Z 폴드7"
+    },
+    {
+     "id": "prod-122",
+     "role": "VARIANT",
+     "variantLabel": "조구만 브라키오 그린, 갤럭시Z 폴드7"
+    },
+    {
+     "id": "prod-123",
+     "role": "VARIANT",
+     "variantLabel": "플라베어 투명, 갤럭시Z 폴드7"
+    },
+    {
+     "id": "prod-124",
+     "role": "VARIANT",
+     "variantLabel": "조구만 테니스공 그린, 갤럭시Z 폴드7"
+    }
+   ]
+  },
+  {
+   "groupKey": "GP-FPL335HI",
+   "title": "삼성 갤럭시 워치 충전독 거치대 워치 8 7 6 5 호환",
+   "representativeId": "prod-001",
+   "category": "웨어러블 디바이스 액세서리",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-001",
+     "role": "PRIMARY",
+     "variantLabel": "리본 춘식 블랙"
+    },
+    {
+     "id": "prod-002",
+     "role": "VARIANT",
+     "variantLabel": "춘식 옐로우"
+    },
+    {
+     "id": "prod-003",
+     "role": "VARIANT",
+     "variantLabel": "에스더버니 핑크"
+    }
+   ]
+  },
+  {
+   "groupKey": "EF-VS731P",
+   "title": "삼성 정품 갤럭시 S25 FE 카인드수트 케이스",
+   "representativeId": "prod-014",
+   "category": "갤럭시 케이스",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-014",
+     "role": "PRIMARY",
+     "variantLabel": "다크 블루, 갤럭시S25 FE"
+    },
+    {
+     "id": "prod-015",
+     "role": "VARIANT",
+     "variantLabel": "블랙, 갤럭시S25 FE"
+    },
+    {
+     "id": "prod-016",
+     "role": "VARIANT",
+     "variantLabel": "브라운, 갤럭시S25 FE"
+    }
+   ]
+  },
+  {
+   "groupKey": "GP-TOX710SBA",
+   "title": "정품 갤럭시",
+   "representativeId": "prod-141",
+   "category": "케이스/파우치",
+   "contentStatus": "raw",
+   "members": [
+    {
+     "id": "prod-141",
+     "role": "PRIMARY",
+     "variantLabel": "탭 S9 탭S9FE 토일렛페이퍼 엔벨롭 커버 호환 갤럭시탭 S8, S7"
+    },
+    {
+     "id": "prod-142",
+     "role": "VARIANT",
+     "variantLabel": "탭S9 탭S9FE 세서미 스트리트 케이스 엔벨롭 전면 북커버 호환 갤럭시"
+    }
+   ]
+  }
+ ],
+ "ungroupedIds": [
+  "prod-004",
+  "prod-005",
+  "prod-006",
+  "prod-013",
+  "prod-022",
+  "prod-023",
+  "prod-024",
+  "prod-025",
+  "prod-038",
+  "prod-039",
+  "prod-040",
+  "prod-041",
+  "prod-042",
+  "prod-043",
+  "prod-044",
+  "prod-045",
+  "prod-050",
+  "prod-051",
+  "prod-057",
+  "prod-058",
+  "prod-059",
+  "prod-060",
+  "prod-061",
+  "prod-062",
+  "prod-063",
+  "prod-064",
+  "prod-065",
+  "prod-066",
+  "prod-067",
+  "prod-068",
+  "prod-081",
+  "prod-082",
+  "prod-083",
+  "prod-102",
+  "prod-103",
+  "prod-104",
+  "prod-105",
+  "prod-106",
+  "prod-107",
+  "prod-108",
+  "prod-109",
+  "prod-110",
+  "prod-111",
+  "prod-112",
+  "prod-113",
+  "prod-114",
+  "prod-115",
+  "prod-116",
+  "prod-117",
+  "prod-118",
+  "prod-119",
+  "prod-120",
+  "prod-125",
+  "prod-126",
+  "prod-137",
+  "prod-138",
+  "prod-139",
+  "prod-140",
+  "prod-143",
+  "prod-144",
+  "prod-145",
+  "prod-146",
+  "prod-147",
+  "prod-148",
+  "prod-149",
+  "prod-150",
+  "prod-151",
+  "prod-152",
+  "prod-153",
+  "prod-154",
+  "prod-155",
+  "prod-156",
+  "prod-157",
+  "prod-158",
+  "prod-159",
+  "prod-160",
+  "prod-161",
+  "prod-162",
+  "prod-163",
+  "prod-164",
+  "prod-165",
+  "prod-166",
+  "prod-167",
+  "prod-168",
+  "prod-169",
+  "prod-170",
+  "prod-171",
+  "prod-172",
+  "prod-173",
+  "prod-174",
+  "prod-175",
+  "prod-176",
+  "prod-177",
+  "prod-178",
+  "prod-179",
+  "prod-180",
+  "prod-181",
+  "prod-182",
+  "prod-183",
+  "prod-184",
+  "prod-185",
+  "prod-186",
+  "prod-187",
+  "prod-188",
+  "prod-189",
+  "prod-190",
+  "prod-191",
+  "prod-196",
+  "prod-199"
+ ]
+}
