@@ -1,0 +1,102 @@
+{
+  "generatedAt": "2026-07-30",
+  "session": "36차",
+  "note": "GP-FPF766HI 혼합 그룹 분할. 플립수트 카드 케이스(6)/버라이어티 마그넷 케이스(10). 35차 SKU 11자 프리픽스가 제품군 2종 병합한 결함 교정. additive: 신규 그룹 1 INSERT + VARIETY 10 재배정. FLIPSUIT는 기존 GP-FPF766HI 행 유지(title만 정제).",
+  "targetGroups": [
+    {
+      "op": "update-existing",
+      "groupKey": "GP-FPF766HI",
+      "title": "삼성 갤럭시 Z플립7 플립수트 카드 케이스",
+      "titleWas": "삼성 갤럭시 Z플립7",
+      "category": "갤럭시 케이스",
+      "representativeId": "prod-007",
+      "contentStatus": "raw",
+      "members": [
+        {
+          "id": "prod-007",
+          "role": "PRIMARY"
+        },
+        {
+          "id": "prod-008",
+          "role": "VARIANT"
+        },
+        {
+          "id": "prod-009",
+          "role": "VARIANT"
+        },
+        {
+          "id": "prod-010",
+          "role": "VARIANT"
+        },
+        {
+          "id": "prod-011",
+          "role": "VARIANT"
+        },
+        {
+          "id": "prod-012",
+          "role": "VARIANT"
+        }
+      ]
+    },
+    {
+      "op": "insert-new",
+      "groupKey": "GP-FPF766HI-VR",
+      "title": "삼성 갤럭시 Z플립7 버라이어티 마그넷 케이스",
+      "category": "갤럭시 케이스",
+      "representativeId": "prod-127",
+      "representativeRule": "최소 id 자동 배정(35차 원칙 ②). 이전 병합 그룹에서 prod-127 role=VARIANT → VARIETY에서 PRIMARY로 승격.",
+      "contentStatus": "raw",
+      "members": [
+        {
+          "id": "prod-127",
+          "role": "PRIMARY"
+        },
+        {
+          "id": "prod-128",
+          "role": "VARIANT"
+        },
+        {
+          "id": "prod-129",
+          "role": "VARIANT"
+        },
+        {
+          "id": "prod-130",
+          "role": "VARIANT"
+        },
+        {
+          "id": "prod-131",
+          "role": "VARIANT"
+        },
+        {
+          "id": "prod-132",
+          "role": "VARIANT"
+        },
+        {
+          "id": "prod-133",
+          "role": "VARIANT"
+        },
+        {
+          "id": "prod-134",
+          "role": "VARIANT"
+        },
+        {
+          "id": "prod-135",
+          "role": "VARIANT"
+        },
+        {
+          "id": "prod-136",
+          "role": "VARIANT"
+        }
+      ]
+    }
+  ],
+  "postConditions": {
+    "groupCount": "18 → 19",
+    "GP-FPF766HI_members": "16 → 6",
+    "GP-FPF766HI-VR_members": 10,
+    "groupedTotal_unchanged": 90,
+    "singleton_unchanged": 109,
+    "eachGroupExactlyOnePrimary": true,
+    "representativeEqualsPrimary": true
+  }
+}
