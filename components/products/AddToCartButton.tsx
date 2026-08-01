@@ -7,7 +7,7 @@ import { useCartCount } from "@/components/CartCountProvider";
 interface AddToCartButtonProps {
   productId: string;
   stock: number;
-  /** 판매중(SALE) + 노출중일 때만 true — 서버 컴포넌트에서 계산해 전달 */
+  /** 판매중(ON_SALE) + 노출중일 때만 true — 서버 컴포넌트에서 계산해 전달 */
   isPurchasable: boolean;
 }
 

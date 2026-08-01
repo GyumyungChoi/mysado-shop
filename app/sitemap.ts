@@ -9,7 +9,8 @@ export const revalidate = 3600;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // isVisible=true 인 상품만.
   // getProductById()가 !isVisible이면 null(→404)을 반환하므로, 이 기준을 벗어나면
-  // 사이트맵에 404 URL이 실리게 됨. 현재 DB: SALE/true=147, OUTOFSTOCK/false=51, SUSPENSION/false=1
+  // 사이트맵에 404 URL이 실리게 됨.
+  // 현재 DB(37차 M1): ON_SALE 146 / SOLD_OUT 43 (노출 189) / DISCONTINUED 10 (비노출)
   const products = await prisma.product.findMany({
     where: {
       isVisible: true,

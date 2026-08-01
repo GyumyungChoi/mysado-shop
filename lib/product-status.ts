@@ -4,8 +4,8 @@
  *  못합니다. 이 모듈의 상수·술어가 실질적인 enum 역할을 합니다.
  *  상태 비교는 반드시 이 술어를 경유하고, 리터럴 직접 비교를 금지합니다.
  *
- *  dual-read: 구값(SALE/OUTOFSTOCK)과 신값을 동시에 인정합니다.
- *  M1 backfill 완료 후 M2에서 LEGACY_* 및 관련 분기를 제거합니다.
+ *  37차 M1에서 구값(SALE/OUTOFSTOCK)은 DB에서 전량 소멸했고,
+ *  M2에서 dual-read를 해제했습니다. 신값만 인정합니다.
  */
 
 /** 신규 상태 (§4-2) */
@@ -26,29 +26,17 @@ export const PRODUCT_STATUS = {
 
 export type ProductStatus = (typeof PRODUCT_STATUS)[keyof typeof PRODUCT_STATUS];
 
-/** 구값 — M1 backfill 후 DB에서 소멸, M2에서 이 블록 제거 */
-export const LEGACY_PRODUCT_STATUS = {
-  SALE: "SALE",
-  OUTOFSTOCK: "OUTOFSTOCK",
-  /** 스키마 주석에만 존재, 실 데이터 0행 (37차 실측) */
-  SUSPENSION: "SUSPENSION",
-} as const;
-
 /** 재고 기반 자동 전이 대상 — 수동 잠금 상태와 구분 */
 const AUTO_TRANSITION: readonly string[] = [
   PRODUCT_STATUS.ON_SALE,
   PRODUCT_STATUS.SOLD_OUT,
 ];
 
-const ON_SALE_VALUES: readonly string[] = [
-  PRODUCT_STATUS.ON_SALE,
-  LEGACY_PRODUCT_STATUS.SALE, // dual-read
-];
+const ON_SALE_VALUES: readonly string[] = [PRODUCT_STATUS.ON_SALE];
 
 const VISIBLE_VALUES: readonly string[] = [
   PRODUCT_STATUS.ON_SALE,
   PRODUCT_STATUS.SOLD_OUT,
-  LEGACY_PRODUCT_STATUS.SALE, // dual-read (구 OUTOFSTOCK은 비노출 유지)
 ];
 
 /** 판매중 상태인가 — 재고는 보지 않습니다(호출부 책임) */

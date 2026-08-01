@@ -21,7 +21,7 @@ export interface CartItemView {
   quantity: number;
   lineTotal: number;     // unitPrice * quantity
   stock: number;
-  isAvailable: boolean;  // 노출중 + SALE + 재고>=수량 이어야 true
+  isAvailable: boolean;  // 노출중 + ON_SALE + 재고>=수량 이어야 true
 }
 
 /** 장바구니 전체 응답 (합계는 서버에서 계산) */
