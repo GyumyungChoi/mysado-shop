@@ -1,7 +1,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { ApiError } from "@/lib/api-helpers";
-import { isOnSaleStatus } from "@/lib/product-status";
+import { getUnavailableLabel, isOnSaleStatus } from "@/lib/product-status";
 
 /** 장바구니 조작 실패 시 던지는 에러 (Route Handler가 status를 그대로 응답코드로 사용) */
 export class CartError extends ApiError {
@@ -22,6 +22,8 @@ export interface CartItemView {
   lineTotal: number;     // unitPrice * quantity
   stock: number;
   isAvailable: boolean;  // 노출중 + ON_SALE + 재고>=수량 이어야 true
+  /** 구매 불가 사유 문구. 구매 가능하면 null */
+  unavailableLabel: string | null;
 }
 
 /** 장바구니 전체 응답 (합계는 서버에서 계산) */
@@ -49,6 +51,7 @@ export async function getCart(userId: string): Promise<CartView> {
 
   const items: CartItemView[] = rows.map((row) => {
     const unitPrice = row.product.discountedPrice ?? row.product.price;
+    const available = isPurchasable(row.product, row.quantity);
     return {
       id: row.id,
       productId: row.productId,
@@ -58,7 +61,10 @@ export async function getCart(userId: string): Promise<CartView> {
       quantity: row.quantity,
       lineTotal: unitPrice * row.quantity,
       stock: row.product.stock,
-      isAvailable: isPurchasable(row.product, row.quantity),
+      isAvailable: available,
+      unavailableLabel: available
+        ? null
+        : getUnavailableLabel(row.product.status, row.product.stock, row.quantity),
     };
   });
 

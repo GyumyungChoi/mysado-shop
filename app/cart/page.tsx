@@ -19,6 +19,7 @@ interface CartItemView {
   lineTotal: number;
   stock: number;
   isAvailable: boolean;
+  unavailableLabel: string | null;
 }
 
 interface CartView {
@@ -184,9 +185,9 @@ export default function CartPage() {
                         </button>
                       </div>
 
-                      {!item.isAvailable && (
+                      {!item.isAvailable && item.unavailableLabel && (
                         <p className="mt-1 text-xs font-medium text-red-600">
-                          현재 구매할 수 없는 상품입니다 (합계 제외)
+                          {item.unavailableLabel} (합계 제외)
                         </p>
                       )}
 
