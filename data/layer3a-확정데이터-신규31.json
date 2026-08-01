@@ -1,0 +1,272 @@
+[
+  {
+    "id": "prod-200",
+    "name": "삼성 정품 갤럭시 클리어 마그넷 케이스 투명, 갤럭시Z 플립8",
+    "compatibleModels": [
+      "갤럭시 Z 플립8"
+    ],
+    "modelSource": "sku-decode"
+  },
+  {
+    "id": "prod-201",
+    "name": "삼성 정품 갤럭시 클리어 마그넷 케이스 투명, 갤럭시Z 폴드8 와이드",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8"
+    ],
+    "modelSource": "sku-decode"
+  },
+  {
+    "id": "prod-202",
+    "name": "삼성 정품 갤럭시 클리어 마그넷 케이스 투명, 갤럭시Z 폴드8 울트라",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8 울트라"
+    ],
+    "modelSource": "sku-decode"
+  },
+  {
+    "id": "prod-203",
+    "name": "삼성 정품 갤럭시 실리콘 링 마그넷 케이스 그라파이트, 갤럭시Z 플립8",
+    "compatibleModels": [
+      "갤럭시 Z 플립8"
+    ],
+    "modelSource": "sku-decode",
+    "color": "그라파이트"
+  },
+  {
+    "id": "prod-204",
+    "name": "삼성 정품 갤럭시 실리콘 링 마그넷 케이스 민트, 갤럭시Z 플립8",
+    "compatibleModels": [
+      "갤럭시 Z 플립8"
+    ],
+    "modelSource": "sku-decode",
+    "color": "민트"
+  },
+  {
+    "id": "prod-205",
+    "name": "삼성 정품 갤럭시 실리콘 링 마그넷 케이스 핑크, 갤럭시Z 플립8",
+    "compatibleModels": [
+      "갤럭시 Z 플립8"
+    ],
+    "modelSource": "sku-decode",
+    "color": "핑크"
+  },
+  {
+    "id": "prod-206",
+    "name": "삼성 정품 갤럭시 실리콘 링 마그넷 케이스 크림, 갤럭시Z 플립8",
+    "compatibleModels": [
+      "갤럭시 Z 플립8"
+    ],
+    "modelSource": "sku-decode",
+    "color": "크림"
+  },
+  {
+    "id": "prod-207",
+    "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 그라파이트, 갤럭시Z 폴드8",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8"
+    ],
+    "modelSource": "sku-decode",
+    "color": "그라파이트"
+  },
+  {
+    "id": "prod-208",
+    "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 피스타치오, 갤럭시Z 폴드8",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8"
+    ],
+    "modelSource": "sku-decode",
+    "color": "피스타치오"
+  },
+  {
+    "id": "prod-209",
+    "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 라벤더, 갤럭시Z 폴드8",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8"
+    ],
+    "modelSource": "sku-decode",
+    "color": "라벤더"
+  },
+  {
+    "id": "prod-210",
+    "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 크림, 갤럭시Z 폴드8",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8"
+    ],
+    "modelSource": "sku-decode",
+    "color": "크림"
+  },
+  {
+    "id": "prod-211",
+    "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 그라파이트, 갤럭시Z 폴드8 울트라",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8 울트라"
+    ],
+    "modelSource": "sku-decode",
+    "color": "그라파이트"
+  },
+  {
+    "id": "prod-212",
+    "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 그린 쉐도우, 갤럭시Z 폴드8 울트라",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8 울트라"
+    ],
+    "modelSource": "sku-decode",
+    "color": "그린 쉐도우"
+  },
+  {
+    "id": "prod-213",
+    "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 바이올렛 쉐도우, 갤럭시Z 폴드8 울트라",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8 울트라"
+    ],
+    "modelSource": "sku-decode",
+    "color": "바이올렛 쉐도우"
+  },
+  {
+    "id": "prod-214",
+    "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 크림, 갤럭시Z 폴드8 울트라",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8 울트라"
+    ],
+    "modelSource": "sku-decode",
+    "color": "크림"
+  },
+  {
+    "id": "prod-215",
+    "name": "삼성 정품 갤럭시 플립수트 케이스 블랙, 갤럭시Z 플립8",
+    "compatibleModels": [
+      "갤럭시 Z 플립8"
+    ],
+    "modelSource": "sku-decode",
+    "color": "블랙"
+  },
+  {
+    "id": "prod-216",
+    "name": "삼성 정품 갤럭시 플립수트 케이스 실버, 갤럭시Z 플립8",
+    "compatibleModels": [
+      "갤럭시 Z 플립8"
+    ],
+    "modelSource": "sku-decode",
+    "color": "실버"
+  },
+  {
+    "id": "prod-217",
+    "name": "삼성 정품 갤럭시 카본 마그넷 케이스 블랙, 갤럭시Z 폴드8 와이드",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8"
+    ],
+    "modelSource": "sku-decode",
+    "color": "블랙"
+  },
+  {
+    "id": "prod-218",
+    "name": "삼성 정품 갤럭시 카본 마그넷 케이스 블루, 갤럭시Z 폴드8 와이드",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8"
+    ],
+    "modelSource": "sku-decode",
+    "color": "블루"
+  },
+  {
+    "id": "prod-219",
+    "name": "삼성 정품 갤럭시 카본 마그넷 케이스 바이올렛, 갤럭시Z 폴드8 와이드",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8"
+    ],
+    "modelSource": "sku-decode",
+    "color": "바이올렛"
+  },
+  {
+    "id": "prod-220",
+    "name": "삼성 정품 갤럭시 카본 마그넷 케이스 블랙, 갤럭시Z 폴드8 울트라",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8 울트라"
+    ],
+    "modelSource": "sku-decode",
+    "color": "블랙"
+  },
+  {
+    "id": "prod-221",
+    "name": "삼성 정품 갤럭시 카본 마그넷 케이스 블루, 갤럭시Z 폴드8 울트라",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8 울트라"
+    ],
+    "modelSource": "sku-decode",
+    "color": "블루"
+  },
+  {
+    "id": "prod-222",
+    "name": "삼성 정품 갤럭시 카본 마그넷 케이스 바이올렛, 갤럭시Z 폴드8 울트라",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8 울트라"
+    ],
+    "modelSource": "sku-decode",
+    "color": "바이올렛"
+  },
+  {
+    "id": "prod-223",
+    "name": "삼성 정품 갤럭시 클리어 케이스 투명, 갤럭시Z 플립8",
+    "compatibleModels": [
+      "갤럭시 Z 플립8"
+    ],
+    "modelSource": "sku-decode"
+  },
+  {
+    "id": "prod-224",
+    "name": "삼성 정품 갤럭시 클리어 케이스 투명, 갤럭시Z 폴드8 와이드",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8"
+    ],
+    "modelSource": "sku-decode"
+  },
+  {
+    "id": "prod-225",
+    "name": "삼성 정품 갤럭시 클리어 케이스 투명, 갤럭시Z 폴드8 울트라",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8 울트라"
+    ],
+    "modelSource": "sku-decode"
+  },
+  {
+    "id": "prod-226",
+    "name": "삼성 정품 갤럭시 액정 보호필름 AR 스크린 프로텍터 갤럭시Z 플립8, 2매입",
+    "compatibleModels": [
+      "갤럭시 Z 플립8"
+    ],
+    "modelSource": "sku-decode"
+  },
+  {
+    "id": "prod-227",
+    "name": "삼성 정품 갤럭시 액정 보호필름 AR 스크린 프로텍터 갤럭시Z 폴드8 와이드, 2매입",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8"
+    ],
+    "modelSource": "sku-decode"
+  },
+  {
+    "id": "prod-228",
+    "name": "삼성 정품 갤럭시 액정 보호필름 AR 스크린 프로텍터 갤럭시Z 폴드8 울트라, 2매입",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8 울트라"
+    ],
+    "modelSource": "sku-decode"
+  },
+  {
+    "id": "prod-229",
+    "name": "삼성 정품 갤럭시 카본 스탠딩 케이스 블랙, 갤럭시Z 폴드8 와이드",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8"
+    ],
+    "modelSource": "sku-decode",
+    "color": "블랙"
+  },
+  {
+    "id": "prod-230",
+    "name": "삼성 정품 갤럭시 카본 스탠딩 케이스 블랙, 갤럭시Z 폴드8 울트라",
+    "compatibleModels": [
+      "갤럭시 Z 폴드8 울트라"
+    ],
+    "modelSource": "sku-decode",
+    "color": "블랙"
+  }
+]

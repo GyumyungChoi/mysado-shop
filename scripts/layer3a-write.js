@@ -1,7 +1,7 @@
 /**
  * Layer 3a — 확정 호환모델·색상 DB 반영 스크립트 (34차)
  *
- * 입력 : data/layer3a-확정데이터-199.json (사람 검증 완료 확정값)
+ * 입력 : data/layer3a-확정데이터-199.json (기본값, --data 로 교체 가능. 사람 검증 완료 확정값)
  * 대상 : product.compatibleModels / specs.color / contentMeta / contentStatus
  * 기본 : DRY-RUN. --apply 없이는 어떤 write도 하지 않음
  *
@@ -37,7 +37,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const DATA_PATH = path.join(ROOT, 'data', 'layer3a-확정데이터-199.json');
+const DEFAULT_DATA_FILE = 'data/layer3a-확정데이터-199.json';
 
 const CHUNK_SIZE = 20;
 const VALID_SOURCES = ['human', 'sku-decode', 'name-rule', 'none'];
@@ -63,11 +63,12 @@ const USAGE = [
   '  --only <ids>     특정 id만 처리 (콤마 구분, 예: --only prod-050,prod-051)',
   '  --force          locked:true 인 필드도 덮어쓴다',
   '  --with-pending   _pendingAttachType / _pendingUnverified 도 specs에 반영',
+  `  --data <경로>    입력 JSON 경로 (기본: ${DEFAULT_DATA_FILE})`,
   '  --help           이 도움말',
 ].join('\n');
 
 function parseArgs(argv) {
-  const opts = { apply: false, force: false, withPending: false, only: null };
+  const opts = { apply: false, force: false, withPending: false, only: null, data: null };
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -87,6 +88,10 @@ function parseArgs(argv) {
       const ids = raw.split(',').map((s) => s.trim()).filter(Boolean);
       if (ids.length === 0) throw new FatalError('--only 값이 비어 있습니다.');
       opts.only = ids;
+    } else if (arg === '--data' || arg.startsWith('--data=')) {
+      const raw = arg === '--data' ? argv[(i += 1)] : arg.slice('--data='.length);
+      if (!raw) throw new FatalError('--data 뒤에 경로를 지정하세요.');
+      opts.data = raw;
     } else {
       throw new FatalError(`알 수 없는 인자: ${arg}\n\n${USAGE}`);
     }
@@ -136,23 +141,32 @@ function truncate(text, max) {
 // 데이터 로드·검증
 // ────────────────────────────────────────────────────────────
 
-function loadRecords() {
-  if (!fs.existsSync(DATA_PATH)) {
+/** 입력 경로를 ROOT 기준으로 해석한다. 저장소 밖 경로는 거부 — 감사 대상 입력을 repo 안에 묶는다. */
+function resolveDataPath(input) {
+  const resolved = path.resolve(ROOT, input);
+  if (!resolved.startsWith(ROOT + path.sep)) {
+    throw new FatalError(`저장소(ROOT) 밖 경로는 사용할 수 없습니다: ${input}`);
+  }
+  return resolved;
+}
+
+function loadRecords(dataPath) {
+  if (!fs.existsSync(dataPath)) {
     throw new FatalError(
-      `데이터 파일이 없습니다: ${DATA_PATH}\n` +
-        '33차 산출물인 확정 데이터 JSON을 위 경로에 놓은 뒤 다시 실행하세요.'
+      `데이터 파일이 없습니다: ${dataPath}\n` +
+        '확정 데이터 JSON을 위 경로에 놓은 뒤 다시 실행하세요.'
     );
   }
 
   let parsed;
   try {
-    parsed = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
+    parsed = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
   } catch (err) {
-    throw new FatalError(`데이터 파일 JSON 파싱 실패: ${DATA_PATH}\n${err.message}`);
+    throw new FatalError(`데이터 파일 JSON 파싱 실패: ${dataPath}\n${err.message}`);
   }
 
   if (!Array.isArray(parsed)) {
-    throw new FatalError(`데이터 파일 최상위가 배열이 아닙니다: ${DATA_PATH}`);
+    throw new FatalError(`데이터 파일 최상위가 배열이 아닙니다: ${dataPath}`);
   }
   if (parsed.length === 0) {
     throw new FatalError('데이터 파일이 비어 있습니다.');
@@ -487,7 +501,9 @@ async function main() {
   if (flags.length > 0) console.log(`옵션: ${flags.join(' / ')}`);
   console.log('');
 
-  const allRecords = loadRecords();
+  const dataPath = resolveDataPath(opts.data ?? DEFAULT_DATA_FILE);
+  console.log(`입력 파일: ${path.relative(ROOT, dataPath)}`);
+  const allRecords = loadRecords(dataPath);
   const records = applyOnlyFilter(allRecords, opts.only);
   console.log(`데이터 파일 로드: ${allRecords.length}건 (처리 대상 ${records.length}건)`);
 
