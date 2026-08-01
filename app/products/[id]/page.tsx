@@ -10,7 +10,7 @@ import Compatibility from "@/components/products/detail/Compatibility";
 import SpecTable from "@/components/products/detail/SpecTable";
 import Notice from "@/components/products/detail/Notice";
 import ShippingReturn from "@/components/products/detail/ShippingReturn";
-import { isOnSaleStatus } from "@/lib/product-status";
+import { getUnavailableLabel, isOnSaleStatus } from "@/lib/product-status";
 import categoriesData from "@/data/categories.json";
 // import productsData from "@/data/products.json";
 import type { Category } from "@/types/product";
@@ -90,6 +90,11 @@ export default async function ProductDetailPage({
   const priceValue = product.discounted_price ?? product.price;
   const inStock =
     isOnSaleStatus(product.status) && product.stock_quantity > 0;
+  // 구매 불가일 때 버튼 자리에 띄울 사유 문구 (구매 가능하면 렌더되지 않음)
+  const unavailableLabel = getUnavailableLabel(
+    product.status,
+    product.stock_quantity
+  );
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -216,6 +221,7 @@ export default async function ProductDetailPage({
                 productId={product.id}
                 stock={product.stock_quantity}
                 isPurchasable={inStock}
+                unavailableLabel={unavailableLabel}
               />
               <a
                 href={product.smartstore_url}

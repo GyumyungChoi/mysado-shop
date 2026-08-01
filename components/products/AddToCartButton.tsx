@@ -9,6 +9,8 @@ interface AddToCartButtonProps {
   stock: number;
   /** 판매중(ON_SALE) + 노출중일 때만 true — 서버 컴포넌트에서 계산해 전달 */
   isPurchasable: boolean;
+  /** 구매 불가일 때 표시할 사유 문구 — 서버 컴포넌트에서 계산해 전달 */
+  unavailableLabel: string;
 }
 
 /** 상품 상세의 수량 선택 + 장바구니 담기 버튼 (로그인 필요, 401이면 로그인 페이지로) */
@@ -16,6 +18,7 @@ export default function AddToCartButton({
   productId,
   stock,
   isPurchasable,
+  unavailableLabel,
 }: AddToCartButtonProps) {
   const router = useRouter();
   const { refreshCartCount } = useCartCount();
@@ -64,7 +67,7 @@ export default function AddToCartButton({
   if (!isPurchasable) {
     return (
       <div className="mt-8 flex w-full items-center justify-center rounded-lg bg-gray-200 px-6 py-4 text-base font-semibold text-gray-500">
-        현재 구매할 수 없는 상품입니다
+        {unavailableLabel}
       </div>
     );
   }

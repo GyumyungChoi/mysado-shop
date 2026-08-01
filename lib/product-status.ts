@@ -66,3 +66,26 @@ export function getStatusBadgeLabel(status: string, stock: number): string | nul
   if (isOnSaleStatus(status) && stock <= 0) return "품절";
   return null;
 }
+
+/** 단종 상태인가 */
+export function isDiscontinuedStatus(status: string): boolean {
+  return status === PRODUCT_STATUS.DISCONTINUED;
+}
+
+/** 구매 불가 사유 문구 — 구매 불가로 판정된 경우에만 호출합니다.
+ *  판정 순서가 곧 우선순위입니다(위에서 먼저 걸리는 것이 이깁니다).
+ *  quantity 기본값 1 — 상세(PDP)는 담긴 수량 개념이 없으므로 생략 호출합니다. */
+export function getUnavailableLabel(
+  status: string,
+  stock: number,
+  quantity = 1
+): string {
+  if (isSoldOutStatus(status)) return "품절입니다";
+  if (isDiscontinuedStatus(status)) return "단종 상품입니다";
+  if (isOnSaleStatus(status)) {
+    if (stock <= 0) return "품절입니다";
+    if (stock < quantity) return `재고가 부족합니다 (재고 ${stock}개)`;
+  }
+  // HIDDEN·SUSPENDED·DRAFT — 정상 경로로는 도달하지 않으나 안전망으로 유지
+  return "현재 구매할 수 없는 상품입니다";
+}
