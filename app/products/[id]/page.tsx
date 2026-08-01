@@ -10,6 +10,7 @@ import Compatibility from "@/components/products/detail/Compatibility";
 import SpecTable from "@/components/products/detail/SpecTable";
 import Notice from "@/components/products/detail/Notice";
 import ShippingReturn from "@/components/products/detail/ShippingReturn";
+import { isOnSaleStatus } from "@/lib/product-status";
 import categoriesData from "@/data/categories.json";
 // import productsData from "@/data/products.json";
 import type { Category } from "@/types/product";
@@ -88,7 +89,7 @@ export default async function ProductDetailPage({
   // 이 페이지는 is_active=false면 이미 notFound()이므로 여기 도달 = 노출 상품
   const priceValue = product.discounted_price ?? product.price;
   const inStock =
-    product.status === "SALE" && product.stock_quantity > 0;
+    isOnSaleStatus(product.status) && product.stock_quantity > 0;
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -214,7 +215,7 @@ export default async function ProductDetailPage({
               <AddToCartButton
                 productId={product.id}
                 stock={product.stock_quantity}
-                isPurchasable={product.status === "SALE" && product.stock_quantity > 0}
+                isPurchasable={inStock}
               />
               <a
                 href={product.smartstore_url}

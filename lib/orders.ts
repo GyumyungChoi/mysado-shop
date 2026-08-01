@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { ApiError } from "@/lib/api-helpers";
 import type { ShippingInfo } from "@/types/order";
+import { isOnSaleStatus } from "@/lib/product-status";
 
 /** 주문 생성 API가 돌려줄 최소 정보 */
 export interface CreateOrderResult {
@@ -63,7 +64,7 @@ export async function createOrder(
     const purchasable = cartItems.filter(
       (item) =>
         item.product.isVisible &&
-        item.product.status === "SALE" &&
+        isOnSaleStatus(item.product.status) &&
         item.product.stock >= item.quantity
     );
 

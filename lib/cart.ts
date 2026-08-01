@@ -1,6 +1,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { ApiError } from "@/lib/api-helpers";
+import { isOnSaleStatus } from "@/lib/product-status";
 
 /** 장바구니 조작 실패 시 던지는 에러 (Route Handler가 status를 그대로 응답코드로 사용) */
 export class CartError extends ApiError {
@@ -35,7 +36,7 @@ function isPurchasable(
   product: { isVisible: boolean; status: string; stock: number },
   quantity: number
 ): boolean {
-  return product.isVisible && product.status === "SALE" && product.stock >= quantity;
+  return product.isVisible && isOnSaleStatus(product.status) && product.stock >= quantity;
 }
 
 /** 내 장바구니 조회 — 가격/합계는 조회 시점 DB 값으로 서버에서 계산 */
@@ -85,7 +86,7 @@ export async function addToCart(
     if (!product || !product.isVisible) {
       throw new CartError("존재하지 않는 상품입니다.", 404);
     }
-    if (product.status !== "SALE") {
+    if (!isOnSaleStatus(product.status)) {
       throw new CartError("현재 판매 중인 상품이 아닙니다.", 400);
     }
 
