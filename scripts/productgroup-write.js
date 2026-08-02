@@ -1,7 +1,9 @@
 /**
  * ProductGroup write — 35차 확정 그룹 배정 반영 스크립트
  *
- * 입력 : data/productgroup-write입력-35차.json (35차 검토 확정 — 18그룹/90상품)
+ * 입력 : --data 로 매번 명시한다. 기본값을 두지 않는 이유 — 이 스크립트는 입력에 적힌
+ *        소속을 무조건 재주장하므로(필드 단위 locked 가드 없음), 낡은 파일이 기본값으로
+ *        남으면 인자 없는 --apply 한 번에 이후 분할·재배정이 조용히 되돌아간다.
  * 대상 : product_group 신규 INSERT + product.groupId/groupRole/variantLabel UPDATE
  * 기본 : DRY-RUN. --apply 없이는 어떤 write도 하지 않음
  *
@@ -30,7 +32,6 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const DATA_PATH = path.join(ROOT, 'data', 'productgroup-write입력-35차.json');
 
 /** 사용자 입력·데이터 오류용. 스택 없이 메시지만 출력하고 exit 1 한다. */
 class FatalError extends Error {}
@@ -40,16 +41,16 @@ class FatalError extends Error {}
 // ────────────────────────────────────────────────────────────
 
 const USAGE = [
-  '사용법: node scripts/productgroup-write.js [옵션]',
+  '사용법: node scripts/productgroup-write.js --data <경로> [옵션]',
   '',
-  '  (옵션 없음)      DRY-RUN — 계획만 출력하고 아무것도 쓰지 않는다',
-  '  --apply          실제 DB 반영',
+  '  --data <경로>    입력 JSON 경로 (필수 — 기본값 없음)',
+  '  --apply          실제 DB 반영 (없으면 DRY-RUN, 아무것도 쓰지 않는다)',
   '  --only <키>      특정 groupKey만 처리 (콤마 구분, 예: --only GP-FPF766HI)',
   '  --help           이 도움말',
 ].join('\n');
 
 function parseArgs(argv) {
-  const opts = { apply: false, only: null };
+  const opts = { apply: false, only: null, data: null };
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -65,6 +66,10 @@ function parseArgs(argv) {
       const keys = raw.split(',').map((s) => s.trim()).filter(Boolean);
       if (keys.length === 0) throw new FatalError('--only 값이 비어 있습니다.');
       opts.only = keys;
+    } else if (arg === '--data' || arg.startsWith('--data=')) {
+      const raw = arg === '--data' ? argv[(i += 1)] : arg.slice('--data='.length);
+      if (!raw) throw new FatalError('--data 뒤에 경로를 지정하세요.');
+      opts.data = raw;
     } else {
       throw new FatalError(`알 수 없는 인자: ${arg}\n\n${USAGE}`);
     }
@@ -90,19 +95,28 @@ function truncate(text, max) {
 // 데이터 로드·검증
 // ────────────────────────────────────────────────────────────
 
-function loadInput() {
-  if (!fs.existsSync(DATA_PATH)) {
+/** 입력 경로를 ROOT 기준으로 해석한다. 저장소 밖 경로는 거부 — 감사 대상 입력을 repo 안에 묶는다. */
+function resolveDataPath(input) {
+  const resolved = path.resolve(ROOT, input);
+  if (!resolved.startsWith(ROOT + path.sep)) {
+    throw new FatalError(`저장소(ROOT) 밖 경로는 사용할 수 없습니다: ${input}`);
+  }
+  return resolved;
+}
+
+function loadInput(dataPath) {
+  if (!fs.existsSync(dataPath)) {
     throw new FatalError(
-      `데이터 파일이 없습니다: ${DATA_PATH}\n` +
-        '35차 산출물인 확정 그룹 배정 JSON을 위 경로에 놓은 뒤 다시 실행하세요.'
+      `데이터 파일이 없습니다: ${dataPath}\n` +
+        '확정 그룹 배정 JSON을 위 경로에 놓은 뒤 다시 실행하세요.'
     );
   }
 
   let parsed;
   try {
-    parsed = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
+    parsed = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
   } catch (err) {
-    throw new FatalError(`데이터 파일 JSON 파싱 실패: ${DATA_PATH}\n${err.message}`);
+    throw new FatalError(`데이터 파일 JSON 파싱 실패: ${dataPath}\n${err.message}`);
   }
 
   validateInput(parsed);
@@ -407,7 +421,15 @@ async function main() {
   if (opts.only) console.log(`옵션: --only ${opts.only.join(',')}`);
   console.log('');
 
-  const parsed = loadInput();
+  if (!opts.data) {
+    throw new FatalError(
+      '--data 로 입력 JSON 경로를 지정하세요. 기본값은 제공하지 않습니다.\n' +
+        '(35차 파일은 36차 분할 이전 상태이므로 재실행 시 분할이 되돌아갑니다.)'
+    );
+  }
+  const dataPath = resolveDataPath(opts.data);
+  console.log(`입력 파일: ${path.relative(ROOT, dataPath)}`);
+  const parsed = loadInput(dataPath);
   const groups = applyOnlyFilter(parsed.groups, opts.only);
   console.log(`데이터 파일 로드: 그룹 ${parsed.groups.length}건 (처리 대상 ${groups.length}건)`);
 

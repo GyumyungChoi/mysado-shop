@@ -1,0 +1,188 @@
+{
+  "generatedAt": "2026-08-02",
+  "note": "39차 신규 폴더블8 31건 중 색상 변형 20건을 6그룹으로 배정. 단독 11건(클리어/클리어마그넷/AR필름/카본스탠딩)은 대상 아님. variantLabel은 형식A(색상, 기종) 준수, title은 기종 병기(신규 한정 개선). ungroupedIds는 이번 입력 범위(신규 31건) 내 미그룹 11건 — 35차의 109건과 달리 전체 단독 상품 목록이 아님(배타성 검사용).",
+  "excludedGroups": [],
+  "stats": {
+    "groups": 25,
+    "groupedProducts": 110,
+    "singletons": 120,
+    "total": 230
+  },
+  "batch": {
+    "newGroups": 6,
+    "newGroupedProducts": 20,
+    "dbBefore": {
+      "groups": 19,
+      "groupedProducts": 90
+    }
+  },
+  "ungroupedIds": [
+    "prod-200",
+    "prod-201",
+    "prod-202",
+    "prod-223",
+    "prod-224",
+    "prod-225",
+    "prod-226",
+    "prod-227",
+    "prod-228",
+    "prod-229",
+    "prod-230"
+  ],
+  "groups": [
+    {
+      "groupKey": "EF-EF776C",
+      "title": "삼성 정품 갤럭시 실리콘 링 마그넷 케이스 (갤럭시Z 플립8)",
+      "representativeId": "prod-203",
+      "category": "갤럭시 케이스",
+      "contentStatus": "raw",
+      "members": [
+        {
+          "id": "prod-203",
+          "role": "PRIMARY",
+          "variantLabel": "그라파이트, 갤럭시Z 플립8"
+        },
+        {
+          "id": "prod-204",
+          "role": "VARIANT",
+          "variantLabel": "민트, 갤럭시Z 플립8"
+        },
+        {
+          "id": "prod-205",
+          "role": "VARIANT",
+          "variantLabel": "핑크, 갤럭시Z 플립8"
+        },
+        {
+          "id": "prod-206",
+          "role": "VARIANT",
+          "variantLabel": "크림, 갤럭시Z 플립8"
+        }
+      ]
+    },
+    {
+      "groupKey": "EF-EF971C",
+      "title": "삼성 정품 갤럭시 실리콘 마그넷 케이스 (갤럭시Z 폴드8)",
+      "representativeId": "prod-207",
+      "category": "갤럭시 케이스",
+      "contentStatus": "raw",
+      "members": [
+        {
+          "id": "prod-207",
+          "role": "PRIMARY",
+          "variantLabel": "그라파이트, 갤럭시Z 폴드8"
+        },
+        {
+          "id": "prod-208",
+          "role": "VARIANT",
+          "variantLabel": "피스타치오, 갤럭시Z 폴드8"
+        },
+        {
+          "id": "prod-209",
+          "role": "VARIANT",
+          "variantLabel": "라벤더, 갤럭시Z 폴드8"
+        },
+        {
+          "id": "prod-210",
+          "role": "VARIANT",
+          "variantLabel": "크림, 갤럭시Z 폴드8"
+        }
+      ]
+    },
+    {
+      "groupKey": "EF-EF976C",
+      "title": "삼성 정품 갤럭시 실리콘 마그넷 케이스 (갤럭시Z 폴드8 울트라)",
+      "representativeId": "prod-211",
+      "category": "갤럭시 케이스",
+      "contentStatus": "raw",
+      "members": [
+        {
+          "id": "prod-211",
+          "role": "PRIMARY",
+          "variantLabel": "그라파이트, 갤럭시Z 폴드8 울트라"
+        },
+        {
+          "id": "prod-212",
+          "role": "VARIANT",
+          "variantLabel": "그린 쉐도우, 갤럭시Z 폴드8 울트라"
+        },
+        {
+          "id": "prod-213",
+          "role": "VARIANT",
+          "variantLabel": "바이올렛 쉐도우, 갤럭시Z 폴드8 울트라"
+        },
+        {
+          "id": "prod-214",
+          "role": "VARIANT",
+          "variantLabel": "크림, 갤럭시Z 폴드8 울트라"
+        }
+      ]
+    },
+    {
+      "groupKey": "EF-FF776C",
+      "title": "삼성 정품 갤럭시 플립수트 케이스 (갤럭시Z 플립8)",
+      "representativeId": "prod-215",
+      "category": "갤럭시 케이스",
+      "contentStatus": "raw",
+      "members": [
+        {
+          "id": "prod-215",
+          "role": "PRIMARY",
+          "variantLabel": "블랙, 갤럭시Z 플립8"
+        },
+        {
+          "id": "prod-216",
+          "role": "VARIANT",
+          "variantLabel": "실버, 갤럭시Z 플립8"
+        }
+      ]
+    },
+    {
+      "groupKey": "EF-KF971S",
+      "title": "삼성 정품 갤럭시 카본 마그넷 케이스 (갤럭시Z 폴드8)",
+      "representativeId": "prod-217",
+      "category": "갤럭시 케이스",
+      "contentStatus": "raw",
+      "members": [
+        {
+          "id": "prod-217",
+          "role": "PRIMARY",
+          "variantLabel": "블랙, 갤럭시Z 폴드8"
+        },
+        {
+          "id": "prod-218",
+          "role": "VARIANT",
+          "variantLabel": "블루, 갤럭시Z 폴드8"
+        },
+        {
+          "id": "prod-219",
+          "role": "VARIANT",
+          "variantLabel": "바이올렛, 갤럭시Z 폴드8"
+        }
+      ]
+    },
+    {
+      "groupKey": "EF-KF976S",
+      "title": "삼성 정품 갤럭시 카본 마그넷 케이스 (갤럭시Z 폴드8 울트라)",
+      "representativeId": "prod-220",
+      "category": "갤럭시 케이스",
+      "contentStatus": "raw",
+      "members": [
+        {
+          "id": "prod-220",
+          "role": "PRIMARY",
+          "variantLabel": "블랙, 갤럭시Z 폴드8 울트라"
+        },
+        {
+          "id": "prod-221",
+          "role": "VARIANT",
+          "variantLabel": "블루, 갤럭시Z 폴드8 울트라"
+        },
+        {
+          "id": "prod-222",
+          "role": "VARIANT",
+          "variantLabel": "바이올렛, 갤럭시Z 폴드8 울트라"
+        }
+      ]
+    }
+  ]
+}
