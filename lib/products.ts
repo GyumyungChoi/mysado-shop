@@ -56,7 +56,7 @@ export async function getFilteredProducts(categoryId?: string): Promise<Product[
       isVisible: true,
       ...(categoryId ? { categoryId } : {}),
     },
-    orderBy: { sortOrder: "asc" },
+    orderBy: [{ registeredAt: "desc" }, { sortOrder: "asc" }],
   });
   return rows.map(toProduct);
 }
@@ -94,7 +94,7 @@ export async function searchProducts(keyword: string): Promise<Product[]> {
       isVisible: true,
       name: { contains: keyword, mode: "insensitive" },
     },
-    orderBy: { sortOrder: "asc" },
+    orderBy: [{ registeredAt: "desc" }, { sortOrder: "asc" }],
   });
   return rows.map(toProduct);
 }
