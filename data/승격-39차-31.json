@@ -1,0 +1,276 @@
+{
+  "generatedAt": "2026-08-02",
+  "note": "39차 신규 31건 판매상태 승격. DRAFT → ON_SALE 28 / SOLD_OUT 3. toStatus는 재고에서 결정(재고>0 ON_SALE, 재고=0 SOLD_OUT)했으며 38차 intended_status와 31건 전건 일치를 확인함. isVisible은 하드코딩이 아니라 deriveIsVisible(toStatus) 결과를 써야 하며, expectedIsVisible은 그 결과와의 대조용 기대값임.",
+  "stats": {
+    "records": 31,
+    "toOnSale": 28,
+    "toSoldOut": 3
+  },
+  "expectedAfter": {
+    "statusDistribution": {
+      "ON_SALE": 174,
+      "SOLD_OUT": 46,
+      "DISCONTINUED": 10,
+      "DRAFT": 0
+    },
+    "visibleProducts": 220,
+    "sitemapUrls": 220,
+    "dbBefore": {
+      "ON_SALE": 146,
+      "SOLD_OUT": 43,
+      "DISCONTINUED": 10,
+      "DRAFT": 31,
+      "visible": 189
+    }
+  },
+  "records": [
+    {
+      "id": "prod-200",
+      "name": "삼성 정품 갤럭시 클리어 마그넷 케이스 투명, 갤럭시Z 플립8",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 3,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-201",
+      "name": "삼성 정품 갤럭시 클리어 마그넷 케이스 투명, 갤럭시Z 폴드8 와이드",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 3,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-202",
+      "name": "삼성 정품 갤럭시 클리어 마그넷 케이스 투명, 갤럭시Z 폴드8 울트라",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 19,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-203",
+      "name": "삼성 정품 갤럭시 실리콘 링 마그넷 케이스 그라파이트, 갤럭시Z 플립8",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 1,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-204",
+      "name": "삼성 정품 갤럭시 실리콘 링 마그넷 케이스 민트, 갤럭시Z 플립8",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 2,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-205",
+      "name": "삼성 정품 갤럭시 실리콘 링 마그넷 케이스 핑크, 갤럭시Z 플립8",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 4,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-206",
+      "name": "삼성 정품 갤럭시 실리콘 링 마그넷 케이스 크림, 갤럭시Z 플립8",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 3,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-207",
+      "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 그라파이트, 갤럭시Z 폴드8",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 4,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-208",
+      "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 피스타치오, 갤럭시Z 폴드8",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 10,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-209",
+      "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 라벤더, 갤럭시Z 폴드8",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 12,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-210",
+      "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 크림, 갤럭시Z 폴드8",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 5,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-211",
+      "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 그라파이트, 갤럭시Z 폴드8 울트라",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 3,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-212",
+      "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 그린 쉐도우, 갤럭시Z 폴드8 울트라",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 3,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-213",
+      "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 바이올렛 쉐도우, 갤럭시Z 폴드8 울트라",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 4,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-214",
+      "name": "삼성 정품 갤럭시 실리콘 마그넷 케이스 크림, 갤럭시Z 폴드8 울트라",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 3,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-215",
+      "name": "삼성 정품 갤럭시 플립수트 케이스 블랙, 갤럭시Z 플립8",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 3,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-216",
+      "name": "삼성 정품 갤럭시 플립수트 케이스 실버, 갤럭시Z 플립8",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 3,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-217",
+      "name": "삼성 정품 갤럭시 카본 마그넷 케이스 블랙, 갤럭시Z 폴드8 와이드",
+      "fromStatus": "DRAFT",
+      "toStatus": "SOLD_OUT",
+      "expectedStock": 0,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-218",
+      "name": "삼성 정품 갤럭시 카본 마그넷 케이스 블루, 갤럭시Z 폴드8 와이드",
+      "fromStatus": "DRAFT",
+      "toStatus": "SOLD_OUT",
+      "expectedStock": 0,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-219",
+      "name": "삼성 정품 갤럭시 카본 마그넷 케이스 바이올렛, 갤럭시Z 폴드8 와이드",
+      "fromStatus": "DRAFT",
+      "toStatus": "SOLD_OUT",
+      "expectedStock": 0,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-220",
+      "name": "삼성 정품 갤럭시 카본 마그넷 케이스 블랙, 갤럭시Z 폴드8 울트라",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 5,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-221",
+      "name": "삼성 정품 갤럭시 카본 마그넷 케이스 블루, 갤럭시Z 폴드8 울트라",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 8,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-222",
+      "name": "삼성 정품 갤럭시 카본 마그넷 케이스 바이올렛, 갤럭시Z 폴드8 울트라",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 5,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-223",
+      "name": "삼성 정품 갤럭시 클리어 케이스 투명, 갤럭시Z 플립8",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 3,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-224",
+      "name": "삼성 정품 갤럭시 클리어 케이스 투명, 갤럭시Z 폴드8 와이드",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 11,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-225",
+      "name": "삼성 정품 갤럭시 클리어 케이스 투명, 갤럭시Z 폴드8 울트라",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 18,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-226",
+      "name": "삼성 정품 갤럭시 액정 보호필름 AR 스크린 프로텍터 갤럭시Z 플립8, 2매입",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 2,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-227",
+      "name": "삼성 정품 갤럭시 액정 보호필름 AR 스크린 프로텍터 갤럭시Z 폴드8 와이드, 2매입",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 5,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-228",
+      "name": "삼성 정품 갤럭시 액정 보호필름 AR 스크린 프로텍터 갤럭시Z 폴드8 울트라, 2매입",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 4,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-229",
+      "name": "삼성 정품 갤럭시 카본 스탠딩 케이스 블랙, 갤럭시Z 폴드8 와이드",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 8,
+      "expectedIsVisible": true
+    },
+    {
+      "id": "prod-230",
+      "name": "삼성 정품 갤럭시 카본 스탠딩 케이스 블랙, 갤럭시Z 폴드8 울트라",
+      "fromStatus": "DRAFT",
+      "toStatus": "ON_SALE",
+      "expectedStock": 4,
+      "expectedIsVisible": true
+    }
+  ]
+}
