@@ -1,7 +1,9 @@
 /**
  * STEP 3 — Layer3b 서술 tier write (36차)
  *
- * 입력 : data/layer3b-write입력-36차.json (대표 4건: prod-007·001·066·172)
+ * 입력 : --data 로 매번 명시한다(기본값 없음 — locked:false 재주장이라 멱등하지 않다).
+ *        선택 키 variantOverrides가 있으면 seoTitle·seoDescription을 멤버별로 지정한다.
+ *        highlights·description은 그대로 그룹 공통 상속이다.
  * 대상 : product.highlights / description / seoTitle / seoDescription
  *        + contentMeta 머지 + contentStatus raw→review
  * 기본 : DRY-RUN. --apply 없이는 어떤 write도 하지 않음
@@ -38,7 +40,6 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const DATA_PATH = path.join(ROOT, 'data', 'layer3b-write입력-36차.json');
 
 /** 서술 tier 4필드. contentMeta 키 = Prisma 필드명. */
 const NARRATIVE_FIELDS = ['highlights', 'description', 'seoTitle', 'seoDescription'];
@@ -53,15 +54,15 @@ class FatalError extends Error {}
 const USAGE = [
   '사용법: node scripts/layer3b-write.js [옵션]',
   '',
-  '  (옵션 없음)      DRY-RUN — 계획만 출력하고 아무것도 쓰지 않는다',
-  '  --apply          실제 DB 반영',
+  '  --data <경로>    입력 JSON 경로 (필수 — 기본값 없음)',
+  '  --apply          실제 DB 반영 (없으면 DRY-RUN, 아무것도 쓰지 않는다)',
   '  --only <ids>     특정 대표 id만 처리 (콤마 구분, 예: --only prod-007)',
   '  --force          locked:true 인 서술 필드도 덮어쓴다',
   '  --help           이 도움말',
 ].join('\n');
 
 function parseArgs(argv) {
-  const opts = { apply: false, force: false, only: null };
+  const opts = { apply: false, force: false, only: null, data: null };
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -79,6 +80,10 @@ function parseArgs(argv) {
       const ids = raw.split(',').map((s) => s.trim()).filter(Boolean);
       if (ids.length === 0) throw new FatalError('--only 값이 비어 있습니다.');
       opts.only = ids;
+    } else if (arg === '--data' || arg.startsWith('--data=')) {
+      const raw = arg === '--data' ? argv[(i += 1)] : arg.slice('--data='.length);
+      if (!raw) throw new FatalError('--data 뒤에 경로를 지정하세요.');
+      opts.data = raw;
     } else {
       throw new FatalError(`알 수 없는 인자: ${arg}\n\n${USAGE}`);
     }
@@ -124,19 +129,25 @@ function preview(value) {
 // 데이터 로드·검증
 // ────────────────────────────────────────────────────────────
 
-function loadInput() {
-  if (!fs.existsSync(DATA_PATH)) {
-    throw new FatalError(
-      `데이터 파일이 없습니다: ${DATA_PATH}\n` +
-        '36차 산출물인 Layer3b 확정 서술 JSON을 위 경로에 놓은 뒤 다시 실행하세요.'
-    );
+/** 입력 경로를 ROOT 기준으로 해석한다. 저장소 밖 경로는 거부 — 감사 대상 입력을 repo 안에 묶는다. */
+function resolveDataPath(input) {
+  const resolved = path.resolve(ROOT, input);
+  if (!resolved.startsWith(ROOT + path.sep)) {
+    throw new FatalError(`저장소(ROOT) 밖 경로는 사용할 수 없습니다: ${input}`);
+  }
+  return resolved;
+}
+
+function loadInput(dataPath) {
+  if (!fs.existsSync(dataPath)) {
+    throw new FatalError(`데이터 파일이 없습니다: ${dataPath}`);
   }
 
   let parsed;
   try {
-    parsed = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
+    parsed = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
   } catch (err) {
-    throw new FatalError(`데이터 파일 JSON 파싱 실패: ${DATA_PATH}\n${err.message}`);
+    throw new FatalError(`데이터 파일 JSON 파싱 실패: ${dataPath}\n${err.message}`);
   }
 
   validateInput(parsed);
@@ -211,6 +222,54 @@ function validateInput(parsed) {
       });
     }
 
+    // ── variantOverrides (40차) — 멤버별 seoTitle·seoDescription 개별 지정 ──
+    // highlights·description은 그룹 공통이라 여기 넣을 수 없다(V3가 차단).
+    const ov = item.variantOverrides;
+    if (ov !== undefined) {
+      if (!isPlainObject(ov)) {
+        errors.push(`${where}: variantOverrides는 객체여야 합니다.`);
+      } else if (item.unit === 'singleton') {
+        errors.push(`${where}: singleton 항목에는 variantOverrides를 둘 수 없습니다.`); // V1
+      } else {
+        // V2 — 키 집합이 대표+상속과 정확히 일치해야 한다.
+        // 오타 id를 두면 그 멤버가 조용히 대표 값을 받게 되므로 누락·초과 모두 오류다.
+        const expected = new Set([item.id, ...(Array.isArray(item.inheritTo) ? item.inheritTo : [])]);
+        const actual = Object.keys(ov);
+        const missing = [...expected].filter((k) => !actual.includes(k));
+        const extra = actual.filter((k) => !expected.has(k));
+        if (missing.length > 0) errors.push(`${where}: variantOverrides에 누락된 id — ${missing.join(', ')}`);
+        if (extra.length > 0) errors.push(`${where}: variantOverrides에 대상 밖 id — ${extra.join(', ')}`);
+
+        actual.forEach((pid) => {
+          const entry = ov[pid];
+          if (!isPlainObject(entry)) {
+            errors.push(`${where}: variantOverrides.${pid}는 객체여야 합니다.`);
+            return;
+          }
+          // V3 — seoTitle·seoDescription 두 키만. 그 외 키는 상속 단위를 흐리므로 금지.
+          const extraKeys = Object.keys(entry).filter((k) => k !== 'seoTitle' && k !== 'seoDescription');
+          if (extraKeys.length > 0) {
+            errors.push(`${where}: variantOverrides.${pid}에 허용되지 않은 키 — ${extraKeys.join(', ')}`);
+          }
+          ['seoTitle', 'seoDescription'].forEach((f) => {
+            if (typeof entry[f] !== 'string' || entry[f].trim() === '') {
+              errors.push(`${where}: variantOverrides.${pid}.${f}는 비어 있지 않은 문자열이어야 합니다.`);
+            }
+          });
+        });
+
+        // V4 — 대표 값이 generated와 variantOverrides 두 곳에 중복 기재되므로 어긋날 수 있다.
+        const self = ov[item.id];
+        if (isPlainObject(self) && isPlainObject(gen)) {
+          ['seoTitle', 'seoDescription'].forEach((f) => {
+            if (typeof self[f] === 'string' && self[f] !== gen[f]) {
+              errors.push(`${where}: variantOverrides.${item.id}.${f}가 generated.${f}와 다릅니다.`);
+            }
+          });
+        }
+      }
+    }
+
     const prov = item.provenance;
     if (!isPlainObject(prov)) {
       errors.push(`${where}: provenance 객체가 없습니다.`);
@@ -230,6 +289,27 @@ function validateInput(parsed) {
         errors.push(`${where}: generated.${forbidden}는 이 스크립트의 write 대상이 아닙니다(사실 tier 오염 방지).`);
       }
     });
+  });
+
+  // V5 — 최종 seoTitle 전역 유일성.
+  // 오버라이드가 버려져 대표 값이 멤버에 복사되는 결함이 재발하면 여기서 잡힌다.
+  const titleOwners = new Map();
+  parsed.items.forEach((item) => {
+    const ov = isPlainObject(item.variantOverrides) ? item.variantOverrides : null;
+    const pairs = ov
+      ? Object.keys(ov).map((pid) => [pid, isPlainObject(ov[pid]) ? ov[pid].seoTitle : undefined])
+      : [[item.id, isPlainObject(item.generated) ? item.generated.seoTitle : undefined]];
+
+    pairs.forEach(([pid, title]) => {
+      if (typeof title !== 'string' || title.trim() === '') return; // 형식 오류는 위에서 이미 보고됨
+      if (!titleOwners.has(title)) titleOwners.set(title, []);
+      titleOwners.get(title).push(pid);
+    });
+  });
+  titleOwners.forEach((owners, title) => {
+    if (owners.length > 1) {
+      errors.push(`seoTitle 중복 (${owners.length}건: ${owners.join(', ')}) — "${title}"`);
+    }
   });
 
   if (errors.length > 0) {
@@ -420,7 +500,9 @@ function printPlans(itemPlans) {
         console.log(`      - ${m.id}: 변경 없음`);
         return;
       }
+      // seoTitle을 함께 찍는다 — 멤버별 오버라이드가 실제로 반영됐는지 육안 확인용(40차).
       console.log(`      - ${m.id}: 서술 4필드 + contentStatus`);
+      if (m.data.seoTitle) console.log(`        seoTitle: ${truncate(m.data.seoTitle, 60)}`);
       if (m.lockedSkips.length > 0) console.log(`        ⚠ locked 스킵: ${m.lockedSkips.join(', ')}`);
       if (m.statusNote) console.log(`        ⚠ contentStatus ${m.statusNote}`);
     });
@@ -519,7 +601,16 @@ async function main() {
   if (flags.length > 0) console.log(`옵션: ${flags.join(' / ')}`);
   console.log('');
 
-  const parsed = loadInput();
+  if (!opts.data) {
+    throw new FatalError(
+      '--data 로 입력 JSON 경로를 지정하세요. 기본값은 제공하지 않습니다.\n' +
+        '(이 스크립트는 서술을 locked:false 로 재주장하므로 멱등하지 않습니다.)'
+    );
+  }
+  const dataPath = resolveDataPath(opts.data);
+  console.log(`입력 파일: ${path.relative(ROOT, dataPath)}`);
+
+  const parsed = loadInput(dataPath);
   const items = applyOnlyFilter(parsed.items, opts.only);
   console.log(`데이터 파일 로드: 대표 ${parsed.items.length}건 (처리 대상 ${items.length}건), targetStatus=${parsed.targetStatus}`);
 
@@ -567,25 +658,31 @@ async function main() {
     const timestamp = new Date().toISOString();
 
     const itemPlans = items.map((item) => {
-      const values = {
+      const baseValues = {
         highlights: item.generated.highlights,
         description: item.generated.description,
         seoTitle: item.generated.seoTitle,
         seoDescription: item.generated.seoDescription,
       };
 
+      // highlights·description은 그룹 공통, seo 2필드만 멤버별로 갈린다(40차 variantOverrides).
+      const valuesFor = (pid) => {
+        const ov = item.variantOverrides && item.variantOverrides[pid];
+        return ov ? { ...baseValues, seoTitle: ov.seoTitle, seoDescription: ov.seoDescription } : baseValues;
+      };
+
       const rep = buildRowPlan(
         rowById.get(item.id),
-        values,
+        valuesFor(item.id),
         item.provenance.source,
         parsed.targetStatus,
         opts,
         timestamp
       );
 
-      // 상속 멤버는 같은 서술을 복사하되 출처만 inherited:<대표id> 로 남긴다.
+      // 상속 멤버는 그룹 공통 서술을 복사하되 출처는 inherited:<대표id> 로 남긴다.
       const members = item.inheritTo.map((mid) =>
-        buildRowPlan(rowById.get(mid), values, `inherited:${item.id}`, parsed.targetStatus, opts, timestamp)
+        buildRowPlan(rowById.get(mid), valuesFor(mid), `inherited:${item.id}`, parsed.targetStatus, opts, timestamp)
       );
 
       return { id: item.id, name: rowById.get(item.id).name, unit: item.unit, source: item.provenance.source, rep, members };
