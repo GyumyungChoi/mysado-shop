@@ -20,7 +20,7 @@ export default function Footer() {
           <p>
             (주)주승시스템 대표이사 : 우승문 | 사업자등록번호: 693-86-03370 |
             서울특별시 금천구 가산디지털1로 75-15, 10층 1025호 | 통신판매업
-            신고 : 2026-서울금천-0272 | 전화 : 000-0000-0000 | 고객센터
+            신고 : 2026-서울금천-0272 | 전화 : 010-3795-4126 | 고객센터
             이메일: mysado.shop@gmail.com
           </p>
           <p>[스마트스토어] smartstore.naver.com/mysado, smartstore.naver.com/royvente</p>
