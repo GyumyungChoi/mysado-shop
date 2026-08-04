@@ -39,3 +39,6 @@ logs/*.log
 /app/generated/prisma
 .env
 outputs/
+
+# Claude Code 검증용 임시 파일 (rm이 deny라 자체 정리 불가)
+.tmp-*
