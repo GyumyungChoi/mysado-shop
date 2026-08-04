@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserId } from "@/lib/api-helpers";
 import { cancelTossPayment, PAYMENT_LOG_TYPE } from "@/lib/payment";
+import { restoreStock, toStockLines } from "@/lib/inventory";
 
 interface CancelRequestBody {
   orderId?: string;
@@ -18,7 +19,7 @@ interface CancelRequestBody {
  *  2. CANCELED면 성공 재응답 (멱등 — 중복 요청 대응)
  *  3. PAID 상태만 취소 허용 (그 외 409)
  *  4. 토스 취소 API 호출 (Idempotency-Key: cancel- prefix)
- *  5. 성공 시 트랜잭션: CANCELED 전환 + PaymentLog(CANCEL, payload 원문)
+ *  5. 성공 시 트랜잭션: CANCELED 전환 + PaymentLog(CANCEL, payload 원문) + 재고 복원
  *     실패 시 CANCEL 로그(실패 원문)만 기록, 주문은 PAID 유지
  */
 export async function POST(request: Request) {
@@ -37,7 +38,10 @@ export async function POST(request: Request) {
   }
 
   // ── 1. 주문 조회 + 소유자 확인 ──
-  const order = await prisma.order.findUnique({ where: { id: orderId } });
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: { items: { select: { productId: true, quantity: true } } },
+  });
 
   if (!order || order.userId !== userId) {
     return NextResponse.json({ message: "주문을 찾을 수 없습니다." }, { status: 404 });
@@ -87,21 +91,26 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: result.message }, { status: 400 });
   }
 
-  // ── 5. 취소 성공 — 트랜잭션으로 상태 전환 + 로그 ──
-  await prisma.$transaction([
-    prisma.order.update({
+  // ── 5. 취소 성공 — 트랜잭션으로 상태 전환 + 로그 + 재고 복원 ──
+  // 위 2·3의 가드(이미 CANCELED면 조기 반환 / PAID만 허용) 덕분에
+  // 여기 도달한 주문은 반드시 "차감된 상태"이며 복원은 1회만 일어난다
+  const paymentKey = order.paymentKey;
+
+  await prisma.$transaction(async (tx) => {
+    await tx.order.update({
       where: { id: order.id },
       data: { status: "CANCELED" },
-    }),
-    prisma.paymentLog.create({
+    });
+    await tx.paymentLog.create({
       data: {
         orderId: order.id,
         type: PAYMENT_LOG_TYPE.CANCEL,
-        paymentKey: order.paymentKey,
+        paymentKey,
         payload: result.payment as object,
       },
-    }),
-  ]);
+    });
+    await restoreStock(tx, toStockLines(order.items));
+  });
 
   return NextResponse.json({
     orderId: order.id,

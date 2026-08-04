@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getTossPayment, PAYMENT_LOG_TYPE } from "@/lib/payment";
+import { restoreStock, toStockLines, tryDeductStock } from "@/lib/inventory";
 
 /**
  * POST /api/payment/webhook — 토스 웹훅 수신 (T-5)
@@ -68,6 +69,7 @@ export async function POST(request: Request) {
       where: payment.orderId.startsWith("MYSADO-")
         ? { orderNumber: payment.orderId }
         : { id: payment.orderId },
+      include: { items: { select: { productId: true, quantity: true } } },
     });
 
     if (!order) {
@@ -89,24 +91,46 @@ export async function POST(request: Request) {
     // ── 5. 상태 동기화 (검증 결과 기준) ──
     if (payment.status === "DONE" && (order.status === "PENDING" || order.status === "FAILED")) {
       // confirm은 성공했으나 DB 반영이 누락된 케이스 보정
-      await prisma.order.update({
-        where: { id: order.id },
-        data: {
-          status: "PAID",
-          paymentKey,
-          paidAt: payment.approvedAt ? new Date(payment.approvedAt) : new Date(),
-        },
+      const shortage = await prisma.$transaction(async (tx) => {
+        // 이 경로의 대상은 confirm 트랜잭션이 롤백된 미차감 주문 → 차감이 필요
+        // confirm과 달리 부족해도 throw하지 않는다: 결제는 이미 토스에서 DONE이라
+        // 재발송을 유도해도 결과가 같고 주문만 영구히 PENDING으로 남는다.
+        // 가능한 만큼 차감하고 나머지를 기록하는 것이 이 경로의 정답.
+        const short = await tryDeductStock(tx, toStockLines(order.items));
+        await tx.order.update({
+          where: { id: order.id },
+          data: {
+            status: "PAID",
+            paymentKey,
+            paidAt: payment.approvedAt ? new Date(payment.approvedAt) : new Date(),
+          },
+        });
+        return short;
       });
+
       console.log(`[webhook] 주문 ${order.id}: ${order.status} → PAID 보정`);
+      if (shortage.length > 0) {
+        console.error(
+          `[webhook] 🔴 수동 개입 필요 — 주문 ${order.id}: 재고 부족으로 일부 미차감`,
+          shortage,
+        );
+      }
     } else if (
       (payment.status === "CANCELED" || payment.status === "PARTIAL_CANCELED") &&
       order.status !== "CANCELED"
     ) {
-      await prisma.order.update({
-        where: { id: order.id },
-        data: { status: "CANCELED" },
+      // 상태 동기화는 모든 미취소 주문에 대해 하되, 복원은 차감된 주문(PAID)에만
+      const wasPaid = order.status === "PAID";
+      await prisma.$transaction(async (tx) => {
+        await tx.order.update({
+          where: { id: order.id },
+          data: { status: "CANCELED" },
+        });
+        // PARTIAL_CANCELED도 전량 복원 — 우리 취소 API는 전액 취소만 지원하므로
+        // 부분취소는 토스 콘솔 수동 조작 외에는 발생하지 않는다 (정밀 처리는 향후 과제)
+        if (wasPaid) await restoreStock(tx, toStockLines(order.items));
       });
-      console.log(`[webhook] 주문 ${order.id}: ${order.status} → CANCELED 동기화`);
+      console.log(`[webhook] 주문 ${order.id}: ${order.status} → CANCELED 동기화 (재고복원 ${wasPaid})`);
     }
     // 그 외(상태 이미 일치 등)는 로그 기록만으로 충분
 
