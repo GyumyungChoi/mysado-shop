@@ -69,7 +69,14 @@ export default function CartPage() {
   /** 수량 변경 (PATCH) 후 목록 갱신 */
   const changeQuantity = async (item: CartItemView, delta: number) => {
     const newQuantity = item.quantity + delta;
-    if (newQuantity < 1 || newQuantity > item.stock) return;
+    // 1 미만은 감소 버튼이 비활성이므로 조용히 반환한다 (알릴 내용이 없음)
+    if (newQuantity < 1) return;
+    // 재고 초과는 이유를 알린다 — 침묵 반환이면 + 를 눌러도 아무 일이 없어 보인다 (44차).
+    // 재고 숫자는 노출하지 않는다 (판매량 추정 단서 차단)
+    if (newQuantity > item.stock) {
+      setErrorMessage("재고가 부족합니다.");
+      return;
+    }
 
     setBusyItemId(item.id);
     try {
@@ -188,6 +195,13 @@ export default function CartPage() {
                       {!item.isAvailable && item.unavailableLabel && (
                         <p className="mt-1 text-xs font-medium text-red-600">
                           {item.unavailableLabel} (합계 제외)
+                        </p>
+                      )}
+
+                      {/* + 버튼이 왜 비활성인지 알린다 — 재고 숫자는 노출하지 않는다 */}
+                      {item.isAvailable && item.quantity >= item.stock && (
+                        <p className="mt-1 text-xs text-gray-500">
+                          재고 한도에 도달했습니다.
                         </p>
                       )}
 

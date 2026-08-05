@@ -14,6 +14,10 @@ import { useSession } from "@/lib/auth-client";
 import PostcodeSearchButton from "@/components/PostcodeSearchButton";
 import { DELIVERY_MEMO_OPTIONS, DELIVERY_MEMO_CUSTOM } from "@/lib/delivery-memo";
 import { formatPhone } from "@/lib/format-phone";
+import {
+  isValidRecipientPhone,
+  RECIPIENT_PHONE_ERROR,
+} from "@/lib/validation/contact";
 
 /** GET /api/cart 응답 항목 (app/cart/page.tsx와 동일 형태) */
 interface CartItemView {
@@ -70,6 +74,18 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  /**
+   * 상단 에러 표시 + 스크롤을 한 곳으로 묶는다.
+   * 에러 렌더 위치가 화면 최상단 한 곳뿐이라, 하단에서 제출하면 에러가 보이지 않았다(44차).
+   * 해제(null)일 때는 스크롤하지 않는다.
+   */
+  const showError = useCallback((message: string | null) => {
+    setErrorMessage(message);
+    if (message) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, []);
+
   /** 결제위젯 인스턴스 — 렌더 완료 후 채워짐 */
   const [widgets, setWidgets] = useState<TossPaymentsWidgets | null>(null);
   const [widgetReady, setWidgetReady] = useState(false);
@@ -79,6 +95,10 @@ export default function CheckoutPage() {
   // 배송지 폼 상태 (types/order.ts의 ShippingInfo 필드와 1:1)
   const [recipientName, setRecipientName] = useState("");
   const [recipientPhone, setRecipientPhone] = useState("");
+  /** 연락처 필드 인라인 에러 — 상단 errorMessage와 섞지 않는다(인라인은 스크롤하면 안 됨) */
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+  /** 제출 직전 검증 실패 시 해당 필드로 포커스를 옮기기 위한 ref */
+  const recipientPhoneRef = useRef<HTMLInputElement>(null);
   const [zipCode, setZipCode] = useState("");
   const [address1, setAddress1] = useState("");
   const [address2, setAddress2] = useState("");
@@ -103,18 +123,18 @@ export default function CheckoutPage() {
       }
       if (!response.ok) {
         const data = (await response.json()) as { message: string };
-        setErrorMessage(data.message);
+        showError(data.message);
         return;
       }
 
       setCart((await response.json()) as CartView);
-      setErrorMessage(null);
+      showError(null);
     } catch {
-      setErrorMessage("주문 정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.");
+      showError("주문 정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.");
     } finally {
       setIsLoading(false);
     }
-  }, [router]);
+  }, [router, showError]);
 
   useEffect(() => {
     loadCart();
@@ -179,7 +199,7 @@ export default function CheckoutPage() {
       try {
         const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
         if (!clientKey) {
-          setErrorMessage("결제 설정에 문제가 있습니다. 관리자에게 문의해주세요.");
+          showError("결제 설정에 문제가 있습니다. 관리자에게 문의해주세요.");
           return;
         }
 
@@ -200,12 +220,12 @@ export default function CheckoutPage() {
         setWidgetReady(true);
       } catch (error) {
         console.error("[checkout] 결제위젯 초기화 실패:", error);
-        setErrorMessage(
+        showError(
           "결제 모듈을 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.",
         );
       }
     })();
-  }, [session, cart]);
+  }, [session, cart, showError]);
 
   /**
    * 주문 생성 → 결제위젯 결제 요청.
@@ -217,13 +237,26 @@ export default function CheckoutPage() {
     if (!widgets || !widgetReady) return;
 
     setIsSubmitting(true);
-    setErrorMessage(null);
+    showError(null);
 
     // 저장 배송지 모드면 선택된 배송지에서, 직접 입력 모드면 폼 state에서 값을 가져온다
     // (필드명이 Address와 동일하므로 매핑 코드 불필요 — 설계 결정 ㊾)
     const selected = selectedAddressId
       ? addresses.find((a) => a.id === selectedAddressId)
       : null;
+
+    // 제출 직전 재검증 — onBlur만으로는 새어나간다.
+    // 브라우저 자동완성은 blur를 발화하지 않는 경우가 많아, 탭으로 필드를 빠져나가지 않으면
+    // 인라인 에러 없이 그대로 제출돼 서버 400으로 간다 (43차 사고 경로).
+    // 폼 state를 보내는 경우(직접 입력)에만 검증한다 — 저장 배송지는 등록 시 검증된 값.
+    // showError는 부르지 않는다: focus()가 스크롤을 데려가므로 상단 배너와 경합한다.
+    if (!selected && !isValidRecipientPhone(recipientPhone)) {
+      setPhoneError(RECIPIENT_PHONE_ERROR);
+      recipientPhoneRef.current?.focus();
+      setIsSubmitting(false);
+      return;
+    }
+
     const shipping = selected
       ? {
           recipientName: selected.recipientName,
@@ -256,7 +289,7 @@ export default function CheckoutPage() {
       }
       if (!response.ok) {
         const data = (await response.json()) as { message: string };
-        setErrorMessage(data.message);
+        showError(data.message);
         return;
       }
 
@@ -280,14 +313,13 @@ export default function CheckoutPage() {
     } catch (error) {
       const tossError = error as TossError;
       if (tossError.code === "PAY_PROCESS_CANCELED") {
-        setErrorMessage("결제가 취소되었습니다. 다시 시도하실 수 있습니다.");
+        showError("결제가 취소되었습니다. 다시 시도하실 수 있습니다.");
       } else {
-        setErrorMessage(
+        showError(
           tossError.message ?? "결제 요청에 실패했습니다. 잠시 후 다시 시도해주세요.",
         );
       }
-      // 에러 메시지가 페이지 상단에 있으므로 보이도록 스크롤 (실측: 미스크롤 시 인지 불가)
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      // 스크롤은 showError가 담당한다 (기존 이 자리의 scrollTo는 중복이라 제거 — 44차)
     } finally {
       setIsSubmitting(false);
     }
@@ -432,13 +464,38 @@ export default function CheckoutPage() {
                     </label>
                     <input
                       id="recipientPhone"
+                      ref={recipientPhoneRef}
                       type="tel"
                       value={recipientPhone}
-                      onChange={(e) => setRecipientPhone(e.target.value)}
+                      onChange={(e) => {
+                        setRecipientPhone(e.target.value);
+                        // 유효해지면 즉시 해제 — 고치는 중에 에러가 남아 있지 않도록
+                        if (phoneError && isValidRecipientPhone(e.target.value)) {
+                          setPhoneError(null);
+                        }
+                      }}
+                      onBlur={(e) => {
+                        // 빈 값은 아직 입력 중일 수 있으므로 검증하지 않는다 (제출 시 서버가 잡음)
+                        const value = e.target.value.trim();
+                        setPhoneError(
+                          value === "" || isValidRecipientPhone(value)
+                            ? null
+                            : RECIPIENT_PHONE_ERROR,
+                        );
+                      }}
                       className={inputClass}
                       placeholder="010-0000-0000"
-                      autoComplete="tel"
+                      // tel-national: 브라우저 자동완성이 국가코드(+54…)를 채우는 것을 줄인다
+                      autoComplete="tel-national"
+                      inputMode="tel"
+                      aria-invalid={phoneError ? true : undefined}
+                      aria-describedby={phoneError ? "recipientPhone-error" : undefined}
                     />
+                    {phoneError ? (
+                      <p id="recipientPhone-error" className="mt-1 text-sm text-red-600">
+                        {phoneError}
+                      </p>
+                    ) : null}
                   </div>
 
                   <div>
@@ -460,7 +517,7 @@ export default function CheckoutPage() {
                           setZipCode(r.zipCode);
                           setAddress1(r.address1);
                         }}
-                        onError={setErrorMessage}
+                        onError={showError}
                       />
                     </div>
                   </div>

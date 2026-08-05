@@ -4,6 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import PostcodeSearchButton from "@/components/PostcodeSearchButton";
 import { formatPhone } from "@/lib/format-phone";
+import {
+  isValidRecipientPhone,
+  RECIPIENT_PHONE_ERROR,
+} from "@/lib/validation/contact";
 import { DELIVERY_MEMO_OPTIONS, DELIVERY_MEMO_CUSTOM } from "@/lib/delivery-memo";
 
 interface AddressItem {
@@ -56,6 +60,10 @@ export default function AddressList(props: Props) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [memoCustom, setMemoCustom] = useState(false);
+  // 연락처 필드 인라인 에러 — 상단 error 배너와 분리한다.
+  // 이 폼은 모달이 아니라 목록 안/아래에 인라인으로 열리므로 상단 배너로 올리면
+  // 사용자가 보던 위치를 벗어난다. 필드 바로 아래에만 표시한다 (44차 판단).
+  const [phoneError, setPhoneError] = useState("");
 
   function setField(key: keyof FormState, value: string | boolean) {
     setForm(function (prev) {
@@ -69,6 +77,7 @@ export default function AddressList(props: Props) {
     setEditingId(null);
     setFormOpen(true);
     setError("");
+    setPhoneError("");
     setMessage("");
   }
 
@@ -88,6 +97,7 @@ export default function AddressList(props: Props) {
     setEditingId(item.id);
     setFormOpen(true);
     setError("");
+    setPhoneError("");
     setMessage("");
   }
 
@@ -95,6 +105,7 @@ export default function AddressList(props: Props) {
     setFormOpen(false);
     setEditingId(null);
     setForm(EMPTY_FORM);
+    setPhoneError("");
   }
 
   async function handleSave() {
@@ -192,11 +203,35 @@ export default function AddressList(props: Props) {
               <input
                 type="tel"
                 value={form.recipientPhone}
-                onChange={(e) => setField("recipientPhone", e.target.value)}
-                autoComplete="tel"
+                onChange={(e) => {
+                  setField("recipientPhone", e.target.value);
+                  // 유효해지면 즉시 해제 — 고치는 중에 에러가 남아 있지 않도록
+                  if (phoneError && isValidRecipientPhone(e.target.value)) {
+                    setPhoneError("");
+                  }
+                }}
+                onBlur={(e) => {
+                  // 빈 값은 아직 입력 중일 수 있으므로 검증하지 않는다 (저장 시 서버가 잡음)
+                  const value = e.target.value.trim();
+                  setPhoneError(
+                    value === "" || isValidRecipientPhone(value)
+                      ? ""
+                      : RECIPIENT_PHONE_ERROR,
+                  );
+                }}
+                // tel-national: 브라우저 자동완성이 국가코드(+54…)를 채우는 것을 줄인다
+                autoComplete="tel-national"
+                inputMode="tel"
                 placeholder="010-1234-5678"
+                aria-invalid={phoneError ? true : undefined}
+                aria-describedby={phoneError ? "addressPhone-error" : undefined}
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
               />
+              {phoneError ? (
+                <p id="addressPhone-error" className="mt-1 text-sm text-red-600">
+                  {phoneError}
+                </p>
+              ) : null}
             </div>
 
             <div>
