@@ -2,6 +2,14 @@ import { prisma } from "@/lib/prisma";
 import { ApiError } from "@/lib/api-helpers";
 import type { ShippingInfo } from "@/types/order";
 import { isOnSaleStatus } from "@/lib/product-status";
+import {
+  normalizePhone,
+  normalizeZipCode,
+  isValidRecipientPhone,
+  isValidZipCode,
+  RECIPIENT_PHONE_ERROR,
+  ZIP_ERROR,
+} from "@/lib/validation/contact";
 
 /** 주문 생성 API가 돌려줄 최소 정보 */
 export interface CreateOrderResult {
@@ -15,15 +23,16 @@ export function validateShippingInfo(raw: Partial<ShippingInfo>): ShippingInfo {
   const recipientName = raw.recipientName?.trim();
   if (!recipientName) throw new ApiError("수령인 이름을 입력해주세요.", 400);
 
-  // 하이픈/공백 제거 후 0 시작 9~11자리 — 배송 연락처는 유선번호 허용 (address-validation.ts와 동일 규칙)
-  const recipientPhone = raw.recipientPhone?.replace(/[-\s]/g, "") ?? "";
-  if (!/^0\d{8,10}$/.test(recipientPhone)) {
-    throw new ApiError("연락처 형식이 올바르지 않습니다. (예: 010-1234-5678)", 400);
+  // 정규화·검증 규칙은 lib/validation/contact.ts가 정본 (44차 통일).
+  // 저장값은 반드시 정규형(숫자만) — 검증한 값과 저장한 값이 어긋나지 않도록 같은 변수를 쓴다.
+  const recipientPhone = normalizePhone(raw.recipientPhone);
+  if (!isValidRecipientPhone(recipientPhone)) {
+    throw new ApiError(RECIPIENT_PHONE_ERROR, 400);
   }
 
-  const zipCode = raw.zipCode?.trim();
-  if (!zipCode || !/^\d{5}$/.test(zipCode)) {
-    throw new ApiError("우편번호 5자리를 입력해주세요.", 400);
+  const zipCode = normalizeZipCode(raw.zipCode);
+  if (!isValidZipCode(zipCode)) {
+    throw new ApiError(ZIP_ERROR, 400);
   }
 
   const address1 = raw.address1?.trim();

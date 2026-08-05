@@ -1,4 +1,12 @@
 import { ApiError } from "@/lib/api-helpers";
+import {
+  normalizePhone,
+  normalizeZipCode,
+  isValidRecipientPhone,
+  isValidZipCode,
+  RECIPIENT_PHONE_ERROR,
+  ZIP_ERROR,
+} from "@/lib/validation/contact";
 
 /**
  * 배송지 입력 검증 공용 모듈 (Phase 7)
@@ -24,14 +32,16 @@ export function parseAddressBody(body: AddressBody) {
     throw new ApiError("받는 분 이름을 1~50자로 입력해주세요.", 400);
   }
 
-  const recipientPhone = (body.recipientPhone || "").replace(/[-\s]/g, "");
-  if (!/^0\d{8,10}$/.test(recipientPhone)) {
-    throw new ApiError("연락처 형식이 올바르지 않습니다. (예: 010-1234-5678)", 400);
+  // 정규화·검증 규칙은 lib/validation/contact.ts가 정본 (44차 통일).
+  // 저장값은 반드시 정규형(숫자만) — 검증한 값과 저장한 값이 어긋나지 않도록 같은 변수를 쓴다.
+  const recipientPhone = normalizePhone(body.recipientPhone);
+  if (!isValidRecipientPhone(recipientPhone)) {
+    throw new ApiError(RECIPIENT_PHONE_ERROR, 400);
   }
 
-  const zipCode = (body.zipCode || "").trim();
-  if (!/^\d{5}$/.test(zipCode)) {
-    throw new ApiError("우편번호는 우편번호 찾기로 입력해주세요.", 400);
+  const zipCode = normalizeZipCode(body.zipCode);
+  if (!isValidZipCode(zipCode)) {
+    throw new ApiError(ZIP_ERROR, 400);
   }
 
   const address1 = (body.address1 || "").trim();
