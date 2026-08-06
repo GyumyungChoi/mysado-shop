@@ -42,15 +42,18 @@
 ## gotcha (함정)
 
 ### 컬럼명
+- **컬럼 명명 규칙에 예측 가능한 패턴이 없다.** 테이블 단위로 갈리지 않고, 같은 테이블 안에 섞인다.
+  - `user`: 코어 필드 camelCase(`emailVerified`·`createdAt`·`updatedAt`)
+    + 프로젝트 추가 필드 snake_case(`phone_number`·`agreed_at`·`marketing_agreed`·`deleted_at`)
+  - FK도 갈린다: `account`·`session`·**`product_view_log`·`search_log`** 는 `"userId"`(camelCase),
+    `address`·`cart_item`·`orders` 는 `user_id`. **프로젝트 테이블이라고 snake_case가 아니다.**
+- → **컬럼명은 어떤 경우에도 추측하지 말고 `\d "테이블명"` 으로 먼저 확인한다.**
+  쌍따옴표 필요 여부도 그 출력으로 판단. 에러 시 psql HINT가 올바른 이름을 제시한다.
 - Prisma 필드명 ≠ DB 컬럼명: `phoneNumber`↔`phone_number`, `deletedAt`↔`deleted_at`,
   product는 `stock`↔`stock_quantity`, `isVisible`↔`is_active`.
-  (`stockQuantity`·`isActive`는 **존재하지 않는 이름**)
-- `Order`는 테이블 `"orders"`(SQL 예약어). SearchLog 컬럼은 camelCase.
-- Better Auth 생성 테이블(user, session, account) → camelCase 컬럼. psql에서 쌍따옴표 필수: `s."userId"`.
-- 우리가 Prisma로 만든 테이블(orders, address, cart_item 등) → snake_case @map 컬럼. 쌍따옴표 불필요.
-- user 테이블은 혼재: 코어 필드(camelCase) + @map 추가 필드(phone_number, marketing_agreed, deleted_at).
-- 헷갈리면 `\d "테이블명"` 으로 실제 컬럼명 확인. 에러 시 psql HINT가 올바른 이름을 제시한다.
-- 테이블 목록: user, orders, session, account, address, cart_item, order_item, product,
+  (`stockQuantity`·`isActive`는 **존재하지 않는 이름**) — 매핑은 `schema.prisma`의 `@map`이 정본.
+- `Order`는 테이블 `"orders"`(SQL 예약어). 테이블명 `user`도 예약어라 쌍따옴표 필요.
+- 테이블 목록(추가될 수 있음, 정본은 '\dt' 출력): user, orders, session, account, address, cart_item, order_item, product,
   product_group, payment_log, product_view_log, search_log, verification, admin_audit_log.
 
 ### 데이터
@@ -62,7 +65,9 @@
   `source`가 `name-rule`인 값은 규칙 산출물이며 사람 검증값이 아니다.
 
 ### 셸
-- 히스토리 확장: `node -e "...!x..."` 가 한 줄을 조용히 삼킨다. `set +H` 선행 또는 `=== undefined` 표현.
+- 히스토리 확장: `!` 가 든 명령은 조용히 치환된다. `node -e`뿐 아니라 **`psql -c` 에서도 발생**(44차 실증).
+  `!~`(정규식 부정)는 직전 명령으로 치환돼 쿼리가 깨진다 → **`NOT (컬럼 ~ '패턴')` 으로 쓴다.**
+  `set +H`는 잊기 쉽고, 연산자 선택은 명령 안에 남는다.
 - heredoc은 `<< 'EOF'`(따옴표)로 셸 변수 확장 차단.
 - 도메인이 섞인 heredoc 붙여넣기 후 `grep '\['` 로 마크다운 링크 변환 손상 확인.
 - 파일 편집은 python3 exact-match + `count == 1` 가드. 다중 행에 sed 금지.
