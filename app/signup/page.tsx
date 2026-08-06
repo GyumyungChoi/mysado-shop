@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/lib/auth-client";
 import { getAuthErrorMessage } from "@/lib/auth-errors";
+import { normalizePhone, isValidMemberPhone, MEMBER_PHONE_ERROR } from "@/lib/validation/contact";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -32,10 +33,10 @@ export default function SignupPage() {
       return;
     }
 
-    // 휴대폰: 하이픈/공백 제거 후 010 + 8자리 숫자 형식 검증 (26.07.11)
-    const phoneDigits = phone.replace(/[-\s]/g, "");
-    if (!/^010\d{8}$/.test(phoneDigits)) {
-      setError("휴대폰 번호를 확인해주세요. (예: 010-1234-5678)");
+    // 휴대폰: 공용 규칙으로 검증 (010/011/016~019 허용). 저장은 숫자만.
+    const phoneDigits = normalizePhone(phone);
+    if (!isValidMemberPhone(phone)) {
+      setError(MEMBER_PHONE_ERROR);
       return;
     }
     if (password.length < 8) {

@@ -2,17 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { formatPhone } from "@/lib/format-phone";
+import { normalizePhone, isValidMemberPhone, MEMBER_PHONE_ERROR } from "@/lib/validation/contact";
 
 interface ProfileFormProps {
   initialName: string;
   initialPhoneNumber: string | null;
   initialMarketingAgreed: boolean;
-}
-
-// 표시용 하이픈 포맷 (저장은 숫자만 — 서버가 재검증)
-function formatPhone(digits: string): string {
-  if (digits.length !== 11) return digits;
-  return digits.slice(0, 3) + "-" + digits.slice(3, 7) + "-" + digits.slice(7);
 }
 
 export default function ProfileForm({ initialName, initialPhoneNumber, initialMarketingAgreed }: ProfileFormProps) {
@@ -32,10 +28,10 @@ export default function ProfileForm({ initialName, initialPhoneNumber, initialMa
       setMessage("이름을 입력해주세요.");
       return;
     }
-    const phoneDigits = phone.replace(/[-\s]/g, "");
-    if (!/^010\d{8}$/.test(phoneDigits)) {
+    const phoneDigits = normalizePhone(phone);
+    if (!isValidMemberPhone(phone)) {
       setIsError(true);
-      setMessage("휴대폰 번호 형식이 올바르지 않습니다. (예: 010-1234-5678)");
+      setMessage(MEMBER_PHONE_ERROR);
       return;
     }
 

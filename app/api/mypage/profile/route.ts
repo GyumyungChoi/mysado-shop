@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserId, toErrorResponse, ApiError } from "@/lib/api-helpers";
+import { normalizePhone, isValidMemberPhone, MEMBER_PHONE_ERROR } from "@/lib/validation/contact";
 
 interface ProfileRequestBody {
   name?: string;
@@ -40,10 +41,10 @@ export async function PATCH(request: Request) {
     }
 
     if (body.phoneNumber !== undefined) {
-      // 가입 폼과 동일 규칙: 하이픈·공백 제거 후 010+8자리, 숫자만 저장
-      const phoneDigits = body.phoneNumber.replace(/[-\s]/g, "");
-      if (!/^010\d{8}$/.test(phoneDigits)) {
-        throw new ApiError("휴대폰 번호 형식이 올바르지 않습니다. (예: 010-1234-5678)", 400);
+      // 공용 규칙으로 검증 (010/011/016~019 허용). 숫자만 저장.
+      const phoneDigits = normalizePhone(body.phoneNumber);
+      if (!isValidMemberPhone(body.phoneNumber)) {
+        throw new ApiError(MEMBER_PHONE_ERROR, 400);
       }
       data.phoneNumber = phoneDigits;
     }
