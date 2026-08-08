@@ -47,6 +47,8 @@
     + 프로젝트 추가 필드 snake_case(`phone_number`·`agreed_at`·`marketing_agreed`·`deleted_at`)
   - FK도 갈린다: `account`·`session`·**`product_view_log`·`search_log`** 는 `"userId"`(camelCase),
     `address`·`cart_item`·`orders` 는 `user_id`. **프로젝트 테이블이라고 snake_case가 아니다.**
+  - **일반 컬럼도 갈린다**: `search_log`는 `"resultCount"`(camelCase, 47차 실증).
+    `product_view_log`의 일반 컬럼은 미확인.
 - → **컬럼명은 어떤 경우에도 추측하지 말고 `\d "테이블명"` 으로 먼저 확인한다.**
   쌍따옴표 필요 여부도 그 출력으로 판단. 에러 시 psql HINT가 올바른 이름을 제시한다.
 - Prisma 필드명 ≠ DB 컬럼명: `phoneNumber`↔`phone_number`, `deletedAt`↔`deleted_at`,
@@ -63,6 +65,9 @@
 - `contentMeta.<field>.locked === true` 인 필드는 **전용 정정 스크립트로만** 덮는다.
   `locked`를 해제하지 않고, `corrections` 배열에 `previousValue`·`previousSource`·`reason`을 누적한다.
   `source`가 `name-rule`인 값은 규칙 산출물이며 사람 검증값이 아니다.
+- FK `ON DELETE CASCADE`는 **자식 삭제 건수를 출력하지 않는다.** 삭제 전 자식 행 수를 세어 두지
+  않으면 "무엇이 사라졌는지 모르는 삭제"가 된다. `orders` 삭제 시 `order_item`·`payment_log`가,
+  `user` 삭제 시 `account`·`session`·`address`·`cart_item`이 동반 삭제된다(47차 실증).
 
 ### 셸
 - 히스토리 확장: `!` 가 든 명령은 조용히 치환된다. `node -e`뿐 아니라 **`psql -c` 에서도 발생**(44차 실증).
@@ -79,12 +84,27 @@
 - **DB·네트워크 없이 검증 불가한 산출물**(결제 라우트 등)은 정적 검사(tsc/lint/grep)와
   논리 대조까지가 한계다. 실행 검증은 Chris가 수행하므로, 검증했다고 보고하지 않는다.
 
+## 데이터 삭제 규약 (47차 신설)
+- `additive-only`는 **스키마·마이그레이션 층위**의 규약이다. 운영 데이터 행의 삭제는 그 대상이
+  아니지만, 대신 아래 5단계가 강제된다. 마이그레이션 SQL의 DROP/TRUNCATE/ALTER COLUMN/DELETE
+  금지는 그대로 유효하다.
+  1. `pg_dump` 백업 + **백업 내용 실측**(대상 테이블 행수 확인 — 파일 크기만으로 판단 금지)
+  2. 삭제 대상과 CASCADE 자식 행 수를 `SELECT`로 사전 확정
+  3. 사람 검수(`cat -n`)
+  4. **단일 트랜잭션**(`psql -1 -f`) + 선두 가드 블록(기대값 불일치 시 `RAISE EXCEPTION`)
+  5. 독립 재조회 교차검증
+- 가드 블록은 `expectedCurrent` 가드의 SQL판이다. **자동 보정하지 않는다** — 불일치는
+  "조사 이후 DB가 변했다"는 사건 신호다.
+- 식별자·실명이 든 정리 SQL은 커밋하지 않는다(git 이력은 사후 삭제가 어렵다).
+
 ## 진행 방식
 - 설계 결정은 Chat(웹)에서 내려온다. 여기서는 지시서대로 **파일 조사·수정만** 수행.
 - 추측 금지 — 확인 명령(grep/cat/tsc) 먼저.
 - 커밋은 Chris가 직접(메시지 초안만 제시). `git add`는 파일 명시(`git add .` 금지).
 - 커밋 메시지는 conventional commit 한국어. 마이그레이션/기능/데이터는 커밋 분리.
 - 임시 파일을 만들었으면 경로를 보고에 명시한다(`rm`이 deny라 스스로 지울 수 없음).
+- 산출물(지시서·SQL·리포트)은 `~/apps/mysado-shop/outputs/`(gitignore). `~/output`은 존재하지 않는다.
+  문서에 경로를 적을 때는 `ls`로 실재를 확인한다(47차: 두 세션 문서가 없는 경로를 기록).
 - 세션 종료 전 dev/prod `git log --oneline -1` 대조로 커밋 격차 확인.
   (prod 폴더는 deny 대상이므로 **Chris가 실행**하고 결과만 전달한다. 대조 자체를 생략하지 말 것)
 - 수동 데이터 원복은 "기준선 복귀"가 아니라 **"원장 재계산"**이다.
