@@ -16,7 +16,9 @@
 - `node` 실행 — `node -e`, `node scripts/*-write.js` 는 psql과 동등한 DB 쓰기 경로다.
   스크립트는 **작성만** 하고 실행은 Chris.
 - `pm2` / `git push` / `git commit` / `npm install` / 배포 — 전부 Chris의 몫.
-- 마이그레이션은 additive-only: `migrate dev` 금지, `--create-only` → SQL 육안검사 → `migrate deploy`.
+- 마이그레이션은 additive-only, `migrate dev` 금지. **실행은 전부 Chris**이며 절차는 정본 규약에 있다.
+  (`--create-only`는 `migrate dev` 전용 플래그라 공유 DB에서 쓸 수 없다 — 49차 확인. 스키마 편집을
+  지시받으면 `schema.prisma` 수정까지만 하고 마이그레이션 생성·적용은 보고 후 Chris에게 넘긴다.)
 - 승인 프롬프트의 **"always allow" 변형은 절대 선택하지 않는다**(Chris 규칙).
 
 ## 기술 스택
@@ -52,11 +54,22 @@
 - → **컬럼명은 어떤 경우에도 추측하지 말고 `\d "테이블명"` 으로 먼저 확인한다.**
   쌍따옴표 필요 여부도 그 출력으로 판단. 에러 시 psql HINT가 올바른 이름을 제시한다.
 - Prisma 필드명 ≠ DB 컬럼명: `phoneNumber`↔`phone_number`, `deletedAt`↔`deleted_at`,
-  product는 `stock`↔`stock_quantity`, `isVisible`↔`is_active`.
+  product는 `stock`↔`stock_quantity`, `isVisible`↔`is_active`,
+  `inventorySource`↔`inventory_source`(49차 신설).
   (`stockQuantity`·`isActive`는 **존재하지 않는 이름**) — 매핑은 `schema.prisma`의 `@map`이 정본.
 - `Order`는 테이블 `"orders"`(SQL 예약어). 테이블명 `user`도 예약어라 쌍따옴표 필요.
 - 테이블 목록(추가될 수 있음, 정본은 '\dt' 출력): user, orders, session, account, address, cart_item, order_item, product,
   product_group, payment_log, product_view_log, search_log, verification, admin_audit_log.
+
+### 재고 쓰기 주체 (`product.inventory_source`, 49차 신설)
+- 값은 `HUB` 또는 `MANUAL` 두 가지. **기본값 `MANUAL`**(안전 방향 — 신규 상품이 실수로 허브
+  관리로 분류돼 재고가 덮이지 않도록).
+- `HUB` = 통합관리 프로그램(주승시스템)이 주기적으로 SET 하는 행. **Admin 업로드 차단.**
+- `MANUAL` = Admin 수기·CSV 업로드로 관리하는 행. **API SET은 400 거부.**
+- 교차 쓰기는 어느 방향도 허용하지 않는다. 재고를 바꾸는 코드를 새로 쓸 때 이 컬럼을 검사하지
+  않으면 두 주체가 같은 행을 덮는다. 검사 지점은 `lib/inventory.ts` 경유 규칙과 같은 자리다.
+- 허브 SKU 매칭의 정준 키는 `regexp_replace(sku, 'KR$', '')` — 한국향 `KR` 접미는 비교 시점에만
+  제거하고 **`sku` 원본은 고치지 않는다**(재임포트 회귀 방지, 48차).
 
 ### 데이터
 - `NULL || jsonb` 는 조용히 NULL을 반환한다. 읽기 → JS 병합 → 전체 쓰기.
@@ -73,9 +86,14 @@
 - 히스토리 확장: `!` 가 든 명령은 조용히 치환된다. `node -e`뿐 아니라 **`psql -c` 에서도 발생**(44차 실증).
   `!~`(정규식 부정)는 직전 명령으로 치환돼 쿼리가 깨진다 → **`NOT (컬럼 ~ '패턴')` 으로 쓴다.**
   `set +H`는 잊기 쉽고, 연산자 선택은 명령 안에 남는다.
+- **빈 출력은 도구 문제가 아닐 수 있다.** 명령이 에러도 결과도 없이 침묵하면, 인자·패턴을 고쳐
+  재시도하기 전에 **`echo alive`로 셸 stdout 생존을 먼저 확인**한다(49차: 출력 리다이렉션이 남아
+  `echo`조차 나오지 않았고, 도구 쪽을 세 번 헛짚었다). 죽어 있으면 보고하고 Chris의 복구를 기다린다.
 - heredoc은 `<< 'EOF'`(따옴표)로 셸 변수 확장 차단.
 - 도메인이 섞인 heredoc 붙여넣기 후 `grep '\['` 로 마크다운 링크 변환 손상 확인.
 - 파일 편집은 python3 exact-match + `count == 1` 가드. 다중 행에 sed 금지.
+- exact-match 앵커는 **빈 줄까지 실측**한다. 앵커 작성 전 `cat -n`으로 빈 줄 위치를 확인하고,
+  큰 블록 하나보다 작은 앵커 여럿으로 나눈다(무관한 코드를 앵커에 포함하지 말 것, 45차).
 
 ## 스크립트 설계 규약
 - 비멱등 스크립트는 `--data` 플래그 필수(기본값 없음). 직전 입력 파일은 감사 기록으로 보존한다.
@@ -113,7 +131,10 @@
 ## 기술부채 (정리 대상, 선택)
 - `lib/admin-guard.ts`의 `(session.user as { role?: string })` 캐스트는 불필요 —
   30차 검증상 `session.user.role` 직접 접근 가능(타입 `string | null | undefined`).
-- `product.status` DEFAULT가 레거시 `'SALE'` 문자열(37차 이전 체계).
+- `product.status` DEFAULT가 레거시 `'SALE'` 문자열(37차 이전 체계). `ALTER COLUMN`이 필요해
+  additive-only 규약상 별건 세션 대상.
+  `schema.prisma`의 옆 주석 `// SALE/OUTOFSTOCK/SUSPENSION`도 낡았다 — 세 값 모두 현행 체계에
+  없는 이름이며, 정본은 `lib/product-status.ts`의 6값이다. **주석만 고치는 것은 아무 세션에 동승 가능.**
 
 ## 주요 파일
 - `lib/auth.ts`(Better Auth) / `lib/prisma.ts`(싱글톤) / `lib/api-helpers.ts`(API 공용)
