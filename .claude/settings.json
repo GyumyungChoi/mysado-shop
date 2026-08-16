@@ -45,7 +45,8 @@
       "Bash(*nginx*)",
       "Bash(*systemctl*)",
       "Bash(*docker*)",
-      "Bash(*mysado-shop-prod*)"
+      "Bash(*mysado-shop-prod*)",
+      "Bash(*mysado-docs*)"
     ],
     "allow": [
       "Read",
