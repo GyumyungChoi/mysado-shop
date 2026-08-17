@@ -276,6 +276,7 @@ model Order {
   paymentLogs PaymentLog[]
 
   @@index([userId, createdAt]) // 마이페이지 "내 주문 최신순" 대비
+  @@index([updatedAt, id]) // 허브 API 커서 페이지네이션 (updatedAt ASC, id ASC) — 55차
   @@map("orders") // 단수 order는 SQL 예약어 → 복수형 예외
 }
 
@@ -288,6 +289,7 @@ model OrderItem {
   productName String @map("product_name")
   unitPrice   Int    @map("unit_price") // 실결제 단가 (discountedPrice ?? price)
   quantity    Int
+  skuSnapshot String? @map("sku_snapshot") // 주문 시점 sku (product.sku는 nullable)
 
   order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
