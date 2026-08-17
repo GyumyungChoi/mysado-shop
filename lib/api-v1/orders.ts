@@ -61,8 +61,8 @@ export const ORDER_SELECT = Prisma.validator<Prisma.OrderSelect>()({
       productName: true,
       unitPrice: true,
       quantity: true,
-      // sku는 주문 시점 스냅샷이 아니라 상품 마스터의 현재값이다(order_item에 sku 컬럼이 없다).
-      product: { select: { sku: true } },
+      // sku는 주문 시점 스냅샷이다(55차: sku_snapshot 컬럼 신설, product 조인 제거).
+      skuSnapshot: true,
     },
     orderBy: { id: "asc" },
   },
@@ -236,7 +236,7 @@ export function serializeOrder(row: OrderRow) {
     },
     lineItems: row.items.map((item) => ({
       productId: item.productId,
-      sku: item.product?.sku ?? null,
+      sku: item.skuSnapshot,
       productName: item.productName,
       unitPrice: item.unitPrice,
       quantity: item.quantity,

@@ -89,6 +89,7 @@ export async function createOrder(
         productName: item.product.name,
         unitPrice,
         quantity: item.quantity,
+        skuSnapshot: item.product.sku,
       };
     });
 
