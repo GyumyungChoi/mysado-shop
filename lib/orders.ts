@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { ApiError } from "@/lib/api-helpers";
 import type { ShippingInfo } from "@/types/order";
 import { isOnSaleStatus } from "@/lib/product-status";
+import { calcDeliveryFee } from "@/lib/delivery-fee";
 import {
   normalizePhone,
   normalizeZipCode,
@@ -14,7 +15,7 @@ import {
 /** 주문 생성 API가 돌려줄 최소 정보 */
 export interface CreateOrderResult {
   orderId: string;      // 토스 orderId — 주문번호 MYSADO-YYMMDD-NNNN (28차 전환, 토스 메일 노출값)
-  totalAmount: number;  // 서버가 재계산한 결제 금액
+  totalAmount: number;  // 서버가 재계산한 최종 결제 금액 (상품금액 합계 + 배송비). CartView.totalAmount와 뜻이 다르다 (59차)
   orderName: string;    // 토스 결제창 표시용 (예: "상품명 외 2건")
 }
 
@@ -93,10 +94,18 @@ export async function createOrder(
       };
     });
 
-    const totalAmount = itemsData.reduce(
+    const itemsAmount = itemsData.reduce(
       (sum, item) => sum + item.unitPrice * item.quantity,
       0
     );
+
+    // 배송비 — 구매 가능 항목 중 최댓값 1건만 부과 (MAX 규칙). 산출은 lib/delivery-fee.ts가 정본이다.
+    // purchasable을 넘긴다: 주문에서 제외된 항목의 배송비가 섞이면 청구액이 부풀어 오른다.
+    const deliveryFee = calcDeliveryFee(purchasable.map((item) => item.product));
+
+    // 🔴 totalAmount는 최종 결제금액이다 (상품금액 + 배송비).
+    //    confirm/route.ts:75가 이 값을 그대로 대조하므로, 여기서 확정된 금액이 토스 승인 기준이 된다.
+    const totalAmount = itemsAmount + deliveryFee;
 
     // 4) 사람이 읽는 주문번호 발급 — MYSADO-YYMMDD-NNNN (KST 날짜 기준)
     //    동시 주문 시 동일 번호 계산 가능성 있으나 order_number UNIQUE 제약이 최후 방어
@@ -128,6 +137,7 @@ export async function createOrder(
         userId,
         orderNumber,
         totalAmount,
+        deliveryFee,
         ordererName: orderer.name,
         ordererEmail: orderer.email,
         ordererPhone: orderer.phoneNumber,

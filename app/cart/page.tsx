@@ -24,7 +24,9 @@ interface CartItemView {
 
 interface CartView {
   items: CartItemView[];
-  totalAmount: number;
+  totalAmount: number;   // 상품금액 합계만 (배송비 미포함)
+  deliveryFee: number;
+  payableAmount: number; // 결제 예정 금액 = totalAmount + deliveryFee
   totalCount: number;
 }
 
@@ -248,12 +250,26 @@ export default function CartPage() {
 
               {/* 합계 + 주문 버튼 */}
               <div className="mt-6 rounded-xl bg-gray-50 p-5">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">상품금액</span>
+                  <span className="tabular-nums text-gray-900">
+                    {cart.totalAmount.toLocaleString("ko-KR")}원
+                  </span>
+                </div>
+                <div className="mt-2 flex items-center justify-between text-sm">
+                  <span className="text-gray-600">배송비</span>
+                  <span className="tabular-nums text-gray-900">
+                    {cart.deliveryFee === 0
+                      ? "무료"
+                      : cart.deliveryFee.toLocaleString("ko-KR") + "원"}
+                  </span>
+                </div>
+                <div className="mt-3 flex items-center justify-between border-t border-gray-200 pt-3">
                   <span className="text-base font-medium text-gray-700">
                     총 결제 예정 금액
                   </span>
                   <span className="text-2xl font-bold text-gray-900">
-                    {cart.totalAmount.toLocaleString("ko-KR")}원
+                    {cart.payableAmount.toLocaleString("ko-KR")}원
                   </span>
                 </div>
                 <button

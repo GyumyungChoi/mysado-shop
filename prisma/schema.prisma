@@ -249,7 +249,8 @@ model Order {
   orderNumber String?     @unique @map("order_number") // 사람이 읽는 주문번호 MYSADO-YYMMDD-NNNN (backfill 전 null 허용)
   userId      String      @map("user_id") // NOT NULL — 탈퇴는 Soft Delete로만 (Restrict가 하드삭제 차단)
   status      OrderStatus @default(PENDING)
-  totalAmount Int         @map("total_amount") // 원 단위 정수, confirm 시 amount 재검증 기준
+  totalAmount Int         @map("total_amount") // 🔴 최종 결제금액 = 상품금액 합계 + deliveryFee. confirm 시 amount 재검증 기준 (59차 의미 확장)
+  deliveryFee Int         @default(0) @map("delivery_fee") // 주문 시점 배송비 스냅샷 (MAX 규칙 산출값). totalAmount에 이미 포함돼 있다
 
   // 주문자 스냅샷 (주문 시점 고정) — 탈퇴 마스킹 후에도 거래기록이 자기완결되도록 (29차)
   ordererName  String? @map("orderer_name")

@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { ApiError } from "@/lib/api-helpers";
 import { getUnavailableLabel, isOnSaleStatus } from "@/lib/product-status";
+import { calcDeliveryFee } from "@/lib/delivery-fee";
 
 /** 장바구니 조작 실패 시 던지는 에러 (Route Handler가 status를 그대로 응답코드로 사용) */
 export class CartError extends ApiError {
@@ -29,7 +30,10 @@ export interface CartItemView {
 /** 장바구니 전체 응답 (합계는 서버에서 계산) */
 export interface CartView {
   items: CartItemView[];
+  /** 🔴 상품금액 합계만. 배송비 미포함 — Order.totalAmount(최종 결제금액)와 뜻이 다르다 (59차) */
   totalAmount: number;   // 구매 가능(isAvailable) 항목만 합산
+  deliveryFee: number;   // MAX 규칙 산출값 (lib/delivery-fee.ts가 정본)
+  payableAmount: number; // 화면에 "결제 예정 금액"으로 찍는 값 = totalAmount + deliveryFee
   totalCount: number;    // 전체 항목 수 (헤더 뱃지용)
 }
 
@@ -72,7 +76,19 @@ export async function getCart(userId: string): Promise<CartView> {
     .filter((item) => item.isAvailable)
     .reduce((sum, item) => sum + item.lineTotal, 0);
 
-  return { items, totalAmount, totalCount: items.length };
+  // 배송비 — lib/orders.ts와 반드시 같은 함수·같은 모집단을 써야 화면 금액과 청구 금액이 일치한다.
+  // isPurchasable을 다시 거는 이유: CartItemView에는 deliveryFee가 없어 원본 row가 필요하다.
+  const deliveryFee = calcDeliveryFee(
+    rows.filter((row) => isPurchasable(row.product, row.quantity)).map((row) => row.product)
+  );
+
+  return {
+    items,
+    totalAmount,
+    deliveryFee,
+    payableAmount: totalAmount + deliveryFee,
+    totalCount: items.length,
+  };
 }
 
 /** 장바구니 담기 — 이미 있으면 수량 증가 (@@unique(userId, productId) 활용 upsert)

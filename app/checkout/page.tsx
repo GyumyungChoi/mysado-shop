@@ -34,7 +34,9 @@ interface CartItemView {
 
 interface CartView {
   items: CartItemView[];
-  totalAmount: number;
+  totalAmount: number;   // 상품금액 합계만 (배송비 미포함)
+  deliveryFee: number;
+  payableAmount: number; // 결제 예정 금액 = totalAmount + deliveryFee
   totalCount: number;
 }
 
@@ -207,7 +209,8 @@ export default function CheckoutPage() {
         const w = tossPayments.widgets({ customerKey: userId });
 
         // 렌더 전 금액 설정 필수 — 이후 결제 직전에 주문 금액으로 재설정함
-        await w.setAmount({ currency: "KRW", value: cart.totalAmount });
+        // 🔴 배송비 포함값을 넘긴다. 상품금액만 넘기면 위젯 표시액과 실청구액이 어긋난다 (59차)
+        await w.setAmount({ currency: "KRW", value: cart.payableAmount });
         await Promise.all([
           w.renderPaymentMethods({
             selector: "#payment-method",
@@ -639,10 +642,24 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="mt-4 rounded-xl bg-gray-50 p-5">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">상품금액</span>
+                    <span className="tabular-nums text-gray-900">
+                      {(cart?.totalAmount ?? 0).toLocaleString("ko-KR")}원
+                    </span>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between text-sm">
+                    <span className="text-gray-600">배송비</span>
+                    <span className="tabular-nums text-gray-900">
+                      {(cart?.deliveryFee ?? 0) === 0
+                        ? "무료"
+                        : (cart?.deliveryFee ?? 0).toLocaleString("ko-KR") + "원"}
+                    </span>
+                  </div>
+                  <div className="mt-3 flex items-center justify-between border-t border-gray-200 pt-3">
                     <span className="text-sm font-medium text-gray-700">결제 예정 금액</span>
                     <span className="text-xl font-bold text-gray-900">
-                      {(cart?.totalAmount ?? 0).toLocaleString("ko-KR")}원
+                      {(cart?.payableAmount ?? 0).toLocaleString("ko-KR")}원
                     </span>
                   </div>
                   <button
