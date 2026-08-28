@@ -43,6 +43,7 @@ export const ORDER_SELECT = Prisma.validator<Prisma.OrderSelect>()({
   orderNumber: true,
   status: true,
   totalAmount: true,
+  deliveryFee: true,
   paidAt: true,
   ordererName: true,
   ordererEmail: true,
@@ -220,6 +221,7 @@ export function serializeOrder(row: OrderRow) {
     orderNumber: row.orderNumber,
     status: row.status,
     totalAmount: row.totalAmount,
+    deliveryFee: row.deliveryFee,
     paidAt: row.paidAt !== null ? isoWithOffset(row.paidAt) : null,
     orderer: {
       name: row.ordererName,
