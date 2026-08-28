@@ -44,6 +44,8 @@
 - `findUnique` 대신 `findUniqueOrThrow` — 조용한 실패 방지.
 - 상태 리터럴은 `lib/product-status.ts` 상수·술어로만. 직접 문자열 비교 금지.
 - 재고 읽기/쓰기는 `lib/inventory.ts` 경유. 라우트에서 `product.updateMany` 직접 호출 금지.
+- 배송비 산출은 `lib/delivery-fee.ts` 의 `calcDeliveryFee` 경유. 화면(`lib/cart.ts`)·결제
+  (`lib/orders.ts`)가 같은 값을 내야 하므로 직접 `Math.max`·`reduce` 금지(59차). MAX 규칙 = 구매 가능 항목 중 가장 비싼 배송비 1건만 부과.
 
 ## gotcha (함정)
 
@@ -63,7 +65,7 @@
   (`stockQuantity`·`isActive`는 **존재하지 않는 이름**) — 매핑은 `schema.prisma`의 `@map`이 정본.
 - `Order`는 테이블 `"orders"`(SQL 예약어). 테이블명 `user`도 예약어라 쌍따옴표 필요.
 - 테이블 목록(추가될 수 있음, 정본은 '\dt' 출력): user, orders, session, account, address, cart_item, order_item, product,
-  product_group, payment_log, product_view_log, search_log, verification, admin_audit_log.
+  product_group, payment_log, product_view_log, search_log, verification, admin_audit_log, api_client.
 
 ### 재고 쓰기 주체 (`product.inventory_source`, 49차 신설)
 - 값은 `HUB` 또는 `MANUAL` 두 가지. **기본값 `MANUAL`**(안전 방향 — 신규 상품이 실수로 허브
@@ -79,12 +81,16 @@
 - `NULL || jsonb` 는 조용히 NULL을 반환한다. 읽기 → JS 병합 → 전체 쓰기.
 - Prisma `DateTime`은 **UTC로 저장**된다. KST 벽시계 값으로 필터하면 어긋난다.
 - `product.name` 이 변형 식별의 정본. `variant_label`은 40자에서 잘린다.
+- **`Order.totalAmount`(상품합+배송비, 최종 결제금액) ≠ `CartView.totalAmount`(상품금액 합계만).**
+  화면에 찍는 값은 `CartView.payableAmount` 다(59차). 이름이 같아 혼동하기 쉽다.
 - `contentMeta.<field>.locked === true` 인 필드는 **전용 정정 스크립트로만** 덮는다.
   `locked`를 해제하지 않고, `corrections` 배열에 `previousValue`·`previousSource`·`reason`을 누적한다.
   `source`가 `name-rule`인 값은 규칙 산출물이며 사람 검증값이 아니다.
 - FK `ON DELETE CASCADE`는 **자식 삭제 건수를 출력하지 않는다.** 삭제 전 자식 행 수를 세어 두지
   않으면 "무엇이 사라졌는지 모르는 삭제"가 된다. `orders` 삭제 시 `order_item`·`payment_log`가,
   `user` 삭제 시 `account`·`session`·`address`·`cart_item`이 동반 삭제된다(47차 실증).
+- **`product.status` DEFAULT `'SALE'` 은 고아를 만든다.** 실데이터는 ON_SALE·SOLD_OUT·DISCONTINUED 3종뿐이고 'SALE'은 0건이다(58차 실측). status 를 생략한
+  product INSERT/create 는 어떤 술어에도 걸리지 않아 목록에서 조용히 사라진다 — 신규 상품 코드는 status 를 반드시 명시한다.
 
 ### 셸
 - 히스토리 확장: `!` 가 든 명령은 조용히 치환된다. `node -e`뿐 아니라 **`psql -c` 에서도 발생**(44차 실증).
@@ -145,6 +151,7 @@
 
 ## 주요 파일
 - `lib/auth.ts`(Better Auth) / `lib/prisma.ts`(싱글톤) / `lib/api-helpers.ts`(API 공용)
-- `lib/product-status.ts`(상태 상수·술어) / `lib/inventory.ts`(재고 차감·복원)
+- `lib/product-status.ts`(상태 상수·술어) / `lib/inventory.ts`(재고 차감·복원) / `lib/delivery-fee.ts`(배송비 MAX, 59차)
+- `lib/api-v1/`(허브 연동 API — serializeOrder 단일 직렬화 경로)
 - `lib/admin-guard.ts`(requireAdminPage/Api) / `middleware.ts`(PROTECTED_PATHS) / `prisma/schema.prisma`
 - `.env.local` — **읽지 말 것**(시크릿 포함, deny 대상).
