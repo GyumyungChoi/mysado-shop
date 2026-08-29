@@ -89,6 +89,8 @@
 - FK `ON DELETE CASCADE`는 **자식 삭제 건수를 출력하지 않는다.** 삭제 전 자식 행 수를 세어 두지
   않으면 "무엇이 사라졌는지 모르는 삭제"가 된다. `orders` 삭제 시 `order_item`·`payment_log`가,
   `user` 삭제 시 `account`·`session`·`address`·`cart_item`이 동반 삭제된다(47차 실증).
+- `order_item.sku_snapshot`(text)이 주문 시점 SKU 스냅샷이다(55차 신설, product 조인 제거).
+  `GET /api/v1/orders` 의 `sku` 는 이 컬럼에서 나온다 — product 조인으로 오추론하지 말 것.
 - **`product.status` DEFAULT `'SALE'` 은 고아를 만든다.** 실데이터는 ON_SALE·SOLD_OUT·DISCONTINUED 3종뿐이고 'SALE'은 0건이다(58차 실측). status 를 생략한
   product INSERT/create 는 어떤 술어에도 걸리지 않아 목록에서 조용히 사라진다 — 신규 상품 코드는 status 를 반드시 명시한다.
 
