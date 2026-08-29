@@ -123,6 +123,8 @@
   5. 독립 재조회 교차검증
 - 가드 블록은 `expectedCurrent` 가드의 SQL판이다. **자동 보정하지 않는다** — 불일치는
   "조사 이후 DB가 변했다"는 사건 신호다.
+- **삭제 전, 그 행이 라이브 문서(사양서·계약)에 실응답으로 채록됐는지 확인한다**(67차 신설).
+  채록됐으면 그 문서 재작업이 삭제의 선행조건이다. 핸드오프 참조는 불변 이력이라 무관하다.
 - 식별자·실명이 든 정리 SQL은 커밋하지 않는다(git 이력은 사후 삭제가 어렵다).
 
 ## 진행 방식
@@ -154,4 +156,6 @@
 - `lib/product-status.ts`(상태 상수·술어) / `lib/inventory.ts`(재고 차감·복원) / `lib/delivery-fee.ts`(배송비 MAX, 59차)
 - `lib/api-v1/`(허브 연동 API — serializeOrder 단일 직렬화 경로)
 - `lib/admin-guard.ts`(requireAdminPage/Api) / `middleware.ts`(PROTECTED_PATHS) / `prisma/schema.prisma`
+- `app/api/health/route.ts`(DB 프로브 — `SELECT 1`, **force-dynamic** 로 ISR이 DB 장애를 200으로
+  덮지 않게, 무인증 200/503. HetrixTools `mysado-health` 가 keyword `"db":"up"` 로 감시. 66차 신설)
 - `.env.local` — **읽지 말 것**(시크릿 포함, deny 대상).
