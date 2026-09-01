@@ -14,8 +14,9 @@ import { getUnavailableLabel, isOnSaleStatus } from "@/lib/product-status";
 import categoriesData from "@/data/categories.json";
 // import productsData from "@/data/products.json";
 import type { Category } from "@/types/product";
-import { getProductById, getRelatedProducts } from "@/lib/products";
+import { getProductById, getRelatedProducts, getGroupSiblings } from "@/lib/products";
 import AddToCartButton from "@/components/products/AddToCartButton";
+import VariantSelector from "@/components/products/detail/VariantSelector";
 
 const categories = categoriesData as Category[];
 // const products = productsData as Product[];
@@ -81,6 +82,9 @@ export default async function ProductDetailPage({
 
   const category = getCategory(product.category_id);
   const relatedProducts = await getRelatedProducts(product.category_id, product.id);
+  const siblings = product.group_id
+    ? await getGroupSiblings(product.group_id)
+    : [];
   const hasDiscount = product.discounted_price !== null;
   const displayPrice = product.discounted_price ?? product.price;
 
@@ -216,6 +220,9 @@ export default async function ProductDetailPage({
                     </span>
                   ))}
                 </div>
+              )}
+              {siblings.length > 1 && (
+                <VariantSelector items={siblings} currentId={product.id} />
               )}
               <AddToCartButton
                 productId={product.id}

@@ -36,6 +36,9 @@ function toProduct(row: ProductRow): Product {
     highlights: row.highlights,
     seo_title: row.seoTitle,
     seo_description: row.seoDescription,
+    group_id: row.groupId,
+    variant_label: row.variantLabel,
+    group_role: row.groupRole,
   };
 }
 
@@ -85,6 +88,20 @@ export async function getRelatedProducts(
   });
   return rows.map(toProduct);
 }
+
+/** 같은 묶음(ProductGroup)의 상품 전량 — 현재 상품 포함 (상세 변형 선택)
+ *  자기 자신이 목록에 있어야 현재 위치가 드러나므로 excludeId 를 두지 않습니다 */
+export async function getGroupSiblings(groupId: string): Promise<Product[]> {
+  const rows = await prisma.product.findMany({
+    where: {
+      isVisible: true,
+      groupId,
+    },
+    orderBy: { sortOrder: "asc" },
+  });
+  return rows.map(toProduct);
+}
+
 /** 상품명 부분 일치 검색 (대소문자 무시 — PostgreSQL ILIKE)
  *  한국어는 대소문자 개념이 없어 mode 옵션이 무의미하지만
  *  영문 상품명(브랜드 등) 검색을 위해 insensitive 유지 */

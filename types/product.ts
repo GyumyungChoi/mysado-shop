@@ -32,6 +32,11 @@ export interface Product {
   highlights: string[];
   seo_title: string | null;
   seo_description: string | null;
+
+  // ── Phase 7 71차: ProductGroup 묶음 층 ──
+  group_id: string | null;
+  variant_label: string | null;
+  group_role: string | null;      // PRIMARY / VARIANT (DB CHECK 없음)
 }
 
 /** 카테고리 데이터 타입 */
