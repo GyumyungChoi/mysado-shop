@@ -98,6 +98,22 @@
 - **`product_group.content_status` 와 `product.content_status` 는 동명이의.** 문서·주석에
   적을 때는 테이블명을 병기한다.
 
+### 노출 판정과 게시 상태 (75차 실측)
+- **화면·사이트맵 노출 판정은 `is_active`(Prisma `isVisible`) 단독이다**(75차 Chris 확정).
+  `app/sitemap.ts` 가 `isVisible: true` 로만 거르며, 근거는 `getProductById()` 가
+  `!isVisible` 이면 null(→404)을 반환한다는 점이다. 이 기준을 벗어나면 사이트맵에
+  404 URL이 실린다.
+- `is_active` 는 독립 축이 아니라 **`status` 의 파생값**이다. `lib/product-status.ts` 의
+  `deriveIsVisible(status)` 가 `[ON_SALE, SOLD_OUT]` 만 true 로 본다.
+  **status 를 쓰는 코드는 `is_active` 를 하드코딩하지 말고 이 함수 결과를 쓴다.**
+- **`product.content_status` 는 노출을 막지 않는다**(75차 실측). `draft` 인 상품 176건이
+  노출 중이고 사이트맵에도 실려 있다. `app`·`lib`·`components` 전체에서 이 컬럼을 읽는
+  코드가 **0건**이며(`prisma/schema.prisma` 선언만 존재), 게시 게이트는 아직 없다.
+  이 컬럼으로 노출을 판정하는 코드를 새로 쓰기 전에 설계를 먼저 확정한다.
+- 75차 실측 분포(228행): `is_active=t` **218**(ON_SALE 174 / SOLD_OUT 44) ·
+  `is_active=f` **10**(전부 DISCONTINUED). `content_status` = `draft` 186 · `review` 42 ·
+  **`published` 0**. 컬럼 DEFAULT 는 `'raw'` 인데 실값 `raw` 는 0건인 고아 기본값이다.
+
 ### 재고 쓰기 주체 (`product.inventory_source`, 49차 신설 · 73차 복원)
 - 값은 `HUB` 또는 `MANUAL` 두 가지. **기본값 `MANUAL`**(안전 방향 — 신규 상품이 실수로 허브
   관리로 분류돼 재고가 덮이지 않도록).
@@ -140,10 +156,22 @@
   **SET NULL 계열은 더 조용하다** — `product` 삭제 → `order_item.product_id`,
   `product_group` 삭제 → `product.group_id` 가 NULL이 되고 아무 것도 출력되지 않는다.
   **두 테이블 모두 행 하드 삭제 금지**(정본 규약).
+- **`product` 삭제는 `cart_item` 을 CASCADE 로 지운다**(75차 `\d product` 실측).
+  `cart_item_product_id_fkey` 만 `ON DELETE CASCADE` 이고 `order_item`·`product_view_log` 는
+  SET NULL 이다. `cart_item` 을 `user` 삭제의 자식으로만 기억하면 건수 없이 사라진다.
 - `order_item.sku_snapshot`(text)이 주문 시점 SKU 스냅샷이다(55차 신설, product 조인 제거).
   `GET /api/v1/orders` 의 `sku` 는 이 컬럼에서 나온다 — product 조인으로 오추론하지 말 것.
 - **`product.status` DEFAULT `'SALE'` 은 고아를 만든다.** 실데이터는 ON_SALE·SOLD_OUT·DISCONTINUED 3종뿐이고 'SALE'은 0건이다(58차 실측). status 를 생략한
   product INSERT/create 는 어떤 술어에도 걸리지 않아 목록에서 조용히 사라진다 — 신규 상품 코드는 status 를 반드시 명시한다.
+- **신규 등록의 시작점은 `DRAFT` 다**(37차 §3-1, 75차 재확인).
+  `lib/product-status.ts` 의 `PRODUCT_STATUS.DRAFT` 주석이 "등록 준비중 — 신규 INSERT ~
+  검수 전. 비노출"이고, `scripts/product-insert-38.js` 가 `status: STATUS_DRAFT` /
+  `isVisible: deriveIsVisible(STATUS_DRAFT)` 로 그 결정을 따른다.
+  **DEFAULT 는 "가장 흔한 상태"가 아니라 "값이 생략됐을 때 안전한 상태"** 이므로
+  실데이터 최다값(`ON_SALE`)을 근거로 삼지 않는다.
+- ⚠️ **DB 의 DEFAULT 는 아직 `'SALE'` / `is_active=true` 다.** 76차에 `'DRAFT'` / `false` 로
+  정정 예정이며(75차 Chris 승인분, `ALTER COLUMN ... SET DEFAULT` 2줄), 그 전까지는
+  status·isVisible 을 명시하지 않는 product INSERT 를 만들지 않는다.
 
 ### 스타일·빌드
 - **빌드는 CSS 실패를 잡아주지 않는다**(71차 신설). 존재하지 않거나 다른 규칙에 덮인 Tailwind
@@ -171,6 +199,10 @@
   `awk '{n=match($0,/[^ ]/)-1} /패턴/{print NR" indent="n"  "$0}' 파일`
   — `cat -n` 의 탭 2칸 함정(59차)을 우회하고 행번호·깊이·본문을 한 줄에 얻는다.
 - `grep -rn 'A|B|C'` 는 `-E` 없이는 `|` 를 리터럴로 읽는다. **0건의 흔한 원인.**
+- **grep 범위에서 `scripts/`·`prisma/` 를 빼면 0건이 거짓이 된다**(75차 실증).
+  `app`·`lib`·`components` 만 보고 `product.create` 0건이 나왔으나, 상품 INSERT 는
+  `scripts/product-insert-38.js` 와 `prisma/seed.js` 에 있었다. 화면 기능이 아닌 것
+  (일회성 등록·백필·시드)은 이 두 디렉터리에 산다. 58차 `components/` 규약의 확장이다.
 - **`core.autocrlf=input` 이 CRLF 파일을 커밋 시 LF로 바꾼다**(73차 실증).
   저장소 blob과 디스크 파일의 sha256이 갈려 "저장소에서 꺼낸 것 = 전달한 것"이 성립하지
   않는다. `mysado-docs` 에는 `.gitattributes` 의 `*.csv -text` 로 차단해 두었다.
