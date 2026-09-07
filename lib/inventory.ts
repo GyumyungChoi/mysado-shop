@@ -84,12 +84,14 @@ export async function tryDeductStock(
   lines: StockLine[],
 ): Promise<StockLine[]> {
   const shortage: StockLine[] = [];
+  // 같은 트랜잭션의 전 라인이 한 시각을 공유한다 (76차)
+  const now = new Date();
 
   for (const line of lines) {
     // TODO(Phase 10): StockMovement 원장 경유로 전환할 지점 (33차 방침)
     const r = await tx.product.updateMany({
       where: { id: line.productId, stock: { gte: line.quantity } },
-      data: { stock: { decrement: line.quantity } },
+      data: { stock: { decrement: line.quantity }, stockUpdatedAt: now },
     });
     // id가 PK라 count는 1을 넘을 수 없다. 상품이 삭제된 경우(count = 0)도 함께 부족으로 처리
     if (r.count !== 1) shortage.push(line);
@@ -103,11 +105,13 @@ export async function restoreStock(
   tx: Prisma.TransactionClient,
   lines: StockLine[],
 ): Promise<void> {
+  const now = new Date();
+
   for (const line of lines) {
     // update가 아니라 updateMany — 상품 행이 이미 삭제됐어도 예외 없이 넘어가야 한다
     await tx.product.updateMany({
       where: { id: line.productId },
-      data: { stock: { increment: line.quantity } },
+      data: { stock: { increment: line.quantity }, stockUpdatedAt: now },
     });
   }
 }

@@ -124,8 +124,8 @@ model Product {
   price            Int
   discountedPrice  Int?             @map("discounted_price")
   stock            Int              @default(0) @map("stock_quantity")
-  status           String           @default("SALE") // SALE/OUTOFSTOCK/SUSPENSION
-  isVisible        Boolean          @default(true) @map("is_active")
+  status           String           @default("DRAFT") // 어휘는 lib/product-status.ts 신값 6종 (37차 M1)
+  isVisible        Boolean          @default(false) @map("is_active") // deriveIsVisible("DRAFT") = false
   description      String           @default("") // AI 설명 생성용
   detailHtml       String           @default("") @map("detail_html")
   images           String[]
@@ -174,6 +174,10 @@ model Product {
   channelModifiedAt DateTime @map("channel_modified_at") // JSON modified_at
   createdAt         DateTime @default(now()) @map("created_at") // DB 삽입 시각
   updatedAt         DateTime @updatedAt @map("updated_at")
+  // 재고가 마지막으로 바뀐 시각 (76차). updatedAt 은 @updatedAt 이라 어떤 필드 변경에도
+  // 갱신되므로 재고 신선도 지표가 될 수 없다. 갱신 주체는 lib/inventory.ts 두 함수뿐이며,
+  // null 은 "판매 층에서 재고를 건드린 사건이 아직 없음" 을 뜻한다 (백필하지 않음).
+  stockUpdatedAt    DateTime? @map("stock_updated_at")
 
   @@index([groupId]) // 2026.07.30 추가
   @@map("product")
