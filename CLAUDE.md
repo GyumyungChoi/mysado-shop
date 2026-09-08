@@ -25,6 +25,10 @@
   (`--create-only`는 `migrate dev` 전용 플래그라 공유 DB에서 쓸 수 없다 — 49차 확인. 스키마 편집을
   지시받으면 `schema.prisma` 수정까지만 하고 마이그레이션 생성·적용은 보고 후 Chris에게 넘긴다.)
 - 승인 프롬프트의 **"always allow" 변형은 절대 선택하지 않는다**(Chris 규칙).
+- 🔴 **`scripts/product-status-write.js` 는 폐기 대상이며 실행·참조하지 않는다**(76차 확정).
+  구값 `OUTOFSTOCK` 로 상태를 되돌리고 `stock: 0` 을 `lib/inventory.ts` 우회로 직접 쓴다.
+  **역할이 끝난 일회성 스크립트는 그 시점의 어휘·전제로 굳어 있어, 나중에 실행하면
+  현재 체계를 과거로 되돌린다.** 이 파일을 참고 코드로 삼지도 않는다.
 
 ## 기술 스택
 - Next.js 14.2.35 (App Router, CommonJS, **src/ 없음**) / TypeScript / Node 22
@@ -80,7 +84,8 @@
   product는 `stock`↔`stock_quantity`, `isVisible`↔`is_active`,
   `inventorySource`↔`inventory_source`(49차 신설),
   **`groupId`↔`group_id`, `variantLabel`↔`variant_label`, `groupRole`↔`group_role`**(71차 실측,
-  `schema.prisma` 157~159행).
+  `schema.prisma` 157~159행),
+  **`stockUpdatedAt`↔`stock_updated_at`**(76차 신설, 테이블 42번째 컬럼).
   (`stockQuantity`·`isActive`는 **존재하지 않는 이름**) — 매핑은 `schema.prisma`의 `@map`이 정본.
 - `Order`는 테이블 `"orders"`(SQL 예약어). 테이블명 `user`도 예약어라 쌍따옴표 필요.
 - 테이블 목록(추가될 수 있음, 정본은 '\dt' 출력): user, orders, session, account, address, cart_item, order_item, product,
@@ -120,8 +125,9 @@
 - `HUB` = 통합관리 프로그램(주승시스템)이 주기적으로 SET 하는 행. **Admin 업로드 차단.**
 - `MANUAL` = Admin 수기·CSV 업로드로 관리하는 행. **API SET은 400 거부.**
 - 교차 쓰기는 어느 방향도 허용하지 않는다. **재고를 바꾸는 코드를 새로 쓸 때 이 컬럼을
-  검사하지 않으면 두 주체가 같은 행을 덮는다.** 검사 지점은 `lib/inventory.ts` 경유 규칙과
-  같은 자리다.
+  검사하지 않으면 두 주체가 같은 행을 덮는다.** 검사 지점은 `lib/inventory.ts` 의
+  `tryDeductStock` 과 `restoreStock` 두 함수다(76차 실측 — 그 전까지 "경유 규칙과 같은 자리"
+  로만 적혔 있어 어느 함수인지 코드를 다시 읽어야 했다).
 - 허브 SKU 매칭의 정준 키는 `regexp_replace(sku, 'KR$', '')` — 한국향 `KR` 접미는 비교 시점에만
   제거하고 **`sku` 원본은 고치지 않는다**(재임포트 회귀 방지, 48차).
 - **허브에만 있고 우리에 없는 품목코드는 우리 쪽 처리 대상이 아니다**(73차 확정).
@@ -132,6 +138,23 @@
 - 재고의 3층: 이카운트 ERP(일별 확정 원장) → 통합 프로그램(확정 가용재고 산출) →
   판매 채널(SET 수신). **우리는 판매 층이며 원장을 갖지 않는다** — 우리 쪽에 둘 것은 원장이
   아니라 동기화 로그(`requestId`·`snapshotAt`·before/after)다(48차).
+- **재고를 바꾸면 `stock_updated_at` 을 함께 갱신한다**(76차 신설). `tryDeductStock`·
+  `restoreStock` 두 함수 진입 시 `new Date()` 를 **한 번만** 잡아 같은 트랜잭션의 모든 줄이
+  공유한다. 줄마다 새로 잡으면 한 주문 안에서 시각이 갈린다.
+  `updatedAt` 은 `@updatedAt` 이라 어느 필드가 바뀌어도 갱신되므로 재고 시각의 근거가 될 수 없다.
+  **NULL 은 "재고가 없다"가 아니라 "우리 쪽에서 관측된 재고 변동이 없다"** 는 뜻이다
+  (백필하지 않았으므로 신설 시점 228행 전량 NULL). 외부 사양서에 이 의미를 명시한다.
+- **인증 주체는 두 경로이며 섞어 쓰지 않는다**(76차 Chris 확정).
+  - **경로 A(확정)** — 허브 프로그램이 쓴다. 인증은 **`api_client` Bearer + scope**,
+    대상은 `inventory_source='HUB'` 행. `hub-jusung` 이 이미 `orders:read` 로 돌고 있으므로
+    계정 신설이 아니라 **scope 한 줄**이다.
+  - **경로 B** — 사람이 화면에서 쓴다. 인증은 Better Auth 로그인 + `user.role`,
+    대상은 `MANUAL` 행. **`HUB` 행에는 적용되지 않는다** — 허브가 다음 SET 때 덮어써서
+    사람이 넣은 값이 조용히 사라진다.
+  - 프로그램이 사람 계정으로 로그인하는 설계는 채택하지 않는다. 세션 만료·비밀번호 변경이
+    장애 요인이 되고 권한을 좁히거나 회수할 수 없다.
+  - **`inventory:write` scope 는 `GET /api/v1/products`(L2)와 짝으로 열다.** 순서는 L2 → L1.
+    재고 쓰기만 먼저 열면 허브가 무엇을 얼마로 세팅할지 모르는 채 권한만 갖는다.
 
 ### 데이터
 - `NULL || jsonb` 는 조용히 NULL을 반환한다. 읽기 → JS 병합 → 전체 쓰기.
@@ -161,17 +184,26 @@
   SET NULL 이다. `cart_item` 을 `user` 삭제의 자식으로만 기억하면 건수 없이 사라진다.
 - `order_item.sku_snapshot`(text)이 주문 시점 SKU 스냅샷이다(55차 신설, product 조인 제거).
   `GET /api/v1/orders` 의 `sku` 는 이 컬럼에서 나온다 — product 조인으로 오추론하지 말 것.
-- **`product.status` DEFAULT `'SALE'` 은 고아를 만든다.** 실데이터는 ON_SALE·SOLD_OUT·DISCONTINUED 3종뿐이고 'SALE'은 0건이다(58차 실측). status 를 생략한
-  product INSERT/create 는 어떤 술어에도 걸리지 않아 목록에서 조용히 사라진다 — 신규 상품 코드는 status 를 반드시 명시한다.
+- **`product` 의 인덱스는 2개뿐이다**(76차 실측): `product_pkey(id)` ·
+  `product_group_id_idx(group_id)`. **`sku` 에 인덱스도 UNIQUE 도 없고 `updated_at`·
+  `stock_updated_at` 에도 없다.** "sku 고유 179/179"(74차)는 그 시점 데이터일 뿐
+  **제약이 아니다** — 중복 sku 를 DB 가 막지 않는다. `updated_since` 류 필터는 풀스캔이 되므로,
+  성능을 전제로 한 설계를 쓰기 전에 인덱스 추가 여부를 먼저 판단한다.
+- **`product.status` DEFAULT 는 76차에 `'SALE'` → `'DRAFT'` 로 정정됐다.** 구 DEFAULT 는
+  실데이터 0건인 고아값이라, status 를 생략한 INSERT 가 어떤 술어에도 걸리지 않고 목록에서
+  조용히 사라졌다(58차 실측). **그래도 신규 상품 코드는 status 를 반드시 명시한다** —
+  DEFAULT 는 안전망이지 설계가 아니며, 명시하지 않으면 코드만 읽어서 어떤 상태로 생기는지 알 수 없다.
 - **신규 등록의 시작점은 `DRAFT` 다**(37차 §3-1, 75차 재확인).
   `lib/product-status.ts` 의 `PRODUCT_STATUS.DRAFT` 주석이 "등록 준비중 — 신규 INSERT ~
   검수 전. 비노출"이고, `scripts/product-insert-38.js` 가 `status: STATUS_DRAFT` /
   `isVisible: deriveIsVisible(STATUS_DRAFT)` 로 그 결정을 따른다.
   **DEFAULT 는 "가장 흔한 상태"가 아니라 "값이 생략됐을 때 안전한 상태"** 이므로
   실데이터 최다값(`ON_SALE`)을 근거로 삼지 않는다.
-- ⚠️ **DB 의 DEFAULT 는 아직 `'SALE'` / `is_active=true` 다.** 76차에 `'DRAFT'` / `false` 로
-  정정 예정이며(75차 Chris 승인분, `ALTER COLUMN ... SET DEFAULT` 2줄), 그 전까지는
-  status·isVisible 을 명시하지 않는 product INSERT 를 만들지 않는다.
+- 🟢 **DB 의 DEFAULT 는 `'DRAFT'` / `is_active=false` 다**(76차 마이그레이션
+  `20260907122117_product_stock_updated_at_and_status_defaults`, 독립 psql 교차검증 완료).
+  `deriveIsVisible('DRAFT') = false` 이므로 생략 INSERT 가 들어와도 비노출로 안착한다.
+- **`product.stock_updated_at`** — `timestamp(3)` · **Nullable** · DEFAULT 없음 ·
+  테이블 **맨 끝(42번째)**. 재고 변경 시각 전용이며 규칙은 「재고 쓰기 주체」절에 있다.
 
 ### 스타일·빌드
 - **빌드는 CSS 실패를 잡아주지 않는다**(71차 신설). 존재하지 않거나 다른 규칙에 덮인 Tailwind
@@ -279,10 +311,9 @@
 ## 기술부채 (정리 대상, 선택)
 - `lib/admin-guard.ts`의 `(session.user as { role?: string })` 캐스트는 불필요 —
   30차 검증상 `session.user.role` 직접 접근 가능(타입 `string | null | undefined`).
-- `product.status` DEFAULT가 레거시 `'SALE'` 문자열(37차 이전 체계). `ALTER COLUMN`이 필요해
-  additive-only 규약상 별건 세션 대상.
-  `schema.prisma`의 옆 주석 `// SALE/OUTOFSTOCK/SUSPENSION`도 낡았다 — 세 값 모두 현행 체계에
-  없는 이름이며, 정본은 `lib/product-status.ts`의 6값이다. **주석만 고치는 것은 아무 세션에 동승 가능.**
+- ~~`product.status` DEFAULT 레거시 `'SALE'`~~ **76차 해소.** DEFAULT 는 `'DRAFT'` 로,
+  `schema.prisma` 의 낡은 주석 `// SALE/OUTOFSTOCK/SUSPENSION` 도 같은 편집에서 정정됐다.
+- `scripts/product-status-write.js` 폐기 표시 또는 삭제(76차 확정, 미착수 — 위 「절대 하지 말 것」참조).
 - `group_role` 에 CHECK 제약이, `(group_id, variant_label)` 에 UNIQUE가 없다. additive 보강
   후보이나 필요성 미확정(70차).
 - `VariantSelector.tsx` 의 `line-clamp-2` 가 화면에서 동작하지 않는다(71차). `block` 제거로
