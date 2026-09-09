@@ -117,7 +117,7 @@ model SearchLog {
 
 model Product {
   id               String           @id // prod-001 (URL/로그 호환)
-  sku              String? // null 50건, @unique 불가
+  sku              String? // null 49건(77차 실측). 값 179건 전량 고유이나 DB 제약은 없다 — @unique·인덱스 모두 미설정
   categoryId       String           @map("category_id")
   categoryName     String           @map("category_name")
   name             String
