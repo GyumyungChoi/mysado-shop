@@ -10,4 +10,6 @@
  */
 export const API_SCOPE = {
   ORDERS_READ: "orders:read",
+  /** 77차 신설. 34차 §5-2 어휘 밖의 새 축이며 소비자는 GET /api/v1/products 다. */
+  PRODUCTS_READ: "products:read",
 } as const;
