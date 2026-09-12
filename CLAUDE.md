@@ -122,8 +122,13 @@
 ### 재고 쓰기 주체 (`product.inventory_source`, 49차 신설 · 73차 복원)
 - 값은 `HUB` 또는 `MANUAL` 두 가지. **기본값 `MANUAL`**(안전 방향 — 신규 상품이 실수로 허브
   관리로 분류돼 재고가 덮이지 않도록).
-- `HUB` = 통합관리 프로그램(주승시스템)이 주기적으로 SET 하는 행. **Admin 업로드 차단.**
-- `MANUAL` = Admin 수기·CSV 업로드로 관리하는 행. **API SET은 400 거부.**
+- `HUB` = 통합관리 프로그램(주승시스템)이 주기적으로 SET 하는 행.
+- `MANUAL` = Admin 수기·CSV 업로드로 관리하는 행.
+- 🔴 **"Admin 업로드 차단"·"API SET 400 거부"는 현재 동작이 아니라 S-3 요구사항이다**(77차 실측).
+  `app`·`lib`·`components`·`scripts`·`prisma` 전 디렉터리에서 `inventorySource` 배선이 **0건**이고,
+  마이그레이션 1줄과 `schema.prisma` 선언 1줄이 전부다. 별칭·헬퍼 경유 경로도 없다.
+  **이원화는 데이터 분류 + 운영 약속이며 코드 게이트가 아니다.** 재고를 쓰는 코드를 새로 쓸 때
+  "어딘가 막아주고 있겠지"로 읽지 말 것 — 막는 코드는 아직 없다.
 - 교차 쓰기는 어느 방향도 허용하지 않는다. **재고를 바꾸는 코드를 새로 쓸 때 이 컬럼을
   검사하지 않으면 두 주체가 같은 행을 덮는다.** 검사 지점은 `lib/inventory.ts` 의
   `tryDeductStock` 과 `restoreStock` 두 함수다(76차 실측 — 그 전까지 "경유 규칙과 같은 자리"
@@ -146,19 +151,30 @@
   (백필하지 않았으므로 신설 시점 228행 전량 NULL). 외부 사양서에 이 의미를 명시한다.
 - **인증 주체는 두 경로이며 섞어 쓰지 않는다**(76차 Chris 확정).
   - **경로 A(확정)** — 허브 프로그램이 쓴다. 인증은 **`api_client` Bearer + scope**,
-    대상은 `inventory_source='HUB'` 행. `hub-jusung` 이 이미 `orders:read` 로 돌고 있으므로
-    계정 신설이 아니라 **scope 한 줄**이다.
+    대상은 `inventory_source='HUB'` 행. `hub-jusung` 의 현재 scope는
+    **`{orders:read, products:read}`** 이며(79차 부여), 남은 것은 계정 신설이 아니라
+    **`inventory:write` scope 한 줄**이다.
   - **경로 B** — 사람이 화면에서 쓴다. 인증은 Better Auth 로그인 + `user.role`,
     대상은 `MANUAL` 행. **`HUB` 행에는 적용되지 않는다** — 허브가 다음 SET 때 덮어써서
     사람이 넣은 값이 조용히 사라진다.
   - 프로그램이 사람 계정으로 로그인하는 설계는 채택하지 않는다. 세션 만료·비밀번호 변경이
     장애 요인이 되고 권한을 좁히거나 회수할 수 없다.
-  - **`inventory:write` scope 는 `GET /api/v1/products`(L2)와 짝으로 열다.** 순서는 L2 → L1.
+  - **`inventory:write`(S-3)는 `GET /api/v1/products`(S-2)가 있어야 연다.**
     재고 쓰기만 먼저 열면 허브가 무엇을 얼마로 세팅할지 모르는 채 권한만 갖는다.
+    🟢 **S-2는 79차에 배포·개통됐으므로 이 선행조건은 해소됐다.** 남은 선행조건은 위의
+    **배선 0건**이며, S-3에서 400 거부·admin 차단을 신설해야 한다.
+    ⚠️ `L1`·`L2` 라벨은 77차에 폐기됐다 — **S-1**(주문 수집) · **S-2**(상품 목록) ·
+    **S-3**(재고 SET)으로만 부른다.
 
 ### 데이터
 - `NULL || jsonb` 는 조용히 NULL을 반환한다. 읽기 → JS 병합 → 전체 쓰기.
 - Prisma `DateTime`은 **UTC로 저장**된다. KST 벽시계 값으로 필터하면 어긋난다.
+- 🔴 **`@updatedAt` 은 Prisma 쓰기에서만 갱신된다**(79차 실측). `psql` 로 직접 UPDATE한 행은
+  `updated_at` 이 움직이지 않아 **허브의 증분 수집(`updatedAfter`)에 영원히 잡히지 않는다**
+  (`prod-108` 이 9/7 수정 후에도 `2026-08-01 07:32:03.578` 그대로였다).
+  `product` 를 psql로 UPDATE할 때는 `updated_at` 을 같은 SQL에서 함께 갱신하되,
+  UTC 저장이므로 **`(now() AT TIME ZONE 'UTC')`** 로 쓴다 — `now()` 를 그대로 넣으면
+  서버 `TimeZone` 에 따라 9시간 어긋난다(서버 `TimeZone` 설정은 **미확인**).
 - **`product.name` 이 변형 식별의 정본이다.** `variant_label` 은 색상명이 아니라
   **상품명 전체에 가까운 문자열**이다(71차 실측: prod-127~136 10건이 `name` 에서 기기 접두만
   빠진 형태). 화면에 그대로 쓰면 같은 묶음 안에서 앞부분이 전부 같아 변별이 되지 않으므로,
@@ -182,8 +198,18 @@
 - **`product` 삭제는 `cart_item` 을 CASCADE 로 지운다**(75차 `\d product` 실측).
   `cart_item_product_id_fkey` 만 `ON DELETE CASCADE` 이고 `order_item`·`product_view_log` 는
   SET NULL 이다. `cart_item` 을 `user` 삭제의 자식으로만 기억하면 건수 없이 사라진다.
+- **미결제 주문은 장바구니를 비우지 않는다**(79차 실측). `MYSADO-260902-0001`(PENDING) 생성
+  30초 전에 담긴 `cart_item` 이 주문 뒤에도 그대로 남아 있었다. **주문 생성과 장바구니
+  비우기가 묶여 있다고 가정하지 말 것** — 코드 경로는 미확인이며, PENDING 만료 정책도
+  미구현이라 누적된다(8/24 · 9/2 · 9/10 세 건).
 - `order_item.sku_snapshot`(text)이 주문 시점 SKU 스냅샷이다(55차 신설, product 조인 제거).
   `GET /api/v1/orders` 의 `sku` 는 이 컬럼에서 나온다 — product 조인으로 오추론하지 말 것.
+- 🔴 **주문 API와 상품 API의 시각 파서가 다르다**(80차 실측). `updatedAfter` 에 마이크로초를
+  붙이면 **상품 목록은 200, 주문 조회는 400**이다. 같은 시각 문자열 생성 코드를 두 API에
+  쓰면 상품만 통과한다. **한쪽에서 통과한 형식을 다른 쪽의 근거로 쓰지 말 것.**
+- 🔴 **`session.ipAddress` 는 실클라이언트 IP가 아니다**(80차 실측). 최근 전 건이
+  `172.25.32.1`(WSL2가 보는 Windows 호스트 주소)이고 **원격 접속도 이 값으로 찍힌다.**
+  접속 주체(사내/외부) 판별에 **쓸 수 없다.** 필요하면 Nginx 접근 로그를 본다.
 - **`product` 의 인덱스는 2개뿐이다**(76차 실측): `product_pkey(id)` ·
   `product_group_id_idx(group_id)`. **`sku` 에 인덱스도 UNIQUE 도 없고 `updated_at`·
   `stock_updated_at` 에도 없다.** "sku 고유 179/179"(74차)는 그 시점 데이터일 뿐
