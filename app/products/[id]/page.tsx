@@ -230,17 +230,21 @@ export default async function ProductDetailPage({
                 isPurchasable={inStock}
                 unavailableLabel={unavailableLabel}
               />
-              <a
-                href={product.smartstore_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 flex w-full items-center justify-center rounded-lg bg-green-600 px-6 py-4 text-base font-semibold text-white transition-colors hover:bg-green-700 sm:mt-auto"
-              >
-                스마트스토어에서 구매하기
-              </a>
-              <p className="mt-2 text-xs text-gray-500">
-                판매 채널에 따라 가격·할인율이 다를 수 있습니다.
-              </p>
+              {product.smartstore_url && (
+                <>
+                  <a
+                    href={product.smartstore_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 flex w-full items-center justify-center rounded-lg bg-green-600 px-6 py-4 text-base font-semibold text-white transition-colors hover:bg-green-700 sm:mt-auto"
+                  >
+                    스마트스토어에서 구매하기
+                  </a>
+                  <p className="mt-2 text-xs text-gray-500">
+                    판매 채널에 따라 가격·할인율이 다를 수 있습니다.
+                  </p>
+                </>
+              )}
             </div>
           </div>
 
