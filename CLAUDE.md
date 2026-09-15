@@ -35,6 +35,10 @@
 - PostgreSQL 16 / Prisma 6.19.3 (**버전 고정 — 업그레이드 금지**)
 - Better Auth 1.6.23 / **Tailwind CSS 3.4.1** / Toss Payments / Resend (이메일)
 - 서버: BOSGAME P4 Ultra, Windows 11 + WSL2 Ubuntu 24.04 / Nginx / PM2 / Let's Encrypt
+- 🔴 **`/api/v1` 은 Nginx ACL로 Tailscale(`100.64.0.0/10`)·localhost 에만 열려 있다**(86차 실측,
+  합의된 접속 경로). 공인망 요청은 전부 403. 허브(주승시스템)는 tailnet 노드 `synjuseung`
+  (`100.93.152.51`)에서 호출한다. **API 호출 흔적은 `api_client.last_used_at`(UTC)과
+  `/var/log/nginx/mysado_access.log`(14일 보존)에 남는다** — `session.ipAddress` 는 못 쓴다.
 
 ## 현재 좌표
 - **최신 핸드오프 문서가 상태의 정본이다.** 세션 시작 시 그 문서의 "세션 시작 프로토콜"을 먼저 실행.
@@ -174,16 +178,24 @@
   (`prod-108` 이 9/7 수정 후에도 `2026-08-01 07:32:03.578` 그대로였다).
   `product` 를 psql로 UPDATE할 때는 `updated_at` 을 같은 SQL에서 함께 갱신하되,
   UTC 저장이므로 **`(now() AT TIME ZONE 'UTC')`** 로 쓴다 — `now()` 를 그대로 넣으면
-  서버 `TimeZone` 에 따라 9시간 어긋난다(서버 `TimeZone` 설정은 **미확인**).
+  9시간 어긋난다(**서버 `TimeZone` = `Asia/Seoul`**, 84차 확정).
+- 🔴 **DB DEFAULT `CURRENT_TIMESTAMP` 인 `created_at` 은 KST로 박힌다 — 단, INSERT가 그 컬럼을
+  생략할 때만**(84차 확정 · 86차 조건 확정). `product`·`cart_item` 등의 `created_at` 이 그 DEFAULT를
+  갖는다. Prisma 경로(`@default(now())`)는 값을 직접 넣어 UTC이므로 걸리지 않는다
+  (86차: `cart_item` 의 `created_at`·`updated_at` 이 밀리초까지 동일 → 둘 다 Prisma UTC).
+  psql·적재기로 INSERT할 때는 `created_at`·`updated_at`·`registered_at`·`channel_modified_at` 을
+  **전부 `(now() AT TIME ZONE 'UTC')` 로 명시**한다. 시각을 읽을 때는 **어느 경로가 쓴 행인지**를 먼저 본다.
 - **`product.name` 이 변형 식별의 정본이다.** `variant_label` 은 색상명이 아니라
   **상품명 전체에 가까운 문자열**이다(71차 실측: prod-127~136 10건이 `name` 에서 기기 접두만
   빠진 형태). 화면에 그대로 쓰면 같은 묶음 안에서 앞부분이 전부 같아 변별이 되지 않으므로,
   표시할 때는 묶음 내 공통 접두·접미를 런타임에 깎는다
   (`components/products/detail/VariantSelector.tsx` 의 `commonAffix`/`trimAffix`).
   **DB 값은 고치지 않는다** — 원본이 스마트스토어 계열이라 재임포트 시 회귀 가능하고 정책 미정.
-  ⚠️ "40자에서 잘린다"는 이전 서술은 **미확인으로 강등**했다(71차). 관측 10건의 최대 길이가
-  정확히 40이나 최장값의 접미가 온전해 절단 흔적이 없다. `SELECT max(length(variant_label))`
-  전수 확인 전까지 절단을 전제로 설계하지 않는다.
+  🔴 **40자 절단은 84차 전수 확인으로 확정됐다** — `max(length)` = 40, ≥38자 12행 중 **3건이 명백한
+  절단**(`prod-010`·`prod-011`·`prod-142`, 전부 71차 관측 대역 `prod-127~136` 밖 → 71차 "미확인
+  강등"은 **모집단 문제**였다). **우리 코드는 자르지 않는다**(`slice(0,40)` 류 0건, `truncate` 헬퍼는
+  `…` 를 붙이는데 DB 값에는 없음). 절단 지점은 원천(스마트스토어 계열) 쪽으로 **소거 추정**이며
+  미확인. 등록 파이프라인은 같은 자리를 지나지 않으므로 신규 등록분에는 걸리지 않는다.
 - **`Order.totalAmount`(상품합+배송비, 최종 결제금액) ≠ `CartView.totalAmount`(상품금액 합계만).**
   화면에 찍는 값은 `CartView.payableAmount` 다(59차). 이름이 같아 혼동하기 쉽다.
 - `contentMeta.<field>.locked === true` 인 필드는 **전용 정정 스크립트로만** 덮는다.
@@ -209,12 +221,14 @@
   쓰면 상품만 통과한다. **한쪽에서 통과한 형식을 다른 쪽의 근거로 쓰지 말 것.**
 - 🔴 **`session.ipAddress` 는 실클라이언트 IP가 아니다**(80차 실측). 최근 전 건이
   `172.25.32.1`(WSL2가 보는 Windows 호스트 주소)이고 **원격 접속도 이 값으로 찍힌다.**
-  접속 주체(사내/외부) 판별에 **쓸 수 없다.** 필요하면 Nginx 접근 로그를 본다.
-- **`product` 의 인덱스는 2개뿐이다**(76차 실측): `product_pkey(id)` ·
-  `product_group_id_idx(group_id)`. **`sku` 에 인덱스도 UNIQUE 도 없고 `updated_at`·
-  `stock_updated_at` 에도 없다.** "sku 고유 179/179"(74차)는 그 시점 데이터일 뿐
-  **제약이 아니다** — 중복 sku 를 DB 가 막지 않는다. `updated_since` 류 필터는 풀스캔이 되므로,
-  성능을 전제로 한 설계를 쓰기 전에 인덱스 추가 여부를 먼저 판단한다.
+  접속 주체(사내/외부) 판별에 **쓸 수 없다.** Nginx 접근 로그(`/var/log/nginx/mysado_access.log`,
+  14일 보존)를 본다 — 86차에 이 로그로 파트너 연동 개시를 특정했다.
+- **`product` 의 인덱스는 3개다**(85차 #54 적용): `product_pkey(id)` · `product_group_id_idx(group_id)` ·
+  **`product_sku_key(sku)` UNIQUE**(마이그레이션 `20260914234323_product_sku_unique`).
+  **중복 `sku` INSERT/UPDATE는 DB가 거부한다.** `NULL` 은 위반이 아니다(49건 공존). 정준키(`KR` 제거)
+  UNIQUE는 **없다**(별건). `updated_at`·`stock_updated_at` 에는 여전히 인덱스가 없어 `updatedAfter`
+  류 필터는 풀스캔이다. 🔴 `scripts/product-insert-38.js`·`prisma/seed.js` 의 중복 sku INSERT는
+  이제 **실행 시 DB 오류로 죽는다** — 재실행 전제로 읽지 말 것.
 - **`product.status` DEFAULT 는 76차에 `'SALE'` → `'DRAFT'` 로 정정됐다.** 구 DEFAULT 는
   실데이터 0건인 고아값이라, status 를 생략한 INSERT 가 어떤 술어에도 걸리지 않고 목록에서
   조용히 사라졌다(58차 실측). **그래도 신규 상품 코드는 status 를 반드시 명시한다** —
@@ -230,6 +244,11 @@
   `deriveIsVisible('DRAFT') = false` 이므로 생략 INSERT 가 들어와도 비노출로 안착한다.
 - **`product.stock_updated_at`** — `timestamp(3)` · **Nullable** · DEFAULT 없음 ·
   테이블 **맨 끝(42번째)**. 재고 변경 시각 전용이며 규칙은 「재고 쓰기 주체」절에 있다.
+- 🔴 **`images[0]` 무가드 2곳** — `components/products/ProductCard.tsx:24` · `app/products/[id]/page.tsx:167`
+  (84차 실측). 지금까지 안 터진 것은 **데이터가 지켜준 것**(NULL 0 · 빈 배열 0)이지 코드가 지킨 것이
+  아니다. 등록이 빈 배열을 한 건 넣으면 그 카드가 있는 목록 전체가 죽는다 — 적재기 게이트에서
+  `images` 빈 배열을 거부한다. 같은 부류로 `smartstore_url=''` 은 85차 `page.tsx:233~243` 조건부
+  렌더로 가드됐다(실물 검증은 시험 5행 대기 — `''` 행이 아직 0건).
 
 ### 스타일·빌드
 - **빌드는 CSS 실패를 잡아주지 않는다**(71차 신설). 존재하지 않거나 다른 규칙에 덮인 Tailwind
@@ -257,6 +276,15 @@
   `awk '{n=match($0,/[^ ]/)-1} /패턴/{print NR" indent="n"  "$0}' 파일`
   — `cat -n` 의 탭 2칸 함정(59차)을 우회하고 행번호·깊이·본문을 한 줄에 얻는다.
 - `grep -rn 'A|B|C'` 는 `-E` 없이는 `|` 를 리터럴로 읽는다. **0건의 흔한 원인.**
+- 🔴 **이 저장소에서 grep은 두 표기를 모두 건다**(84차 ⓘ). Prisma 필드명 ↔ DB 컬럼명 매핑표가
+  위 「컬럼명」 절에 있다. `stock_quantity` 만 걸면 정본 경로 `lib/inventory.ts`(`stock`)가 빠지고,
+  `variantLabel` 만 걸면 snake_case 화면 코드(`types/product.ts`)가 빠진다 — **0건이 아니라 목록
+  누락**이라 더 조용하다. 패턴은 `-E 'stock_quantity|stock\b'` 처럼 양쪽을 교대로 건다.
+- **`awk` 를 여러 파일에 걸 때 줄 번호는 `NR` 이 아니라 `FNR`**(85차 ⓚ). `NR` 은 누적이라
+  두 번째 파일부터 밀린 번호를 낸다. 위 들여쓰기 계측 명령도 다중 파일이면 `FNR` 로 바꾼다.
+- **파일로 받는 스크립트·지시서는 sha256 대조가 관문이다**(85차 ⓙ). 행수·말미·CR·구문 검사는
+  형태만 보고, 붙여넣기 채널이 지운 `<a` 줄(85차)은 해시만 잡았다. HTML 태그 조각이 든 코드는
+  분량과 무관하게 힙독이 아니라 파일로 받는다.
 - **grep 범위에서 `scripts/`·`prisma/` 를 빼면 0건이 거짓이 된다**(75차 실증).
   `app`·`lib`·`components` 만 보고 `product.create` 0건이 나왔으나, 상품 INSERT 는
   `scripts/product-insert-38.js` 와 `prisma/seed.js` 에 있었다. 화면 기능이 아닌 것
@@ -342,8 +370,8 @@
 - `scripts/product-status-write.js` 폐기 표시 또는 삭제(76차 확정, 미착수 — 위 「절대 하지 말 것」참조).
 - `group_role` 에 CHECK 제약이, `(group_id, variant_label)` 에 UNIQUE가 없다. additive 보강
   후보이나 필요성 미확정(70차).
-- `VariantSelector.tsx` 의 `line-clamp-2` 가 화면에서 동작하지 않는다(71차). `block` 제거로
-  해결될 가능성이 있으나 미검증.
+- `VariantSelector.tsx:76` 의 `line-clamp-2` 가 화면에서 동작하지 않는다(71차, 위치는 84차 실증).
+  `block` 제거로 해결될 가능성이 있으나 미검증 — 판정은 개발자도구의 계산된 `display` 값.
 
 ## 주요 파일
 - `lib/auth.ts`(Better Auth) / `lib/prisma.ts`(싱글톤) / `lib/api-helpers.ts`(API 공용)
