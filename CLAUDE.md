@@ -178,6 +178,15 @@
     **S-3**(재고 SET)으로만 부른다.
 
 ### 데이터
+- 🔴 **"DB write 0"은 "우리가 한 write 0"이다**(89차 ⓔ). 파트너(주승시스템)가
+  `GET /api/v1/orders?limit=10` 을 **5분 주기·24시간** 호출하고 있어 `api_client.last_used_at` 이
+  **하루 288회** Prisma로 갱신된다. dump 크기가 안 변하는 것은 행이 안 늘고 타임스탬프 길이가
+  고정이기 때문이지 내용이 같아서가 아니다.
+- 🔵 **`/api/v1` rate limit = 60회/분 · `api_client.id` 별 인메모리 고정 윈도**
+  (89차 실측 `lib/api-v1/rate-limit.ts`). 초과 시 **429 + `Retry-After`**. 적용 라우트는 4개
+  (`ping`·`products`·`orders`·`orders/[id]`)이고 순서는 전부 **인증 → rate limit → 처리**다
+  (미인증 요청이 카운터를 오염시키면 안 되므로). 파트너 사용률은 분당 0.2회(0.33%)라
+  주기 설계에서 rate limit은 제약이 아니다. 재기동하면 카운터는 0으로 초기화된다.
 - `NULL || jsonb` 는 조용히 NULL을 반환한다. 읽기 → JS 병합 → 전체 쓰기.
 - Prisma `DateTime`은 **UTC로 저장**된다. KST 벽시계 값으로 필터하면 어긋난다.
 - 🔴 **`@updatedAt` 은 Prisma 쓰기에서만 갱신된다**(79차 실측). `psql` 로 직접 UPDATE한 행은
