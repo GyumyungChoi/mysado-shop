@@ -408,4 +408,13 @@
 - `lib/admin-guard.ts`(requireAdminPage/Api) / `middleware.ts`(PROTECTED_PATHS) / `prisma/schema.prisma`
 - `app/api/health/route.ts`(DB 프로브 — `SELECT 1`, **force-dynamic** 로 ISR이 DB 장애를 200으로
   덮지 않게, 무인증 200/503. HetrixTools `mysado-health` 가 keyword `"db":"up"` 로 감시. 66차 신설)
-- `.env.local` — **읽지 말 것**(시크릿 포함, deny 대상).
+- `.env` 계열 **4개** — `.env` / `.env.development` / `.env.production` / **`.env.local`**.
+  🔴 **전부 읽지 말 것**(시크릿 포함, deny 대상). 아래는 "열지 않고 알아야 하는" 정보다.
+  - 로드 우선순위 **`.env.local` > `.env.production` > `.env`**
+    (`npm run build` 로그의 `Environments:` 줄이 그 순서를 출력한다)
+  - **외부 서비스 키가 어느 파일에 있는지는 문서가 아니라 실물이 정본**이다. 92차에 절차서가
+    `.env` 를 지목했으나 토스 키는 **`.env.local` 에만** 있었고, 그대로 고쳤다면 **편집은 성공하고
+    값은 안 바뀌는 침묵 실패**가 났을 자리다. **확인·편집은 Chris가 한다 — 파일을 열어 확인하려
+    하지 말고, 어느 파일인지 모르면 물어본다.**
+  - `NEXT_PUBLIC_*` 는 **빌드 시점에 번들로 박힌다.** 값이 바뀌면 `pm2 restart` 로는 안 바뀌고
+    **`npm run build` 가 필요**하다(89차 실측 · 92차 라이브 키 전환에서 실증).
