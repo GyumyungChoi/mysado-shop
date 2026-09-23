@@ -24,7 +24,7 @@ function SuccessContent() {
   const searchParams = useSearchParams();
   const { refreshCartCount } = useCartCount();
 
-  const [phase, setPhase] = useState<"confirming" | "done" | "error">("confirming");
+  const [phase, setPhase] = useState<"confirming" | "done" | "processing" | "error">("confirming");
   const [result, setResult] = useState<ConfirmResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   /** StrictMode 이펙트 2회 실행으로 confirm이 중복 호출되는 것 방지 */
@@ -52,9 +52,14 @@ function SuccessContent() {
           body: JSON.stringify({ paymentKey, orderId, amount: Number(amount) }),
         });
 
-        const data = (await response.json()) as ConfirmResponse & { message?: string };
+        const data = (await response.json()) as ConfirmResponse & { message?: string; code?: string };
 
         if (!response.ok) {
+          // #104: 같은 결제의 앞선 승인 요청이 처리 중 — 실패가 아니므로 "처리 중"으로 안내
+          if (data.code === "PAYMENT_PROCESSING") {
+            setPhase("processing");
+            return;
+          }
           setPhase("error");
           setErrorMessage(data.message ?? "결제 승인에 실패했습니다.");
           return;
@@ -110,6 +115,22 @@ function SuccessContent() {
           >
             쇼핑 계속하기
           </Link>
+        </>
+      )}
+
+      {phase === "processing" && (
+        <>
+          <h1 className="text-2xl font-bold text-gray-900">결제 승인이 진행 중입니다</h1>
+          <p className="mt-3 text-sm text-gray-500">
+            같은 결제의 승인 요청이 이미 처리되고 있습니다. 잠시 후 결과를 다시 확인해주세요.
+          </p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="mt-8 inline-block rounded-lg bg-gray-900 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-gray-700"
+          >
+            결과 다시 확인
+          </button>
         </>
       )}
 

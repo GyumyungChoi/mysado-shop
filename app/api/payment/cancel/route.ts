@@ -19,7 +19,8 @@ interface CancelRequestBody {
  *  2. CANCELED면 성공 재응답 (멱등 — 중복 요청 대응)
  *  3. PAID 상태만 취소 허용 (그 외 409)
  *  4. 토스 취소 API 호출 (Idempotency-Key: cancel- prefix)
- *  5. 성공 시 트랜잭션: CANCELED 전환 + PaymentLog(CANCEL, payload 원문) + 재고 복원
+ *  5. 성공 시 트랜잭션: PAID → CANCELED 조건부 전이(#104) — 1건일 때만 PaymentLog(CANCEL, payload 원문) + 재고 복원
+ *     0건이면 동시 요청(또는 웹훅)이 먼저 취소한 것 — 복원·로그 없이 alreadyCanceled 응답
  *     실패 시 CANCEL 로그(실패 원문)만 기록, 주문은 PAID 유지
  */
 export async function POST(request: Request) {
@@ -91,16 +92,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: result.message }, { status: 400 });
   }
 
-  // ── 5. 취소 성공 — 트랜잭션으로 상태 전환 + 로그 + 재고 복원 ──
-  // 위 2·3의 가드(이미 CANCELED면 조기 반환 / PAID만 허용) 덕분에
-  // 여기 도달한 주문은 반드시 "차감된 상태"이며 복원은 1회만 일어난다
+  // ── 5. 취소 성공 — 트랜잭션으로 상태 전이 + 로그 + 재고 복원 ──
+  // #104: 위 2·3의 가드는 트랜잭션 밖의 읽기라 동시 요청을 막지 못한다. 두 요청이 모두 PAID를 읽고
+  // 토스 멱등키 재생으로 둘 다 성공 응답을 받을 수 있다 — 복원 1회는 아래 조건부 전이가 보장한다
   const paymentKey = order.paymentKey;
 
-  await prisma.$transaction(async (tx) => {
-    await tx.order.update({
-      where: { id: order.id },
+  const restored = await prisma.$transaction(async (tx) => {
+    // 전이를 가장 먼저 — PAID일 때만 CANCELED. 동시 요청 중 한 쪽만 count = 1
+    const moved = await tx.order.updateMany({
+      where: { id: order.id, status: "PAID" },
       data: { status: "CANCELED" },
     });
+    if (moved.count !== 1) return false;
+
     await tx.paymentLog.create({
       data: {
         orderId: order.id,
@@ -110,7 +114,17 @@ export async function POST(request: Request) {
       },
     });
     await restoreStock(tx, toStockLines(order.items));
+    return true;
   });
+
+  if (!restored) {
+    console.warn(`[payment-race] cancel 주문 ${order.id}: 다른 요청이 먼저 CANCELED로 전이 — 로그·재고 복원 생략`);
+    return NextResponse.json({
+      orderId: order.id,
+      status: "CANCELED",
+      alreadyCanceled: true,
+    });
+  }
 
   return NextResponse.json({
     orderId: order.id,

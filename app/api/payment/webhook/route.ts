@@ -91,46 +91,79 @@ export async function POST(request: Request) {
     // ── 5. 상태 동기화 (검증 결과 기준) ──
     if (payment.status === "DONE" && (order.status === "PENDING" || order.status === "FAILED")) {
       // confirm은 성공했으나 DB 반영이 누락된 케이스 보정
+      // 반환: null = 전이 0건(다른 요청이 먼저 PAID로 만듦) / 배열 = 차감하지 못한 행
       const shortage = await prisma.$transaction(async (tx) => {
-        // 이 경로의 대상은 confirm 트랜잭션이 롤백된 미차감 주문 → 차감이 필요
-        // confirm과 달리 부족해도 throw하지 않는다: 결제는 이미 토스에서 DONE이라
-        // 재발송을 유도해도 결과가 같고 주문만 영구히 PENDING으로 남는다.
-        // 가능한 만큼 차감하고 나머지를 기록하는 것이 이 경로의 정답.
-        const short = await tryDeductStock(tx, toStockLines(order.items));
-        await tx.order.update({
-          where: { id: order.id },
+        // #104: 위 조건은 트랜잭션 밖의 읽기다 — 전이를 가장 먼저, 조건부로 한다.
+        // confirm 라우트와 겹쳐 도착하면 한 쪽만 count = 1이 되고, 0건이면 차감하지 않는다
+        const moved = await tx.order.updateMany({
+          where: { id: order.id, status: { in: ["PENDING", "FAILED"] } },
           data: {
             status: "PAID",
             paymentKey,
             paidAt: payment.approvedAt ? new Date(payment.approvedAt) : new Date(),
           },
         });
-        return short;
+        if (moved.count !== 1) return null;
+
+        // 이 경로의 대상은 confirm 트랜잭션이 롤백된 미차감 주문 → 차감이 필요
+        // confirm과 달리 부족해도 throw하지 않는다: 결제는 이미 토스에서 DONE이라
+        // 재발송을 유도해도 결과가 같고 주문만 영구히 PENDING으로 남는다.
+        // 가능한 만큼 차감하고 나머지를 기록하는 것이 이 경로의 정답.
+        return tryDeductStock(tx, toStockLines(order.items));
       });
 
-      console.log(`[webhook] 주문 ${order.id}: ${order.status} → PAID 보정`);
-      if (shortage.length > 0) {
-        console.error(
-          `[webhook] 🔴 수동 개입 필요 — 주문 ${order.id}: 재고 부족으로 일부 미차감`,
-          shortage,
-        );
+      if (shortage === null) {
+        console.warn(`[payment-race] webhook 주문 ${order.id}: 다른 요청이 먼저 PAID로 전이 — 차감 생략`);
+      } else {
+        console.log(`[webhook] 주문 ${order.id}: ${order.status} → PAID 보정`);
+        if (shortage.length > 0) {
+          console.error(
+            `[webhook] 🔴 수동 개입 필요 — 주문 ${order.id}: 재고 부족으로 일부 미차감`,
+            shortage,
+          );
+        }
       }
     } else if (
       (payment.status === "CANCELED" || payment.status === "PARTIAL_CANCELED") &&
       order.status !== "CANCELED"
     ) {
       // 상태 동기화는 모든 미취소 주문에 대해 하되, 복원은 차감된 주문(PAID)에만
-      const wasPaid = order.status === "PAID";
-      await prisma.$transaction(async (tx) => {
-        await tx.order.update({
-          where: { id: order.id },
+      // #104: PAID 여부를 트랜잭션 밖의 읽기로 정하지 않는다 — 조건부 전이의 건수로 정한다
+      const outcome = await prisma.$transaction(async (tx) => {
+        // ① PAID → CANCELED: 차감된 주문 → 복원
+        const fromPaid = await tx.order.updateMany({
+          where: { id: order.id, status: "PAID" },
           data: { status: "CANCELED" },
         });
-        // PARTIAL_CANCELED도 전량 복원 — 우리 취소 API는 전액 취소만 지원하므로
-        // 부분취소는 토스 콘솔 수동 조작 외에는 발생하지 않는다 (정밀 처리는 향후 과제)
-        if (wasPaid) await restoreStock(tx, toStockLines(order.items));
+        if (fromPaid.count === 1) {
+          // PARTIAL_CANCELED도 전량 복원 — 우리 취소 API는 전액 취소만 지원하므로
+          // 부분취소는 토스 콘솔 수동 조작 외에는 발생하지 않는다 (정밀 처리는 향후 과제)
+          await restoreStock(tx, toStockLines(order.items));
+          return "restored";
+        }
+        // ② PENDING/FAILED → CANCELED: 미차감 주문 → 상태만
+        const fromUnpaid = await tx.order.updateMany({
+          where: { id: order.id, status: { in: ["PENDING", "FAILED"] } },
+          data: { status: "CANCELED" },
+        });
+        return fromUnpaid.count === 1 ? "synced" : "none";
       });
-      console.log(`[webhook] 주문 ${order.id}: ${order.status} → CANCELED 동기화 (재고복원 ${wasPaid})`);
+
+      if (outcome === "none") {
+        // 두 전이 모두 0건 — 다른 요청이 먼저 CANCELED로 만들었거나, ①과 ② 사이에 동시 요청이
+        // PENDING → PAID로 바꿨다. 후자면 PAID로 남아 토스와 어긋나므로 500으로 재발송을 유도해 수렴시킨다
+        const current = await prisma.order.findUnique({
+          where: { id: order.id },
+          select: { status: true },
+        });
+        if (current?.status !== "CANCELED") {
+          console.warn(`[payment-race] webhook 주문 ${order.id}: CANCELED 동기화 0건(현재 ${current?.status}) — 재발송 유도`);
+          return NextResponse.json({ ok: false }, { status: 500 });
+        }
+        console.warn(`[payment-race] webhook 주문 ${order.id}: 다른 요청이 먼저 CANCELED로 전이 — 복원 생략`);
+      } else {
+        console.log(`[webhook] 주문 ${order.id}: ${order.status} → CANCELED 동기화 (재고복원 ${outcome === "restored"})`);
+      }
     }
     // 그 외(상태 이미 일치 등)는 로그 기록만으로 충분
 
