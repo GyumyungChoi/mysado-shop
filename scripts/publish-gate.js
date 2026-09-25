@@ -11,7 +11,13 @@
  * 입력은 product 행 객체이고, 필드명은 DB 컬럼명이 아니라 ORM 필드명을 쓴다.
  *   id, name, images, price, categoryId,
  *   compatibleModels, specs, seoTitle, seoDescription,
+ *   highlights, description,
  *   contentMeta, contentStatus
+ *
+ * 관문은 둘이다 (94차 B안 · 100차 구현).
+ *   관문 1 → review    : failures 가 0건 (G1~G5). pass 가 이것이다.
+ *   관문 2 → published : 관문 1 + publishBlockers 가 0건 (G7). publishable 이 이것이다.
+ * G7 은 failures 에 넣지 않는다 — 넣으면 review 자격을 갖춘 행이 거짓 FAIL 이 된다(94차 D2).
  */
 
 'use strict';
@@ -28,6 +34,14 @@ const GATE_CODES = {
   MISSING_SEO_DESC: 'SEO 설명 없음 (seoDescription 비어 있음)',
   DUPLICATE_SEO_TITLE: 'SEO 제목 중복 (전체 집합에서 유일하지 않음)',
   MISSING_COLOR: '색상 없음 (specs.color 부재 — 경고, PASS에 영향 없음)',
+};
+
+/**
+ * 관문 2 차단 코드 → 문구. failures 와 다른 배열(publishBlockers)에 담긴다.
+ * G7 은 "비어 있는가"까지만 본다 — 본문의 좋고 나쁨은 판정할 수 없으므로 넣지 않는다(94차 D1).
+ */
+const PUBLISH_BLOCKER_CODES = {
+  MISSING_NARRATIVE: '서술 없음 (highlights·description — published 차단, review 판정과 무관)',
 };
 
 /** contentMeta 는 점이 포함된 평평한 문자열 키를 쓴다(중첩 객체 아님). */
@@ -95,6 +109,18 @@ function isModelsExempt(row) {
   return entry.source === 'none';
 }
 
+/**
+ * G7 — 서술 2필드가 비어 있는 항목 이름 목록.
+ * highlights 는 text[] 이고 [''] 처럼 빈 문자열만 든 배열도 비어 있는 것으로 본다.
+ * 면제 마커(94차 D4)는 두지 않는다 — 서술이 필요 없는 상품이 아직 0건이다(100차).
+ */
+function checkNarrative(row) {
+  const missing = [];
+  if (!(Array.isArray(row.highlights) && row.highlights.some(hasText))) missing.push('highlights');
+  if (!hasText(row.description)) missing.push('description');
+  return missing;
+}
+
 /** G6 — specs.color 존재 여부. specs 는 nullable jsonb. */
 function hasColor(row) {
   const specs = row.specs;
@@ -110,13 +136,15 @@ function hasColor(row) {
 /**
  * 행 1건 판정. 전역 유일성(G5)은 집합을 봐야 하므로 여기서 판정하지 않는다.
  *
- * 반환: { id, contentStatus, pass, failures, warnings }
- *   failures / warnings 원소는 { code, detail? } 이며 detail 은 문자열 배열이다.
+ * 반환: { id, contentStatus, pass, failures, warnings, publishBlockers, publishable }
+ *   failures / warnings / publishBlockers 원소는 { code, detail? } 이며 detail 은 문자열 배열이다.
  *   pass 는 FAIL tier 위반이 0건인가만 본다 — WARN 은 pass 에 영향을 주지 않는다.
+ *   publishable 은 pass 이면서 publishBlockers 가 0건인가다 (관문 2).
  */
 function judgeRow(row) {
   const failures = [];
   const warnings = [];
+  const publishBlockers = [];
 
   // G1 MISSING_BASIC
   const missingBasic = checkBasic(row);
@@ -146,12 +174,21 @@ function judgeRow(row) {
     warnings.push({ code: 'MISSING_COLOR' });
   }
 
+  // G7 MISSING_NARRATIVE — 관문 2 전용. failures 에 넣지 않는다.
+  const missingNarrative = checkNarrative(row);
+  if (missingNarrative.length > 0) {
+    publishBlockers.push({ code: 'MISSING_NARRATIVE', detail: missingNarrative });
+  }
+
+  const pass = failures.length === 0;
   return {
     id: row.id,
     contentStatus: row.contentStatus,
-    pass: failures.length === 0,
+    pass,
     failures,
     warnings,
+    publishBlockers,
+    publishable: pass && publishBlockers.length === 0,
   };
 }
 
@@ -198,16 +235,21 @@ function judgeAll(rows) {
       ? result.failures.slice()
       : result.failures.concat([{ code: 'DUPLICATE_SEO_TITLE', detail: [dupTitle] }]);
 
+    // 🔴 필드를 하나씩 옮겨 새 객체를 만드므로, judgeRow 에 필드를 더하면 여기에도 더해야 한다.
+    //    빠뜨리면 judgeAll 결과에서 그 필드가 조용히 사라진다(40차 values 공유와 같은 계열).
+    const pass = failures.length === 0; // G5 반영 후 재계산
     return {
       id: result.id,
       contentStatus: result.contentStatus,
-      pass: failures.length === 0, // G5 반영 후 재계산
+      pass,
       failures,
       warnings: result.warnings.slice(),
+      publishBlockers: result.publishBlockers.slice(),
+      publishable: pass && result.publishBlockers.length === 0, // G5 가 관문 2도 막는다
     };
   });
 
   return { results, duplicateSeoTitles };
 }
 
-module.exports = { judgeRow, judgeAll, GATE_CODES };
+module.exports = { judgeRow, judgeAll, GATE_CODES, PUBLISH_BLOCKER_CODES };

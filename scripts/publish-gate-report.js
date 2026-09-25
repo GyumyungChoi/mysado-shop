@@ -4,7 +4,8 @@
  * 판정 규칙은 scripts/publish-gate.js 에 있고, 이 파일은 I/O만 담당한다.
  *
  * 읽기 전용 스크립트다. findMany 외의 DB 접근 경로를 두지 않으며,
- * contentStatus 를 승격시키는 write 플래그도 두지 않는다(쓸 대상이 이번 범위에 없다).
+ * contentStatus 를 승격시키는 write 플래그도 두지 않는다.
+ * review → published 승격은 scripts/content-publish-write.js 가 따로 한다(100차).
  *
  * 사용법
  *   node scripts/publish-gate-report.js                표 출력 (기본)
@@ -21,7 +22,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const { judgeAll, GATE_CODES } = require('./publish-gate');
+const { judgeAll, GATE_CODES, PUBLISH_BLOCKER_CODES } = require('./publish-gate');
 
 const ROOT = path.join(__dirname, '..');
 
@@ -168,6 +169,30 @@ function summarize(results) {
     pass: results.filter((r) => r.pass).length,
     fail: results.filter((r) => !r.pass).length,
     warn: results.filter((r) => r.warnings.length > 0).length,
+    publishable: results.filter((r) => r.publishable).length,
+  };
+}
+
+/**
+ * 관문 2(published 자격) — G7 차단 사유와 두 방향의 어긋남.
+ *   reviewPublishable : review 인데 관문 2까지 통과 → 승격 후보
+ *   publishedBlocked  : published 인데 관문 2 미통과 → 표기가 데이터보다 앞섬
+ */
+function buildGate2(results) {
+  const narrativeDetail = new Map();
+  results.forEach((r) => {
+    const blocker = r.publishBlockers.find((b) => b.code === 'MISSING_NARRATIVE');
+    if (!blocker || !Array.isArray(blocker.detail)) return;
+    blocker.detail.forEach((field) => narrativeDetail.set(field, (narrativeDetail.get(field) || 0) + 1));
+  });
+
+  return {
+    blockByCode: countByCode(results, 'publishBlockers'),
+    narrativeDetail: [...narrativeDetail.entries()]
+      .map(([field, count]) => ({ field, count }))
+      .sort((a, b) => b.count - a.count || a.field.localeCompare(b.field)),
+    reviewPublishable: results.filter((r) => r.contentStatus === 'review' && r.publishable),
+    publishedBlocked: results.filter((r) => r.contentStatus === 'published' && !r.publishable),
   };
 }
 
@@ -197,7 +222,7 @@ function pushRowList(lines, rows, nameById) {
 
 function buildTableLines(report, nameById, opts) {
   const lines = [];
-  const { summary, failByCode, basicDetail, warnByCode, crossTab, drift, duplicateSeoTitles } = report;
+  const { summary, failByCode, basicDetail, warnByCode, crossTab, drift, duplicateSeoTitles, gate2 } = report;
 
   // ── --fail-only : 탈락 행 상세만 ──
   if (opts.failOnly) {
@@ -219,6 +244,7 @@ function buildTableLines(report, nameById, opts) {
   lines.push('① 요약');
   lines.push(RULE);
   lines.push(`총 ${summary.total} / PASS ${summary.pass} / FAIL ${summary.fail} / WARN 보유 ${summary.warn}`);
+  lines.push(`관문 2 통과(published 자격) ${summary.publishable}`);
 
   // ── ② FAIL 사유별 집계 ──
   lines.push('');
@@ -295,6 +321,37 @@ function buildTableLines(report, nameById, opts) {
     }
   }
 
+  // ── ⑤ 관문 2 (published 자격 · G7) ──
+  lines.push('');
+  lines.push('⑤ 관문 2 — published 자격 (PASS + 서술 존재)');
+  lines.push(RULE);
+  if (gate2.blockByCode.length === 0) {
+    lines.push('  차단 사유 없음');
+  } else {
+    gate2.blockByCode.forEach(({ code, count }) => {
+      lines.push(`  ${String(count).padStart(4)}  ${code.padEnd(21)}  ${PUBLISH_BLOCKER_CODES[code] || ''}`);
+    });
+    gate2.narrativeDetail.forEach(({ field, count }) => {
+      lines.push(`  ${String(count).padStart(4)}    · ${field}`);
+    });
+  }
+
+  lines.push('');
+  lines.push(`[review 인데 관문 2 통과] ${gate2.reviewPublishable.length}건 — published 승격 후보`);
+  if (gate2.reviewPublishable.length === 0) lines.push('  없음');
+  else pushRowList(lines, gate2.reviewPublishable, nameById);
+
+  lines.push('');
+  lines.push(`[published 인데 관문 2 미통과] ${gate2.publishedBlocked.length}건 — 표기가 데이터보다 앞섬`);
+  if (gate2.publishedBlocked.length === 0) {
+    lines.push('  드리프트 없음');
+  } else {
+    gate2.publishedBlocked.forEach((r) => {
+      const reasons = r.failures.concat(r.publishBlockers);
+      lines.push(`  ${r.id}  ${truncate(nameById.get(r.id) || '', 34).padEnd(34)}  ${fmtReasons(reasons)}`);
+    });
+  }
+
   lines.push('');
   lines.push('※ 이 게이트는 콘텐츠 축(contentStatus)만 본다. 사이트 노출·구매 가능 여부와 무관하다.');
   lines.push('');
@@ -340,7 +397,10 @@ async function main() {
   let rows;
   try {
     // 전체 계측이 목적이므로 where 필터 없이 전 행을 읽는다.
-    // detailHtml·description 은 크므로 select 하지 않는다.
+    // description·highlights 는 G7(관문 2) 판정에 필요하다. 46차가 "크므로" 뺐던 것은
+    // 실측이 아니었다. 100차 실측에서 가장 큰 본문 컬럼 detail_html 도 최대 4,593자였고,
+    // description 은 따로 재지 않았으나 Layer 3b 입력 문안 기준 수백 자다(36·40차 JSON).
+    // detailHtml 은 어느 규칙도 보지 않으므로 계속 select 하지 않는다.
     rows = await db.product.findMany({
       select: {
         id: true,
@@ -352,6 +412,8 @@ async function main() {
         specs: true,
         seoTitle: true,
         seoDescription: true,
+        highlights: true,
+        description: true,
         contentMeta: true,
         contentStatus: true,
       },
@@ -374,6 +436,7 @@ async function main() {
     crossTab: buildCrossTab(results),
     drift: buildDrift(results),
     duplicateSeoTitles,
+    gate2: buildGate2(results),
     results,
   };
 
