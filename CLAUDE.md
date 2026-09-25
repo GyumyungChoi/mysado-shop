@@ -120,13 +120,38 @@
 - `is_active` 는 독립 축이 아니라 **`status` 의 파생값**이다. `lib/product-status.ts` 의
   `deriveIsVisible(status)` 가 `[ON_SALE, SOLD_OUT]` 만 true 로 본다.
   **status 를 쓰는 코드는 `is_active` 를 하드코딩하지 말고 이 함수 결과를 쓴다.**
-- **`product.content_status` 는 노출을 막지 않는다**(75차 실측). `draft` 인 상품 176건이
-  노출 중이고 사이트맵에도 실려 있다. `app`·`lib`·`components` 전체에서 이 컬럼을 읽는
-  코드가 **0건**이며(`prisma/schema.prisma` 선언만 존재), 게시 게이트는 아직 없다.
+- **`product.content_status` 는 노출을 막지 않는다**(75차 실측 · 100차 재확인). `app`·`lib`·`components`
+  전체에서 이 컬럼을 읽는 코드가 **0건**이고 `draft` 인 상품도 노출·사이트맵에 실린다.
   이 컬럼으로 노출을 판정하는 코드를 새로 쓰기 전에 설계를 먼저 확정한다.
-- 75차 실측 분포(228행): `is_active=t` **218**(ON_SALE 174 / SOLD_OUT 44) ·
-  `is_active=f` **10**(전부 DISCONTINUED). `content_status` = `draft` 186 · `review` 42 ·
-  **`published` 0**. 컬럼 DEFAULT 는 `'raw'` 인데 실값 `raw` 는 0건인 고아 기본값이다.
+- 🔴 **옛 서술 *"게시 게이트는 아직 없다"* 는 거짓이 됐다**(101차 정정). 게이트는 **`scripts/` 에 있다** —
+  46차 `publish-gate.js`(판정 · I/O 없음) · `publish-gate-report.js`(읽기 전용 리포트)가 94차에 발굴됐고,
+  100차에 **관문 2**(G7 `MISSING_NARRATIVE` — `failures` 가 아니라 **`publishBlockers`** 에 담김)와 승격 스크립트가
+  붙었다. 🔴 `judgeAll` 은 판정 필드를 **하나씩 옮기는 구조**라, 필드를 추가하면 거기에도 옮겨 적지 않는 한 조용히
+  사라진다(파일 주석 · 100차).
+- **콘텐츠 축의 쓰기 주체는 둘이다**(100차 실측).
+  - draft → review = **`scripts/layer3b-write.js`** — 서술 4필드 + `content_meta` 머지 + `content_status` 를 **한 쓰기로**
+    한다(`NARRATIVE_FIELDS` `:45` · 전이 `:390-396` · *"published 직행은 금지"* `:163-165` · 대표 묶음마다 트랜잭션
+    1개 `:567-588` — 줄 번호는 100차 버전). `published` 행은 강등하지 않고 서술만 쓴다(100차 #114 기록 —
+    줄 인용 없음, 이 파일을 편집하기 전에 코드로 재확인).
+  - review → published = **`scripts/content-publish-write.js`** — `--data` 필수 · 전이 고정 · **product 전 행을 읽어
+    G5까지 재판정** · **한 트랜잭션 + 행마다 조건부 `updateMany`(`count === 1`)** · `updatedAt` 을 배치 시각으로 명시 ·
+    이미 `published` 인 행은 건너뛴다(강등 없음).
+  - 둘 다 Prisma 경유라 `updated_at` 이 움직여 허브 증분 수집에 잡힌다(79차 · 100차 D3).
+  - ⚠️ **`promote` 를 이름에 쓰지 않는다** — `scripts/product-promote-write.js` 가 이미 **판매 상태 승격**(DRAFT→ON_SALE)이다.
+- **Layer 3b = 서술 4필드**(`highlights`·`description`·`seo_title`·`seo_description`)다(100차 실측 · #96).
+  `detail_html` 은 **입력**이고(`text NOT NULL DEFAULT ''` · 228행 모두 값), 완료 판정은 **4필드가 모두 비어 있지 않음**이다.
+  - 🔴 **서술을 쓰면 화면이 바뀐다** — `app/products/[id]/page.tsx:56`(제목) · `:58`(`seo_description → description →
+    대체 문구`)이 `seo_*` 를 먼저 쓴다(100차 실측 · 줄 번호는 그 버전). 판매 축(`status`·`is_active`)은 안 바뀐다.
+  - **SEO 2필드를 상품명 템플릿으로 채우지 않는다** — 위 대체 문구가 이미 상품명으로 같은 일을 한다(100차 기각).
+  - 🔴 **서술의 사실 주장은 사실 tier 를 넘지 않는다**(101차 신설) — 호환 기종 등은 `compatible_models` 실값에 맞춰
+    좁히고, 사실 tier 보강은 별건 쓰기로 넘긴다(100차: 이미지의 기종이 DB보다 넓은 유닛 2개).
+  - 수치·소재·구성품을 지어내지 않고, 한 멤버만의 색·디자인을 묶음 공통 문구에 넣지 않는다. 규격·중량·제조국은
+    서술 밖이고 '투명'은 색으로 기록하지 않는다(36·40차 규칙).
+  - **SEO 꼬리표** — EF `- 삼성 정품` · GP **`- Designed for Samsung`**(GP에 *"삼성 정품"* 불가 · Chris 100차).
+    캐릭터 표기는 **`죠르디`**(서술·SEO 한정 — `name` 은 그대로).
+- 분포(228행): `is_active=t` **218** · `is_active=f` **10**(전부 DISCONTINUED — 75차 · 100차 분모 재확인).
+  `content_status` = `draft` **105**(노출 95 · 비노출 10) · `published` **123** · `review` 0(100차 실측 · 101차 재확인).
+  컬럼 DEFAULT 는 `'raw'` 인데 실값 `raw` 는 0건인 고아 기본값이다.
 
 ### 재고 쓰기 주체 (`product.inventory_source`, 49차 신설 · 73차 복원)
 - 값은 `HUB` 또는 `MANUAL` 두 가지. **기본값 `MANUAL`**(안전 방향 — 신규 상품이 실수로 허브
@@ -437,6 +462,11 @@
 - 비멱등 스크립트는 `--data` 플래그 필수(기본값 없음). 직전 입력 파일은 감사 기록으로 보존한다.
 - `expectedCurrent` 가드 — write 대상의 현재값을 입력에 명시하고 불일치 시 중단.
 - 백필 UPDATE에는 `IS NULL` 조건을 넣어 멱등화.
+- **여러 행의 상태를 옮기는 스크립트는 한 트랜잭션 + 행마다 조건부 `updateMany`(`count === 1`)** 로 짠다(100차).
+  한 건씩 커밋하면 중간 실패 때 일부만 옮겨진 상태가 남고, 선검사와 쓰기 사이의 경합은 **전체 롤백**으로 막는다
+  (결제 경로 97차 #104 규칙의 데이터판). 선검사가 하나라도 어긋나면 **쓰기 0**.
+- **대상 id 목록은 DB가 아니라 승인 산출물(사람이 검수한 입력 JSON)에서 만든다**(101차 신설). `--data` 파일에
+  `expectedCount` 와 출처를 적고, 파일·DB의 id 집합이 같은지는 Chris가 해시로 대조한다.
 - **DB·네트워크 없이 검증 불가한 산출물**(결제 라우트 등)은 정적 검사(tsc/lint/grep)와
   논리 대조까지가 한계다. 실행 검증은 Chris가 수행하므로, 검증했다고 보고하지 않는다.
 - **`tsc` 는 산술도 문자열 처리도 검사하지 않는다.** 슬라이스·정규식·금액 계산은 실값으로
@@ -494,6 +524,8 @@
   후보이나 필요성 미확정(70차).
 - `VariantSelector.tsx:76` 의 `line-clamp-2` 가 화면에서 동작하지 않는다(71차, 위치는 84차 실증).
   `block` 제거로 해결될 가능성이 있으나 미검증 — 판정은 개발자도구의 계산된 `display` 값.
+- `scripts/layer3b-write.js:8` 의 주석 *"contentStatus raw→review"* 는 낡았다 — 실제 출발값은 `draft`
+  (36차 정정 · 100차 확인). **다음에 이 파일을 편집할 때** 같은 편집에서 고친다(76차).
 
 ## 주요 파일
 - `lib/auth.ts`(Better Auth) / `lib/prisma.ts`(싱글톤) / `lib/api-helpers.ts`(API 공용)
@@ -505,6 +537,9 @@
   `components/products/detail/`(`Highlights`·`Compatibility`·`SpecTable`·`ShippingReturn`·
   `Notice`·**`VariantSelector`**(71차))
 - `lib/api-v1/`(허브 연동 API — serializeOrder 단일 직렬화 경로)
+- `scripts/publish-gate.js`(게시 판정 순수 함수) / `scripts/publish-gate-report.js`(읽기 전용 리포트) /
+  `scripts/layer3b-write.js`(draft→review) / `scripts/content-publish-write.js`(review→published, 100차) —
+  콘텐츠 축. 판매 상태의 `scripts/product-promote-write.js` 와는 다른 축이다
 - `lib/admin-guard.ts`(requireAdminPage/Api) / `middleware.ts`(PROTECTED_PATHS) / `prisma/schema.prisma`
 - `app/api/health/route.ts`(DB 프로브 — `SELECT 1`, **force-dynamic** 로 ISR이 DB 장애를 200으로
   덮지 않게, 무인증 200/503. HetrixTools `mysado-health` 가 keyword `"db":"up"` 로 감시. 66차 신설)
